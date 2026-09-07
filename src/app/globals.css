@@ -1,26 +1,143 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ------------------------------------------------------------------
+   RaceDynamic tokens — matched to the reference site the client chose.
+   Light base, red accent, dark bands for the hero / category / footer.
+------------------------------------------------------------------- */
+@theme {
+  /* light surfaces */
+  --color-paper: #ffffff;
+  --color-mist: #f4f4f5; /* Popular Bikes band */
+  --color-line: #e4e4e7; /* hairlines on light */
+  --color-ghost: #e9e9ec; /* giant background display text */
+
+  /* dark surfaces */
+  --color-ink: #141414; /* nav, footer, hero */
+  --color-ink-2: #2b2b2b; /* category band */
+  --color-ink-3: #1e1e1e; /* cards on dark */
+  --color-line-dark: #333336;
+
+  /* type */
+  --color-graphite: #16161a; /* headings on light */
+  --color-body: #45454c; /* body copy on light */
+  --color-slate: #78787f; /* meta / labels */
+  --color-chalk: #f2f2f4; /* text on dark */
+  --color-ash: #9a9aa2; /* meta on dark */
+
+  /* brand */
+  --color-red: #d50d2e;
+  --color-red-dark: #ac0a25;
+  --color-lamp: #e5a54b; /* the overhead lamp in the hero, nowhere else */
+  --color-whatsapp: #25d366;
+
+  --font-display: var(--font-saira), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-barlow), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --text-eyebrow: 0.6875rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    background: var(--color-paper);
+    color-scheme: light;
+    scroll-behavior: auto;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-paper);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-red);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Bold condensed uppercase — the reference site's dominant voice. */
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.04;
+  letter-spacing: 0.005em;
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@utility figure-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Red pill button, the reference's primary CTA. */
+@utility btn-red {
+  display: inline-block;
+  background: var(--color-red);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.9rem 1.9rem;
+  transition: background-color 0.2s ease;
+}
+@utility btn-dark {
+  display: inline-block;
+  background: var(--color-ink);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.9rem 1.9rem;
+  transition: background-color 0.2s ease;
+}
+
+/* The oversized grey word sitting behind a section heading. */
+@utility ghost-word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-ghost);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

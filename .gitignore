@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# hero source clips (large, not needed at runtime)
+*.mp4
+nsone_in__.html
