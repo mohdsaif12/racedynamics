@@ -9,6 +9,7 @@ import { newStoragePath } from "@/lib/supabase/storage";
 import type { AdminCategory } from "@/lib/admin/categories";
 import type { EditableBike } from "@/lib/admin/bikes";
 import { revalidateSite } from "../../actions";
+import { hasTransparency } from "@/lib/admin/transparency";
 
 type Props =
   | { mode: "create"; categories: AdminCategory[] }
@@ -59,21 +60,32 @@ export default function BikeForm(props: Props) {
   // alongside it — calling URL.createObjectURL(file) fresh on every render
   // (as a plain `newFiles: File[]` would need to, for the <img src>) leaks a
   // new blob URL every time this component re-renders.
-  const [newFiles, setNewFiles] = useState<{ file: File; previewUrl: string }[]>([]);
+  const [newFiles, setNewFiles] = useState<
+    { file: File; previewUrl: string; cutout: boolean }[]
+  >([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [saving, setSaving] = useState(false);
   const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const addFiles = (files: FileList | null) => {
+  const addFiles = async (files: FileList | null) => {
     if (!files) return;
-    const added = Array.from(files).map((file) => ({
-      file,
-      previewUrl: URL.createObjectURL(file),
-    }));
+    const added = await Promise.all(
+      Array.from(files).map(async (file) => ({
+        file,
+        previewUrl: URL.createObjectURL(file),
+        cutout: await hasTransparency(file),
+      })),
+    );
     setNewFiles((prev) => [...prev, ...added]);
   };
+
+  /* The cover is whatever sits first overall: an already-saved photo if there
+     is one, otherwise the first newly-added file. We can only inspect files
+     added in this session, so a bike that already has photos is left alone. */
+  const coverNeedsCutout =
+    existingImages.length === 0 && newFiles.length > 0 && !newFiles[0].cutout;
 
   const removeNewFile = (i: number) => {
     setNewFiles((prev) => {
@@ -273,9 +285,34 @@ export default function BikeForm(props: Props) {
             onChange={(e) => addFiles(e.target.files)}
           />
         </div>
-        <p className="mt-2 text-[13px] text-slate">
-          The first photo is the cover picture shown across the site.
-        </p>
+        <div className="mt-4 rounded-xl bg-mist p-4">
+          <p className="text-[13px] font-bold text-graphite">
+            The first photo is the cover
+          </p>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-slate">
+            It floats on the dark stage with no frame around it, so it needs a{" "}
+            <strong className="text-graphite">cut-out with no background</strong>{" "}
+            — a PNG or WebP where the area around the bike is see-through. Any
+            photos after the first are shown as normal photographs, so those can
+            be ordinary pictures straight off your phone.
+          </p>
+          <a
+            href="https://www.remove.bg/upload"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2.5 inline-block text-[13px] font-bold text-red underline underline-offset-2"
+          >
+            Free tool to cut out a background →
+          </a>
+        </div>
+
+        {coverNeedsCutout && (
+          <p className="mt-3 rounded-xl bg-red/10 px-4 py-3 text-[13px] leading-relaxed text-red">
+            <strong>That cover photo still has its background.</strong> You can
+            save it and it will work — but on the stage it will show as a
+            rectangle instead of floating. Cut it out first if you can.
+          </p>
+        )}
       </Section>
 
       {/* --------------------------------------------------------- details */}

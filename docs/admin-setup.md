@@ -101,6 +101,9 @@ created once, here:
 
 - **Bikes** — add one (photos, price, year, km, status), edit any field,
   flip a single switch to mark it sold, delete it.
+- **Enquiries** — everyone who fills in the form on the Sell your bike page,
+  newest first, with buttons to call or WhatsApp them and a To call /
+  Called / Done marker.
 - **Categories** — add, rename, delete (a category can't be deleted while
   bikes are still in it).
 - **Reviews** — add or remove the testimonials shown on the homepage.
@@ -108,6 +111,18 @@ created once, here:
   four homepage stats, social links.
 
 Every change appears on the live site within a few seconds.
+
+### About bike photos
+
+The **first** photo of each bike is its cover, and the inventory page floats
+it over a dark lit platform with no frame — so it has to be a cut-out with a
+see-through background (a PNG or WebP), not an ordinary photograph. The form
+checks as you add it and says so if the background is still there; it never
+blocks the save, it just warns.
+
+Every photo **after** the first is shown as a normal framed photograph in the
+details section below, so those can be ordinary pictures straight off a phone.
+A bike with only its cover photo simply doesn't show that gallery.
 
 ## Notes for whoever maintains this later
 
