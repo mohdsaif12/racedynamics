@@ -25,8 +25,8 @@ export default function SiteHeader({ categories }: { categories: Category[] }) {
           <Image
             src="/brand/racedynamics.webp"
             alt="RaceDynamics"
-            width={900}
-            height={220}
+            width={1800}
+            height={477}
             priority
             unoptimized
             className="h-7 w-auto lg:h-8"

@@ -48,8 +48,8 @@ export default async function AdminLayout({
           <Image
             src="/brand/racedynamics.webp"
             alt="RaceDynamics"
-            width={900}
-            height={220}
+            width={1800}
+            height={477}
             unoptimized
             className="h-6 w-auto"
           />
