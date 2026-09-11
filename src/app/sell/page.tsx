@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { pad } from "@/lib/format";
 import { getSiteSettings } from "@/lib/data/settings";
-import { whatsappLink } from "@/lib/data/links";
 import { SITE } from "@/lib/site";
+import SellForm from "./SellForm";
 
 export const metadata: Metadata = {
   title: "Sell your bike",
@@ -24,7 +24,6 @@ const STEPS = [
   },
 ] as const;
 
-/** Skeleton — the real multi-step form with photo upload lands in Phase 5. */
 export default async function SellPage() {
   const settings = await getSiteSettings();
 
@@ -52,21 +51,10 @@ export default async function SellPage() {
         ))}
       </ol>
 
-      <div className="mt-14 border border-line p-8">
-        <h2 className="eyebrow text-body">Get a quote</h2>
-        <p className="mt-4 max-w-[46ch] text-sm text-body">
-          The multi-step form with photo upload is Phase 5. Until then, WhatsApp
-          is the fastest route and it&rsquo;s the one most sellers use anyway.
-        </p>
-        <a
-          href={whatsappLink(settings)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-red mt-6 hover:bg-red-dark"
-        >
-          WhatsApp {SITE.city}
-        </a>
+      <div className="mt-14 max-w-2xl">
+        <SellForm settings={settings} />
       </div>
+
     </div>
   );
 }

@@ -37,6 +37,14 @@ const MOBILE = { dir: "/hero/mobile", count: 96 };
    fraction of it, so shortening this tightens the entire hero at once. */
 const SCROLL_HEIGHT = "260svh";
 
+/* How far past "fit the width" the frame is scaled on portrait phones.
+   Capped by cover in draw(). 1.35 keeps the full 18%-87% lit span on screen
+   with margin to spare. */
+const PORTRAIT_ZOOM = 1.35;
+
+/* Fraction down the frame that the lit subject centres on. */
+const PORTRAIT_ANCHOR = 0.58;
+
 /* The bike clears the frame at ~0.75. The logo starts resolving just before
    that so it rides the last of the motion, and is fully settled by 0.80 —
    about one scroll after the bay empties, not five. */
@@ -150,11 +158,28 @@ export default function HeroSequence() {
 
     const sx = w / img.naturalWidth;
     const sy = h / img.naturalHeight;
-    const portrait = h > w;
-    const scale = portrait ? Math.min(sx, sy) : Math.max(sx, sy);
+    const cover = Math.max(sx, sy);
+    const contain = Math.min(sx, sy);
+
+    /* Landscape viewports get cover — the frame fills the stage, no seam.
+       A portrait phone can't: the frames are 16:9 and covering a 9:19.5
+       screen would crop ~60% of the width, taking the bike's ride-out with
+       it. So we fit, then zoom back up as far as is safe. The lit subject
+       never extends past 18%-87% of the frame width, and everything outside
+       it is pure black, so cropping this much costs nothing visible. */
+    const scale =
+      h > w ? Math.min(contain * PORTRAIT_ZOOM, cover) : cover;
+
     const dw = img.naturalWidth * scale;
     const dh = img.naturalHeight * scale;
-    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+
+    /* Vertically the lit area sits low in the frame (roughly 27%-90%), so
+       centring the image leaves a dead black band up top and pushes the bike
+       below the optical centre. Anchor on the action instead. */
+    const dy =
+      dh >= h ? (h - dh) / 2 : h / 2 - dh * PORTRAIT_ANCHOR;
+
+    ctx.drawImage(img, (w - dw) / 2, dy, dw, dh);
   };
 
   useGSAP(
@@ -245,11 +270,14 @@ export default function HeroSequence() {
   return (
     <section
       ref={wrapRef}
-      className="relative bg-ink"
+      className="relative bg-black"
       style={reduced ? undefined : { height: SCROLL_HEIGHT }}
       aria-label={`${SITE.name} introduction`}
     >
-      <div className="sticky top-0 grid h-svh place-items-center overflow-hidden bg-ink">
+      {/* Pure black, not bg-ink (#141414): the frames carry black borders,
+          and on a portrait phone the fitted frame would otherwise read as a
+          visibly-edged video box sitting on a lighter stage. */}
+      <div className="sticky top-0 grid h-svh place-items-center overflow-hidden bg-black">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 h-full w-full"

@@ -8,6 +8,7 @@ import { getSiteSettings } from "@/lib/data/settings";
 import { telLink, whatsappLink } from "@/lib/data/links";
 import { formatKm, formatPrice, STATUS_CLASS, STATUS_LABEL } from "@/lib/format";
 import { SITE } from "@/lib/site";
+import { BikeJsonLd } from "@/components/JsonLd";
 
 /** Every bike's slug, so each one gets its own real, indexable URL. */
 export async function generateStaticParams() {
@@ -30,9 +31,22 @@ export async function generateMetadata({
   const bike = await getBikeBySlug(slug);
   if (!bike) return {};
 
+  const title = `${bike.brand} ${bike.fullName} (${bike.year})`;
+  const description = `${bike.year} ${bike.brand} ${bike.fullName}, ${formatKm(bike.km)}, ${bike.location}. ${formatPrice(bike.priceINR)} at ${SITE.name}, ${SITE.city}.`;
+
   return {
-    title: `${bike.brand} ${bike.fullName} (${bike.year})`,
-    description: `${bike.year} ${bike.brand} ${bike.fullName}, ${formatKm(bike.km)}, ${bike.location}. ${formatPrice(bike.priceINR)} at ${SITE.name}, ${SITE.city}.`,
+    title,
+    description,
+    alternates: { canonical: `/bike/${bike.slug}` },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: `/bike/${bike.slug}`,
+      // The bike's own cover photo, so a shared link previews the machine
+      // rather than the generic brand card.
+      images: bike.image ? [{ url: bike.image, alt: title }] : undefined,
+    },
   };
 }
 
@@ -50,6 +64,7 @@ export default async function BikePage({ params }: PageProps<"/bike/[slug]">) {
 
   return (
     <article className="mx-auto max-w-[1400px] px-5 py-10 lg:px-10">
+      <BikeJsonLd bike={bike} />
       <nav
         aria-label="Breadcrumb"
         className="flex flex-wrap gap-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-slate"

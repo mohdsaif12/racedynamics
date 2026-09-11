@@ -6,6 +6,7 @@ import SignOutButton from "./SignOutButton";
 
 const NAV = [
   { href: "/admin/bikes", label: "Bikes", icon: BikeIcon },
+  { href: "/admin/enquiries", label: "Enquiries", icon: InboxIcon },
   { href: "/admin/categories", label: "Categories", icon: TagIcon },
   { href: "/admin/testimonials", label: "Reviews", icon: StarIcon },
   { href: "/admin/settings", label: "Site settings", icon: GearIcon },
@@ -81,7 +82,7 @@ export default async function AdminLayout({
       </aside>
 
       {/* ------------------------------------------------------- mobile nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-line bg-white lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-white lg:hidden">
         {NAV.map((item) => (
           <Link
             key={item.href}
@@ -99,6 +100,13 @@ export default async function AdminLayout({
   );
 }
 
+function InboxIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M3 13h4l1.5 3h7L17 13h4M3 13l2.5-7h13L21 13v6H3v-6Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  );
+}
 function BikeIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>

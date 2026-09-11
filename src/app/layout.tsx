@@ -6,6 +6,8 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactRail from "@/components/ContactRail";
 import { SITE } from "@/lib/site";
+import { SITE_URL } from "@/lib/url";
+import { OrganizationJsonLd } from "@/components/JsonLd";
 import { getCategories } from "@/lib/data/categories";
 import { getSiteSettings } from "@/lib/data/settings";
 
@@ -30,12 +32,35 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
+const TITLE = `${SITE.name} — Pre-owned superbikes in ${SITE.city}`;
+
 export const metadata: Metadata = {
-  title: {
-    default: `${SITE.name} — Pre-owned superbikes in ${SITE.city}`,
-    template: `%s · ${SITE.name}`,
-  },
+  // Without metadataBase, every relative Open Graph image URL below resolves
+  // against nothing and social platforms silently drop the preview.
+  metadataBase: new URL(SITE_URL),
+  title: { default: TITLE, template: `%s · ${SITE.name}` },
   description: SITE.description,
+  applicationName: SITE.name,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE.name,
+    title: TITLE,
+    description: SITE.description,
+    url: "/",
+    locale: "en_IN",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: SITE.name }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: SITE.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 /**
@@ -61,6 +86,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <SiteFooter categories={categories} settings={settings} />
           <ContactRail settings={settings} />
         </SmoothScroll>
+        <OrganizationJsonLd settings={settings} />
       </body>
     </html>
   );
