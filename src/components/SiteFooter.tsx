@@ -13,7 +13,7 @@ const SOCIALS = [
   { key: "youtube", label: "YouTube", Icon: YoutubeIcon },
 ] as const;
 
-/** Three-column dark footer: quick links, contact details, and the map. */
+/** Four-column dark footer: about, quick links, contact details, and the map. */
 export default function SiteFooter({ settings }: { settings: SiteSettings }) {
   return (
     <footer className="mt-auto bg-ink pb-16 pt-16 sm:pb-0">
@@ -22,8 +22,23 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
         y={14}
         stagger={0.08}
         duration={0.45}
-        className="mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-3 lg:px-10"
+        className="mx-auto grid max-w-[1400px] gap-12 px-5 sm:grid-cols-2 lg:grid-cols-4 lg:px-10"
       >
+        <div>
+          <h2 className="display text-xl text-white">About us</h2>
+          <p className="mt-5 max-w-[38ch] text-[14.5px] leading-[1.85] text-ash">
+            A complete solution to owning your dream superbike, cruiser,
+            adventure or classic — bought, inspected and delivered by{" "}
+            {SITE.name} in {SITE.city}.
+          </p>
+          <Link
+            href="/about"
+            className="mt-5 inline-block text-[13px] font-bold uppercase tracking-[0.14em] text-red hover:text-white"
+          >
+            Read more
+          </Link>
+        </div>
+
         <nav aria-label="Quick links">
           <h2 className="display text-xl text-white">Quick links</h2>
           <ul className="mt-5 flex flex-col gap-2.5">
