@@ -5,7 +5,8 @@ import Link from "next/link";
 import NextImage from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import BikeArt from "@/components/BikeArt";
-import { BIKES, CATEGORIES, getCategory, type Bike } from "@/lib/inventory";
+import { telLink, whatsappLink } from "@/lib/data/links";
+import type { Bike, Category, SiteSettings } from "@/lib/data/types";
 import {
   formatKm,
   formatPrice,
@@ -13,7 +14,7 @@ import {
   STATUS_CLASS_DARK,
   STATUS_LABEL,
 } from "@/lib/format";
-import { SITE, telLink, whatsappLink } from "@/lib/site";
+import { SITE } from "@/lib/site";
 
 /**
  * The inventory, as a single full-bleed showcase panel.
@@ -27,6 +28,9 @@ import { SITE, telLink, whatsappLink } from "@/lib/site";
  * corner. Added on top: the category row and the left/right arrows.
  *
  * Below the panel sits a detail band that tracks whichever machine is showing.
+ *
+ * `bikes`/`categories`/`settings` come from the live database (src/lib/data),
+ * fetched once by src/app/inventory/page.tsx.
  */
 
 const EASE_OUT = [0.33, 1, 0.68, 1] as const;
@@ -48,13 +52,6 @@ const A_HOVER_BG = "hover:bg-red-dark";
 const STAGE_BG =
   "radial-gradient(ellipse 125% 95% at 62% 32%, #6E6E6E 0%, #5C5C5C 42%, #4E4E4E 72%, #3E3E3E 100%)";
 
-type CatKey = typeof ALL | (typeof CATEGORIES)[number]["slug"];
-
-const TABS: { slug: CatKey; name: string }[] = [
-  { slug: ALL, name: "All" },
-  ...CATEGORIES.map((c) => ({ slug: c.slug as CatKey, name: c.name })),
-];
-
 function matches(b: Bike, q: string) {
   if (!q) return true;
   const hay =
@@ -67,20 +64,26 @@ function matches(b: Bike, q: string) {
 }
 
 export default function InventoryBrowser({
+  bikes,
+  categories,
+  settings,
   initialCategory,
   initialBike,
 }: {
-  initialCategory: CatKey;
+  bikes: Bike[];
+  categories: Category[];
+  settings: SiteSettings;
+  initialCategory: string;
   initialBike?: string;
 }) {
-  const [cat, setCat] = useState<CatKey>(initialCategory);
+  const [cat, setCat] = useState(initialCategory);
   const [q, setQ] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [index, setIndex] = useState(() => {
     if (!initialBike) return 0;
-    const at = BIKES.filter(
-      (b) => initialCategory === ALL || b.category === initialCategory,
-    ).findIndex((b) => b.slug === initialBike);
+    const at = bikes
+      .filter((b) => initialCategory === ALL || b.category === initialCategory)
+      .findIndex((b) => b.slug === initialBike);
     return at > 0 ? at : 0;
   });
   const [dir, setDir] = useState<1 | -1>(1);
@@ -88,7 +91,9 @@ export default function InventoryBrowser({
   const searchRef = useRef<HTMLInputElement>(null);
   const firstRun = useRef(true);
 
-  const list = BIKES.filter(
+  const TABS = [{ slug: ALL, name: "All" }, ...categories];
+
+  const list = bikes.filter(
     (b) => (cat === ALL || b.category === cat) && matches(b, q),
   );
 
@@ -108,7 +113,7 @@ export default function InventoryBrowser({
     window.history.replaceState(null, "", qs ? `/inventory?${qs}` : "/inventory");
   }, [cat, bike]);
 
-  const chooseCategory = (next: CatKey) => {
+  const chooseCategory = (next: string) => {
     setDir(1);
     setCat(next);
     setIndex(0);
@@ -227,7 +232,7 @@ export default function InventoryBrowser({
                 setSearchOpen((v) => !v);
                 requestAnimationFrame(() => searchRef.current?.focus());
               }}
-              className={`grid size-9 shrink-0 place-items-center text-white/85 transition-colors hover:${A_TEXT.slice(5)}`}
+              className="grid size-9 shrink-0 place-items-center text-white/85 transition-colors hover:text-red"
             >
               {searchOpen ? <ClearIcon /> : <SearchIcon />}
             </button>
@@ -324,7 +329,7 @@ export default function InventoryBrowser({
                 >
                   <SpecRow value={bike.fullName} label="Model" />
                   <SpecRow
-                    value={getCategory(bike.category)?.name ?? "—"}
+                    value={categories.find((c) => c.slug === bike.category)?.name ?? "—"}
                     label="Category"
                   />
                   <SpecRow value={formatKm(bike.km)} label="Odometer" numeric />
@@ -357,18 +362,7 @@ export default function InventoryBrowser({
         {/* ------------------------------------------- socials + GO corner */}
         <div className="relative flex items-end justify-between">
           <div className="flex items-center gap-5 px-5 pb-7 lg:px-12">
-            {SOCIALS.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={s.label}
-                className="text-white/70 transition-colors hover:text-red"
-              >
-                {s.icon}
-              </a>
-            ))}
+            <Socials settings={settings} />
             {bike && (
               <span className="figure-nums ml-2 text-[11px] tracking-[0.18em] text-white/55">
                 {pad(safe + 1)} / {pad(list.length)}
@@ -407,7 +401,7 @@ export default function InventoryBrowser({
                     {bike.fullName}
                   </h2>
                   <p className="mt-3 max-w-[44ch] text-[15px] leading-relaxed text-ash">
-                    {getCategory(bike.category)?.blurb}
+                    {categories.find((c) => c.slug === bike.category)?.blurb}
                   </p>
 
                   <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -424,6 +418,7 @@ export default function InventoryBrowser({
                   <div className="mt-7 flex flex-wrap gap-3">
                     <a
                       href={whatsappLink(
+                        settings,
                         `${bike.brand} ${bike.fullName} (${bike.year})`,
                       )}
                       target="_blank"
@@ -433,7 +428,7 @@ export default function InventoryBrowser({
                       Enquire on WhatsApp
                     </a>
                     <a
-                      href={telLink()}
+                      href={telLink(settings)}
                       className="border border-white/25 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.16em] text-white transition-colors duration-200 hover:border-white hover:bg-white hover:text-ink"
                     >
                       Call {SITE.city}
@@ -454,7 +449,7 @@ export default function InventoryBrowser({
                   <Cell label="Engine" value={`${bike.engineCc} cc`} numeric />
                   <Cell
                     label="Category"
-                    value={getCategory(bike.category)?.name ?? "—"}
+                    value={categories.find((c) => c.slug === bike.category)?.name ?? "—"}
                   />
                   <Cell label="Reg. State" value={bike.location} />
                   <Cell label="Status" value={STATUS_LABEL[bike.status]} />
@@ -580,32 +575,51 @@ function ClearIcon() {
   );
 }
 
-const SOCIALS = [
-  {
-    label: "Facebook",
-    href: SITE.social.facebook,
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-        <path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6c-.29-.04-1.27-.12-2.4-.12-2.38 0-4 1.45-4 4.11V9.9H7.6V13h2.7v8h3.2Z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Instagram",
-    href: SITE.social.instagram,
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-        <path d="M12 2.2c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85C2.42 3.92 3.93 2.38 7.15 2.23 8.42 2.21 8.8 2.2 12 2.2Zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8Zm0 8.08a3.18 3.18 0 1 1 0-6.36 3.18 3.18 0 0 1 0 6.36Zm5.09-8.27a1.14 1.14 0 1 0 0-2.29 1.14 1.14 0 0 0 0 2.29Z" />
-      </svg>
-    ),
-  },
-  {
-    label: "YouTube",
-    href: SITE.social.youtube,
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-        <path d="M21.6 7.2s-.2-1.4-.8-2c-.75-.8-1.6-.8-2-.85C16 4.2 12 4.2 12 4.2h-.01s-4 0-6.8.2c-.4.05-1.25.05-2 .85-.6.6-.8 2-.8 2S2.2 8.8 2.2 10.5v1.6c0 1.65.2 3.3.2 3.3s.2 1.4.8 2c.75.8 1.75.77 2.2.85 1.6.15 6.8.2 6.8.2s4 0 6.8-.21c.4-.05 1.25-.05 2-.85.6-.6.8-2 .8-2s.2-1.65.2-3.3v-1.6c0-1.65-.2-3.3-.2-3.3ZM9.95 14.5V8.9l5.15 2.81-5.15 2.79Z" />
-      </svg>
-    ),
-  },
-];
+function Socials({ settings }: { settings: SiteSettings }) {
+  const items = [
+    {
+      label: "Facebook",
+      href: settings.social.facebook,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6c-.29-.04-1.27-.12-2.4-.12-2.38 0-4 1.45-4 4.11V9.9H7.6V13h2.7v8h3.2Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Instagram",
+      href: settings.social.instagram,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <path d="M12 2.2c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92C2.21 15.58 2.2 15.2 2.2 12s.01-3.58.07-4.85C2.42 3.92 3.93 2.38 7.15 2.23 8.42 2.21 8.8 2.2 12 2.2Zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8Zm0 8.08a3.18 3.18 0 1 1 0-6.36 3.18 3.18 0 0 1 0 6.36Zm5.09-8.27a1.14 1.14 0 1 0 0-2.29 1.14 1.14 0 0 0 0 2.29Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "YouTube",
+      href: settings.social.youtube,
+      icon: (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <path d="M21.6 7.2s-.2-1.4-.8-2c-.75-.8-1.6-.8-2-.85C16 4.2 12 4.2 12 4.2h-.01s-4 0-6.8.2c-.4.05-1.25.05-2 .85-.6.6-.8 2-.8 2S2.2 8.8 2.2 10.5v1.6c0 1.65.2 3.3.2 3.3s.2 1.4.8 2c.75.8 1.75.77 2.2.85 1.6.15 6.8.2 6.8.2s4 0 6.8-.21c.4-.05 1.25-.05 2-.85.6-.6.8-2 .8-2s.2-1.65.2-3.3v-1.6c0-1.65-.2-3.3-.2-3.3ZM9.95 14.5V8.9l5.15 2.81-5.15 2.79Z" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      {items.map((s) => (
+        <a
+          key={s.label}
+          href={s.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={s.label}
+          className="text-white/70 transition-colors hover:text-red"
+        >
+          {s.icon}
+        </a>
+      ))}
+    </>
+  );
+}

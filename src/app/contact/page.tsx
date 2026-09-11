@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { SITE, telLink, whatsappLink } from "@/lib/site";
+import { getSiteSettings } from "@/lib/data/settings";
+import { telLink, whatsappLink } from "@/lib/data/links";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -7,7 +9,9 @@ export const metadata: Metadata = {
 };
 
 /** No animation on this route by design — people arrive here with intent. */
-export default function ContactPage() {
+export default async function ContactPage() {
+  const settings = await getSiteSettings();
+
   return (
     <div className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10">
       <h1 className="display text-[clamp(2.25rem,6vw,4rem)] text-graphite">
@@ -18,18 +22,18 @@ export default function ContactPage() {
         <section>
           <h2 className="eyebrow text-slate">Showroom</h2>
           <address className="mt-3 text-sm not-italic text-body">
-            {SITE.address}
+            {settings.address}
           </address>
         </section>
 
         <section>
           <h2 className="eyebrow text-slate">Phone</h2>
           <p className="figure-nums mt-3 flex flex-col gap-1 text-sm text-body">
-            <a href={telLink(SITE.phonePrimary)} className="hover:text-graphite">
-              {SITE.phonePrimary}
+            <a href={telLink(settings, settings.phonePrimary)} className="hover:text-graphite">
+              {settings.phonePrimary}
             </a>
-            <a href={telLink(SITE.phoneSecondary)} className="hover:text-graphite">
-              {SITE.phoneSecondary}
+            <a href={telLink(settings, settings.phoneSecondary)} className="hover:text-graphite">
+              {settings.phoneSecondary}
             </a>
           </p>
         </section>
@@ -46,8 +50,8 @@ export default function ContactPage() {
         <section>
           <h2 className="eyebrow text-slate">Email</h2>
           <p className="mt-3 text-sm text-body">
-            <a href={`mailto:${SITE.email}`} className="hover:text-graphite">
-              {SITE.email}
+            <a href={`mailto:${settings.email}`} className="hover:text-graphite">
+              {settings.email}
             </a>
           </p>
         </section>
@@ -55,7 +59,7 @@ export default function ContactPage() {
 
       <div className="mt-12 flex flex-wrap gap-2">
         <a
-          href={whatsappLink()}
+          href={whatsappLink(settings)}
           target="_blank"
           rel="noopener noreferrer"
           className="btn-red hover:bg-red-dark"
@@ -63,7 +67,7 @@ export default function ContactPage() {
           WhatsApp
         </a>
         <a
-          href={telLink()}
+          href={telLink(settings)}
           className="btn-dark hover:bg-graphite"
         >
           Call now

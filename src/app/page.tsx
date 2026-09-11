@@ -11,6 +11,9 @@ import {
   TiltedStrip,
   TrustBand,
 } from "@/components/home/Sections";
+import { getAllBikes, getFeaturedBikes } from "@/lib/data/bikes";
+import { getCategories } from "@/lib/data/categories";
+import { getTestimonials } from "@/lib/data/testimonials";
 
 /**
  * Homepage — animation hierarchy:
@@ -20,11 +23,18 @@ import {
  *   NORMAL ZONE   → everything else scrolls naturally with subtle reveals
  *   FOOTER        → static / minimal
  *
- * Only two sections use the sticky-card drawer. The rest use masked heading
- * reveals, staggered fades, and subtle scroll-driven motion — giving the
- * page a clear hierarchy instead of every section competing for attention.
+ * All content below the hero comes from the database (src/lib/data) — bikes,
+ * categories, featured picks and testimonials — with a static-seed fallback
+ * so the page still renders before a Supabase project exists.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const [bikes, categories, featured, testimonials] = await Promise.all([
+    getAllBikes(),
+    getCategories(),
+    getFeaturedBikes(),
+    getTestimonials(),
+  ]);
+
   return (
     <>
       <HeroSequence />
@@ -34,22 +44,22 @@ export default function HomePage() {
           first; BrowseByCategory rises over it and pins in turn.    */}
       <div className="relative">
         <SectionCard tone="paper" dwell={45}>
-          <PlanningToSell />
+          <PlanningToSell bikes={bikes} />
         </SectionCard>
 
         <SectionCard tone="ink" dwell={50}>
-          <BrowseByCategory />
+          <BrowseByCategory categories={categories} bikes={bikes} />
         </SectionCard>
       </div>
 
       {/* ── NORMAL ZONE ─────────────────────────────────────────────
           Standard scroll with subtle reveals. No sticky pinning.    */}
-      <BrowseDatabase />
-      <TiltedStrip />
+      <BrowseDatabase bikeCount={bikes.length} />
+      <TiltedStrip bikes={bikes} />
       <TrustBand />
-      <PopularBikesCarousel />
+      <PopularBikesCarousel bikes={featured} />
       <AboutBand />
-      <Testimonials />
+      <Testimonials testimonials={testimonials} />
       <BrandStrip />
     </>
   );

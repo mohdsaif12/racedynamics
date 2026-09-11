@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CATEGORIES } from "@/lib/inventory";
+import type { Category } from "@/lib/data/types";
 
 const NAV = [
   { href: "/inventory", label: "Inventory" },
@@ -14,7 +14,7 @@ const NAV = [
 ] as const;
 
 /** Dark bar, red wordmark, wide-tracked uppercase nav — as on the reference. */
-export default function SiteHeader() {
+export default function SiteHeader({ categories }: { categories: Category[] }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -50,10 +50,10 @@ export default function SiteHeader() {
                 {item.href === "/inventory" && (
                   <div className="invisible absolute left-1/2 top-full -translate-x-1/2 pt-5 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                     <ul className="min-w-48 bg-ink-3 py-2 shadow-xl">
-                      {CATEGORIES.map((c) => (
+                      {categories.map((c) => (
                         <li key={c.slug}>
                           <Link
-                            href={`/inventory/${c.slug}`}
+                            href={`/inventory?category=${c.slug}`}
                             className="block px-5 py-2.5 text-[13px] font-medium uppercase tracking-[0.12em] text-ash transition-colors hover:bg-red hover:text-white"
                           >
                             {c.name}
@@ -98,10 +98,10 @@ export default function SiteHeader() {
           </ul>
           <p className="eyebrow mt-5 text-slate">Categories</p>
           <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <li key={c.slug}>
                 <Link
-                  href={`/inventory/${c.slug}`}
+                  href={`/inventory?category=${c.slug}`}
                   onClick={() => setOpen(false)}
                   className="block py-1 text-[13px] font-medium uppercase tracking-[0.1em] text-ash hover:text-red"
                 >

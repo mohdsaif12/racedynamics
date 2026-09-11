@@ -8,23 +8,29 @@ import ImageReveal from "@/components/ImageReveal";
 import ScaleReveal from "@/components/ScaleReveal";
 import Parallax from "@/components/Parallax";
 import EngineeringPanel from "@/components/home/EngineeringPanel";
-import { BIKES, categoryCounts } from "@/lib/inventory";
 import { formatPrice, STATUS_LABEL } from "@/lib/format";
-import { SITE, whatsappLink } from "@/lib/site";
+import { SITE } from "@/lib/site";
+import type { Bike, Category } from "@/lib/data/types";
 
-/* Homepage sections, matched to the reference site the client picked. */
+/* Homepage sections, matched to the reference site the client picked. Data
+   (bikes/categories/counts) is fetched once in app/page.tsx and passed down
+   as props — these are otherwise plain presentational Server Components. */
 
 const WRAP = "mx-auto max-w-[1400px] px-5 lg:px-10";
 
 /* ------------------------------------------------- Planning to sell? ----- */
-const VALUE_PROPS: { top: React.ReactNode; bottom: string }[] = [
-  { top: "Outright", bottom: "Sale" },
-  { top: <CountUp to={480} suffix="+" />, bottom: "Satisfied Customers" },
-  { top: "Best", bottom: "Offer" },
-  { top: "Hassle Free", bottom: "Processing" },
-];
+function valueProps(bikeCount: number) {
+  return [
+    { top: "Outright", bottom: "Sale" },
+    { top: <CountUp to={bikeCount} suffix="+" />, bottom: "Bikes Sold" },
+    { top: "Best", bottom: "Offer" },
+    { top: "Hassle Free", bottom: "Processing" },
+  ];
+}
 
-export function PlanningToSell() {
+export function PlanningToSell({ bikes }: { bikes: Bike[] }) {
+  const photo = bikes.find((b) => b.image);
+
   return (
     <section className="bg-paper py-20 lg:py-28">
       <div className={`${WRAP} grid items-center gap-14 lg:grid-cols-2`}>
@@ -38,7 +44,7 @@ export function PlanningToSell() {
 
           <RevealGroup selector="li">
           <ul className="mt-10 grid gap-7 sm:grid-cols-2">
-            {VALUE_PROPS.map((v) => (
+            {valueProps(bikes.length).map((v) => (
               <li key={v.bottom} className="flex items-center gap-4">
                 <span className="grid size-[74px] shrink-0 place-items-center border border-line">
                   <BadgeMark />
@@ -60,13 +66,15 @@ export function PlanningToSell() {
         </div>
 
         <div className="relative grid min-h-72 place-items-center">
-          <NextImage
-            src="/bikes/diavel-1260s-2021.webp"
-            alt="Ducati Diavel"
-            width={1400}
-            height={900}
-            className="h-auto w-[92%]"
-          />
+          {photo?.image && (
+            <NextImage
+              src={photo.image}
+              alt={`${photo.brand} ${photo.fullName}`}
+              width={1400}
+              height={900}
+              className="h-auto w-[92%]"
+            />
+          )}
         </div>
       </div>
     </section>
@@ -74,13 +82,15 @@ export function PlanningToSell() {
 }
 
 /* ------------------------------------------------- Browse the database --- */
-const DB_POINTS = [
-  "Full inspection report on every bike.",
-  "Compare any two machines side by side.",
-  `More than ${BIKES.length} superbikes and their in-depth specifications.`,
-] as const;
+function dbPoints(bikeCount: number) {
+  return [
+    "Full inspection report on every bike.",
+    "Compare any two machines side by side.",
+    `More than ${bikeCount} superbikes and their in-depth specifications.`,
+  ];
+}
 
-export function BrowseDatabase() {
+export function BrowseDatabase({ bikeCount }: { bikeCount: number }) {
   return (
     <section className="bg-mist py-16 lg:py-24">
       <div className={WRAP}>
@@ -89,7 +99,7 @@ export function BrowseDatabase() {
           <span className="text-graphite">pre-owned superbikes</span> in India
         </MaskReveal>
 
-        <EngineeringPanel points={DB_POINTS} icon={<BadgeMark />} />
+        <EngineeringPanel points={dbPoints(bikeCount)} icon={<BadgeMark />} />
 
         <TextReveal className="mt-10 text-center">
           <Link
@@ -105,8 +115,8 @@ export function BrowseDatabase() {
 }
 
 /* -------------------------------------------------- Tilted photo strip --- */
-export function TiltedStrip() {
-  const strip = BIKES.slice(0, 5);
+export function TiltedStrip({ bikes }: { bikes: Bike[] }) {
+  const strip = bikes.filter((b) => b.image).slice(0, 5);
 
   return (
     <section className="overflow-hidden bg-paper py-14 lg:py-20">
@@ -138,8 +148,18 @@ export function TiltedStrip() {
 }
 
 /* ------------------------------------------------- Browse by category ---- */
-export function BrowseByCategory() {
-  const counts = categoryCounts();
+export function BrowseByCategory({
+  categories,
+  bikes,
+}: {
+  categories: Category[];
+  bikes: Bike[];
+}) {
+  const counts = categories.map((c) => ({
+    ...c,
+    count: bikes.filter((b) => b.category === c.slug).length,
+    photo: bikes.find((b) => b.category === c.slug && b.image)?.image,
+  }));
 
   return (
     <section className="bg-ink-2 py-16">
@@ -153,17 +173,19 @@ export function BrowseByCategory() {
           {counts.map((c) => (
             <li key={c.slug}>
               <Link
-                href={`/inventory/${c.slug}`}
+                href={`/inventory?category=${c.slug}`}
                 className="group flex flex-col items-center gap-4"
               >
                 <span className="grid aspect-square w-full max-w-[168px] place-items-center overflow-hidden rounded-full bg-white transition-transform duration-200 ease-out group-hover:scale-[1.03]">
-                  <NextImage
-                    src={CATEGORY_PHOTO[c.slug]}
-                    alt={c.name}
-                    width={1400}
-                    height={900}
-                    className="h-auto w-[84%]"
-                  />
+                  {c.photo && (
+                    <NextImage
+                      src={c.photo}
+                      alt={c.name}
+                      width={1400}
+                      height={900}
+                      className="h-auto w-[84%]"
+                    />
+                  )}
                 </span>
                 <span className="text-center">
                   <span className="block text-[15px] font-bold uppercase tracking-[0.12em] text-white transition-colors group-hover:text-red">
@@ -182,16 +204,6 @@ export function BrowseByCategory() {
     </section>
   );
 }
-
-/** One representative machine per category for the circular tiles. */
-const CATEGORY_PHOTO: Record<string, string> = {
-  sport: "/bikes/panigale-v4.webp",
-  cruiser: "/bikes/fatbob-114-2022.webp",
-  adventure: "/bikes/r1300gs-adventure-2025.webp",
-  touring: "/bikes/k1600gt-2019.webp",
-  roadster: "/bikes/z900.webp",
-  classic: "/bikes/bonneville-t120-2018.webp",
-};
 
 /* --------------------------------------------------------- Trust band --- */
 export function TrustBand() {
@@ -245,7 +257,7 @@ function RedSwoosh() {
 }
 
 /** Card layout lifted from the reference: photo, price, model, 3-up spec row. */
-export function BikeCard({ bike }: { bike: (typeof BIKES)[number] }) {
+export function BikeCard({ bike }: { bike: Bike }) {
   const sold = bike.status === "booked" || bike.status === "sold";
 
   return (
@@ -402,5 +414,3 @@ function BadgeMark() {
     </svg>
   );
 }
-
-export { whatsappLink };

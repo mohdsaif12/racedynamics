@@ -11,8 +11,8 @@ import {
 } from "motion/react";
 import MaskReveal from "@/components/MaskReveal";
 import TextReveal from "@/components/TextReveal";
-import { BIKES, getCategory } from "@/lib/inventory";
 import { formatKm, formatPrice, pad, STATUS_LABEL } from "@/lib/format";
+import type { Bike } from "@/lib/data/types";
 
 /**
  * Popular bikes — an interactive showroom.
@@ -28,6 +28,10 @@ import { formatKm, formatPrice, pad, STATUS_LABEL } from "@/lib/format";
  * circle, so the machine travels through space rather than sliding flat.
  *
  * All transforms are GPU-friendly: rotate, translate, scale, opacity.
+ *
+ * `bikes` comes from the client's "featured" toggle in /admin — see
+ * getFeaturedBikes() in src/lib/data/bikes.ts for the fallback when nothing
+ * has been marked yet.
  */
 
 const WRAP = "mx-auto max-w-[1400px] px-5 lg:px-10";
@@ -49,22 +53,7 @@ const SWING = 28;
  */
 const SEQ = { bike: 0, ghost: 0.05, platform: 0.08, info: 0.14 } as const;
 
-/* The three RACEDYNAMICS brand renders, named explicitly. The inventory page
-   carries photos on more machines than these, so "has an image" is no longer
-   the right test for what belongs in this showcase.
-
-   Module scope: rebuilding this array each render would make its length a
-   dependency the React Compiler cannot memoize around. */
-const FEATURED_SLUGS = [
-  "panigale-v4-2022",
-  "s1000rr-2020",
-  "rsv4-factory-2019",
-];
-const FEATURED = FEATURED_SLUGS.map(
-  (slug) => BIKES.find((b) => b.slug === slug)!,
-).filter(Boolean);
-
-export default function PopularBikes() {
+export default function PopularBikes({ bikes }: { bikes: Bike[] }) {
   const [index, setIndex] = useState(0);
   const [dir, setDir] = useState<1 | -1>(1);
   const [paused, setPaused] = useState(false);
@@ -72,33 +61,37 @@ export default function PopularBikes() {
   const reduced = useReducedMotion() ?? false;
   const platform = useAnimationControls();
 
-  const bike = FEATURED[index];
-  const sold = bike.status === "booked" || bike.status === "sold";
-  const descriptor = getCategory(bike.category)?.blurb ?? "";
+  const safe = bikes.length ? index % bikes.length : 0;
+  const bike = bikes[safe];
+  const sold = bike?.status === "booked" || bike?.status === "sold";
 
-  const step = useCallback((d: 1 | -1) => {
-    setDir(d);
-    setIndex((i) => (i + d + FEATURED.length) % FEATURED.length);
-  }, []);
+  const step = useCallback(
+    (d: 1 | -1) => {
+      if (!bikes.length) return;
+      setDir(d);
+      setIndex((i) => (i + d + bikes.length) % bikes.length);
+    },
+    [bikes.length],
+  );
 
   /* The pedestal is part of the move: it takes a nudge in the travel direction
      and settles. Keyframes rather than a state toggle, so it always returns to
      rest however fast you click. */
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !bike) return;
     platform.start({
       x: [dir * 22, 0],
       rotate: [dir * 1.6, 0],
       scaleX: [1.05, 1],
       transition: { duration: SWAP, ease: EASE_OUT, delay: SEQ.platform },
     });
-  }, [index, dir, reduced, platform]);
+  }, [index, dir, reduced, platform, bike]);
 
   useEffect(() => {
-    if (paused || reduced) return;
+    if (paused || reduced || bikes.length < 2) return;
     const t = setInterval(() => step(1), AUTOPLAY_MS);
     return () => clearInterval(t);
-  }, [paused, reduced, step]);
+  }, [paused, reduced, step, bikes.length]);
 
   /* Arrow keys act only when the stage has focus — this section sits mid-page
      and must not hijack the document's arrow keys. */
@@ -134,6 +127,8 @@ export default function PopularBikes() {
   };
 
   const swap = { duration: reduced ? 0 : SWAP, ease: EASE_OUT };
+
+  if (!bike) return null;
 
   return (
     <section className="relative overflow-hidden bg-ink py-16">
@@ -236,16 +231,18 @@ export default function PopularBikes() {
                   }}
                   className="w-[min(76%,34rem)] cursor-grab active:cursor-grabbing"
                 >
-                  <NextImage
-                    src={bike.image as string}
-                    alt={`${bike.brand} ${bike.fullName}`}
-                    width={1400}
-                    height={900}
-                    priority={index === 0}
-                    /* drop-shadow traces the cut-out silhouette; box-shadow
-                       would draw a rectangle around it. */
-                    className="h-auto w-full [filter:drop-shadow(0_30px_24px_rgba(0,0,0,0.55))]"
-                  />
+                  {bike.image && (
+                    <NextImage
+                      src={bike.image}
+                      alt={`${bike.brand} ${bike.fullName}`}
+                      width={1400}
+                      height={900}
+                      priority={safe === 0}
+                      /* drop-shadow traces the cut-out silhouette; box-shadow
+                         would draw a rectangle around it. */
+                      className="h-auto w-full [filter:drop-shadow(0_30px_24px_rgba(0,0,0,0.55))]"
+                    />
+                  )}
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -257,8 +254,12 @@ export default function PopularBikes() {
             )}
           </div>
 
-          <Arrow side="left" onClick={() => step(-1)} />
-          <Arrow side="right" onClick={() => step(1)} />
+          {bikes.length > 1 && (
+            <>
+              <Arrow side="left" onClick={() => step(-1)} />
+              <Arrow side="right" onClick={() => step(1)} />
+            </>
+          )}
         </motion.div>
 
         {/* ------------------------------------- readout, lands last in the seq */}
@@ -280,7 +281,6 @@ export default function PopularBikes() {
               <h3 className="display text-[clamp(1.6rem,3.6vw,2.5rem)] text-white">
                 {bike.fullName}
               </h3>
-              <p className="max-w-[46ch] text-[14.5px] text-ash">{descriptor}</p>
 
               <p className="figure-nums display mt-1 text-[clamp(1.3rem,2.8vw,1.9rem)] text-white">
                 {sold ? STATUS_LABEL[bike.status] : formatPrice(bike.priceINR)}
@@ -297,29 +297,31 @@ export default function PopularBikes() {
 
         {/* ------------------------------------------------------ navigation */}
         <div className="mt-6 flex flex-col items-center gap-5">
-          <div className="flex items-center gap-4">
-            <span className="figure-nums text-[12px] tracking-[0.12em] text-ash">
-              {pad(index + 1)}{" "}
-              <span className="text-slate">/ {pad(FEATURED.length)}</span>
-            </span>
-            <div className="flex gap-2">
-              {FEATURED.map((b, i) => (
-                <button
-                  key={b.slug}
-                  type="button"
-                  onClick={() => {
-                    setDir(i > index ? 1 : -1);
-                    setIndex(i);
-                  }}
-                  aria-label={`Show ${b.brand} ${b.fullName}`}
-                  aria-current={i === index ? "true" : undefined}
-                  className={`h-[3px] w-7 transition-colors duration-200 ${
-                    i === index ? "bg-red" : "bg-line-dark hover:bg-slate"
-                  }`}
-                />
-              ))}
+          {bikes.length > 1 && (
+            <div className="flex items-center gap-4">
+              <span className="figure-nums text-[12px] tracking-[0.12em] text-ash">
+                {pad(safe + 1)}{" "}
+                <span className="text-slate">/ {pad(bikes.length)}</span>
+              </span>
+              <div className="flex gap-2">
+                {bikes.map((b, i) => (
+                  <button
+                    key={b.slug}
+                    type="button"
+                    onClick={() => {
+                      setDir(i > safe ? 1 : -1);
+                      setIndex(i);
+                    }}
+                    aria-label={`Show ${b.brand} ${b.fullName}`}
+                    aria-current={i === safe ? "true" : undefined}
+                    className={`h-[3px] w-7 transition-colors duration-200 ${
+                      i === safe ? "bg-red" : "bg-line-dark hover:bg-slate"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link href={`/bike/${bike.slug}`} className="btn-red hover:bg-red-dark">
@@ -332,7 +334,6 @@ export default function PopularBikes() {
               Browse collection
             </Link>
           </div>
-
         </div>
       </div>
     </section>

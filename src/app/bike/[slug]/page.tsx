@@ -2,19 +2,32 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import NextImage from "next/image";
-import { BIKES, getBike, getCategory } from "@/lib/inventory";
+import { getAllBikes, getBikeBySlug } from "@/lib/data/bikes";
+import { getCategories } from "@/lib/data/categories";
+import { getSiteSettings } from "@/lib/data/settings";
+import { telLink, whatsappLink } from "@/lib/data/links";
 import { formatKm, formatPrice, STATUS_CLASS, STATUS_LABEL } from "@/lib/format";
-import { SITE, telLink, whatsappLink } from "@/lib/site";
+import { SITE } from "@/lib/site";
 
-export function generateStaticParams() {
-  return BIKES.map((b) => ({ slug: b.slug }));
+/** Every bike's slug, so each one gets its own real, indexable URL. */
+export async function generateStaticParams() {
+  const bikes = await getAllBikes();
+  return bikes.map((b) => ({ slug: b.slug }));
 }
+
+/**
+ * New bikes (or edits) show up without a redeploy: the static params above
+ * are only a warm cache. `revalidate` refreshes it in the background, and
+ * the sold-toggle Server Action in /admin calls `revalidatePath` for an
+ * instant update on top of that.
+ */
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
 }: PageProps<"/bike/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const bike = getBike(slug);
+  const bike = await getBikeBySlug(slug);
   if (!bike) return {};
 
   return {
@@ -25,10 +38,15 @@ export async function generateMetadata({
 
 export default async function BikePage({ params }: PageProps<"/bike/[slug]">) {
   const { slug } = await params;
-  const bike = getBike(slug);
+
+  const [bike, categories, settings] = await Promise.all([
+    getBikeBySlug(slug),
+    getCategories(),
+    getSiteSettings(),
+  ]);
   if (!bike) notFound();
 
-  const category = getCategory(bike.category);
+  const category = categories.find((c) => c.slug === bike.category);
 
   return (
     <article className="mx-auto max-w-[1400px] px-5 py-10 lg:px-10">
@@ -40,7 +58,10 @@ export default async function BikePage({ params }: PageProps<"/bike/[slug]">) {
           Inventory
         </Link>
         <span aria-hidden>›</span>
-        <Link href={`/inventory/${bike.category}`} className="hover:text-red">
+        <Link
+          href={`/inventory?category=${bike.category}`}
+          className="hover:text-red"
+        >
           {category?.name}
         </Link>
         <span aria-hidden>›</span>
@@ -95,22 +116,17 @@ export default async function BikePage({ params }: PageProps<"/bike/[slug]">) {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href={whatsappLink(`${bike.brand} ${bike.fullName} (${bike.year})`)}
+              href={whatsappLink(settings, `${bike.brand} ${bike.fullName} (${bike.year})`)}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-red hover:bg-red-dark"
             >
               Enquire on WhatsApp
             </a>
-            <a href={telLink()} className="btn-dark hover:bg-graphite">
+            <a href={telLink(settings)} className="btn-dark hover:bg-graphite">
               Call {SITE.city}
             </a>
           </div>
-
-          <p className="mt-6 max-w-[52ch] text-[14px] text-slate">
-            Ownership history, service records and finance estimates land here in
-            Phase 5, once the CMS schema is in place.
-          </p>
         </div>
       </div>
     </article>

@@ -1,10 +1,16 @@
 import Link from "next/link";
 import RevealGroup from "@/components/Reveal";
-import { CATEGORIES } from "@/lib/inventory";
 import { SITE } from "@/lib/site";
+import type { Category, SiteSettings } from "@/lib/data/types";
 
 /** Four-column dark footer, as on the reference site. */
-export default function SiteFooter() {
+export default function SiteFooter({
+  categories,
+  settings,
+}: {
+  categories: Category[];
+  settings: SiteSettings;
+}) {
   return (
     <footer className="mt-auto bg-ink pb-16 pt-16 sm:pb-0">
       <RevealGroup
@@ -54,10 +60,10 @@ export default function SiteFooter() {
         <nav aria-label="Categories">
           <h2 className="display text-xl text-white">Categories</h2>
           <ul className="mt-5 flex flex-col gap-2.5">
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <li key={c.slug}>
                 <Link
-                  href={`/inventory/${c.slug}`}
+                  href={`/inventory?category=${c.slug}`}
                   className="text-[14.5px] text-ash transition-colors hover:text-red"
                 >
                   {c.name}
@@ -70,24 +76,24 @@ export default function SiteFooter() {
         <div>
           <h2 className="display text-xl text-white">Contact info</h2>
           <address className="mt-5 flex flex-col gap-3 text-[14.5px] not-italic leading-relaxed text-ash">
-            <span>{SITE.address}</span>
+            <span>{settings.address}</span>
             <a
-              href={`mailto:${SITE.email}`}
+              href={`mailto:${settings.email}`}
               className="transition-colors hover:text-red"
             >
-              {SITE.email}
+              {settings.email}
             </a>
             <a
-              href={`tel:${SITE.phonePrimary}`}
+              href={`tel:${settings.phonePrimary}`}
               className="figure-nums transition-colors hover:text-red"
             >
-              {SITE.phonePrimary}
+              {settings.phonePrimary}
             </a>
             <a
-              href={`tel:${SITE.phoneSecondary}`}
+              href={`tel:${settings.phoneSecondary}`}
               className="figure-nums transition-colors hover:text-red"
             >
-              {SITE.phoneSecondary}
+              {settings.phoneSecondary}
             </a>
           </address>
         </div>

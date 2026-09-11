@@ -1,19 +1,21 @@
 "use client";
 
-import { SITE, telLink, whatsappLink } from "@/lib/site";
+import { SITE } from "@/lib/site";
+import { telLink, whatsappLink } from "@/lib/data/links";
+import type { SiteSettings } from "@/lib/data/types";
 
 /**
  * Fixed WhatsApp + call buttons pinned to the right edge, exactly as on the
  * reference site. On phones it becomes a full-width bottom bar instead, since
  * a right-edge rail eats thumb space.
  */
-export default function ContactRail() {
+export default function ContactRail({ settings }: { settings: SiteSettings }) {
   return (
     <>
       {/* desktop / tablet — right edge */}
       <div className="fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 flex-col sm:flex">
         <a
-          href={whatsappLink()}
+          href={whatsappLink(settings)}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
@@ -22,7 +24,7 @@ export default function ContactRail() {
           <WhatsAppIcon />
         </a>
         <a
-          href={telLink()}
+          href={telLink(settings)}
           aria-label={`Call ${SITE.name}`}
           className="grid size-11 place-items-center bg-red text-white transition-colors hover:bg-red-dark"
         >
@@ -33,7 +35,7 @@ export default function ContactRail() {
       {/* phones — bottom bar */}
       <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 sm:hidden">
         <a
-          href={whatsappLink()}
+          href={whatsappLink(settings)}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 bg-whatsapp py-3.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-white"
@@ -41,7 +43,7 @@ export default function ContactRail() {
           <WhatsAppIcon /> WhatsApp
         </a>
         <a
-          href={telLink()}
+          href={telLink(settings)}
           className="flex items-center justify-center gap-2 bg-red py-3.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-white"
         >
           <PhoneIcon /> Call

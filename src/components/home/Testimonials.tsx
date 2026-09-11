@@ -4,47 +4,29 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import NextImage from "next/image";
 import { SITE } from "@/lib/site";
+import type { Testimonial } from "@/lib/data/types";
 
 /**
  * Testimonials — reference layout: a giant grey ghost wordmark behind a photo
  * collage, one quote at a time, dash pagination underneath. Auto-advance is
  * off on purpose; this is the trust section, so let people read.
  *
- * PLACEHOLDER QUOTES — real ones needed before launch.
+ * `testimonials` comes from the client's /admin — see getTestimonials() in
+ * src/lib/data/testimonials.ts for the fallback used before any are added.
  */
-const QUOTES = [
-  {
-    text: "Third bike I've bought from them. They tell you what's wrong with it before you find it yourself.",
-    name: "Rahul Khurana",
-  },
-  {
-    text: "Superb bikes and honest people. The process is transparent and the condition of every machine is outstanding.",
-    name: "Abhinav Kaushik",
-  },
-  {
-    text: "Shipped to Bengaluru in four days with the paperwork already sorted. No chasing anyone.",
-    name: "Tripush Modgil",
-  },
-  {
-    text: "They had the full service history for a seven-year-old bike. That told me everything I needed to know.",
-    name: "Roman Tellis",
-  },
-] as const;
-
-/* Stand-in owner photography for the test build. */
-const OWNER_PHOTOS = [
-  "/owners/owner-1.webp",
-  "/owners/owner-2.webp",
-  "/owners/owner-3.webp",
-  "/owners/owner-4.webp",
-  "/owners/owner-5.webp",
-  "/owners/owner-1.webp",
-];
-
-export default function Testimonials() {
+export default function Testimonials({
+  testimonials,
+}: {
+  testimonials: Testimonial[];
+}) {
   const [i, setI] = useState(0);
   const reduced = useReducedMotion() ?? false;
-  const quote = QUOTES[i];
+
+  if (testimonials.length === 0) return null;
+
+  const safe = i % testimonials.length;
+  const quote = testimonials[safe];
+  const photos = testimonials.filter((t) => t.photo).slice(0, 6);
 
   return (
     <section className="relative overflow-hidden bg-paper py-16">
@@ -56,28 +38,29 @@ export default function Testimonials() {
       </span>
 
       <div className="relative mx-auto max-w-[1400px] px-5 lg:px-10">
-        {/* honeycomb collage — placeholder cells until owner photos land */}
-        <ul className="mx-auto grid max-w-xl grid-cols-3 gap-2 sm:grid-cols-6">
-          {OWNER_PHOTOS.map((src, n) => (
-            <li
-              key={n}
-              className="relative aspect-square overflow-hidden bg-mist"
-              style={{
-                clipPath:
-                  "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
-                transform: n % 2 ? "translateY(14%)" : undefined,
-              }}
-            >
-              <NextImage
-                src={src}
-                alt=""
-                fill
-                sizes="120px"
-                className="object-cover"
-              />
-            </li>
-          ))}
-        </ul>
+        {photos.length > 0 && (
+          <ul className="mx-auto grid max-w-xl grid-cols-3 gap-2 sm:grid-cols-6">
+            {photos.map((t, n) => (
+              <li
+                key={t.id}
+                className="relative aspect-square overflow-hidden bg-mist"
+                style={{
+                  clipPath:
+                    "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
+                  transform: n % 2 ? "translateY(14%)" : undefined,
+                }}
+              >
+                <NextImage
+                  src={t.photo!}
+                  alt=""
+                  fill
+                  sizes="120px"
+                  className="object-cover"
+                />
+              </li>
+            ))}
+          </ul>
+        )}
 
         <h2 className="display mt-12 text-center text-[clamp(1.85rem,4.6vw,3.25rem)] text-red">
           What our <span className="text-graphite">customers say</span>
@@ -86,7 +69,7 @@ export default function Testimonials() {
         <div className="mt-6 min-h-32">
           <AnimatePresence mode="wait" initial={false}>
             <motion.blockquote
-              key={i}
+              key={quote.id}
               initial={reduced ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduced ? undefined : { opacity: 0, y: -12 }}
@@ -94,29 +77,36 @@ export default function Testimonials() {
               className="mx-auto max-w-[62ch] text-center"
             >
               <p className="text-[16.5px] leading-[1.9] text-body">
-                {quote.text}
+                {quote.quote}
               </p>
               <footer className="mt-6 text-[15px] font-semibold text-red">
                 {quote.name}
+                {quote.bikeBought && (
+                  <span className="ml-2 font-normal text-slate">
+                    · {quote.bikeBought}
+                  </span>
+                )}
               </footer>
             </motion.blockquote>
           </AnimatePresence>
         </div>
 
-        <div className="mt-6 flex justify-center gap-3">
-          {QUOTES.map((q, n) => (
-            <button
-              key={q.name}
-              type="button"
-              onClick={() => setI(n)}
-              aria-label={`Read review from ${q.name}`}
-              aria-current={n === i ? "true" : undefined}
-              className={`h-[3px] w-9 transition-colors ${
-                n === i ? "bg-ink" : "bg-line hover:bg-slate"
-              }`}
-            />
-          ))}
-        </div>
+        {testimonials.length > 1 && (
+          <div className="mt-6 flex justify-center gap-3">
+            {testimonials.map((t, n) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setI(n)}
+                aria-label={`Read review from ${t.name}`}
+                aria-current={n === safe ? "true" : undefined}
+                className={`h-[3px] w-9 transition-colors ${
+                  n === safe ? "bg-ink" : "bg-line hover:bg-slate"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

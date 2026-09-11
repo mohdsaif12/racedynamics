@@ -6,6 +6,8 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactRail from "@/components/ContactRail";
 import { SITE } from "@/lib/site";
+import { getCategories } from "@/lib/data/categories";
+import { getSiteSettings } from "@/lib/data/settings";
 
 /* Bold condensed display + a workmanlike grotesk for body, matching the
    reference site's voice. Mono is kept only for the showcase index rail. */
@@ -36,7 +38,17 @@ export const metadata: Metadata = {
   description: SITE.description,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/**
+ * Categories and contact details are fetched once here and passed down to the
+ * header, footer and floating contact rail — every page shares this one
+ * request rather than each component re-fetching the same rows.
+ */
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const [categories, settings] = await Promise.all([
+    getCategories(),
+    getSiteSettings(),
+  ]);
+
   return (
     <html
       lang="en"
@@ -44,10 +56,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-paper text-body">
         <SmoothScroll>
-          <SiteHeader />
+          <SiteHeader categories={categories} />
           <main className="flex-1">{children}</main>
-          <SiteFooter />
-          <ContactRail />
+          <SiteFooter categories={categories} settings={settings} />
+          <ContactRail settings={settings} />
         </SmoothScroll>
       </body>
     </html>
