@@ -22,12 +22,10 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  */
 export default function EngineeringPanel({
   points,
-  icon,
 }: {
-  points: readonly string[];
-  /** A rendered element, not a factory — functions cannot cross the
-      server/client boundary. Reused for every node. */
-  icon: React.ReactNode;
+  /** Each node carries its own icon. They are rendered elements, not
+      factories — functions cannot cross the server/client boundary. */
+  points: readonly { text: string; icon: React.ReactNode }[];
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLSpanElement>(null);
@@ -125,16 +123,16 @@ export default function EngineeringPanel({
 
       <ul className="relative z-10 grid gap-8 lg:grid-cols-3">
         {points.map((p, i) => (
-          <li key={p} className="flex items-center gap-5">
+          <li key={p.text} className="flex items-center gap-5">
             <span
               data-node
               style={{ transitionDuration: `${DUR.micro}s` }}
-              className="grid size-[86px] shrink-0 place-items-center rounded-full border border-line bg-paper"
+              className="grid size-[86px] shrink-0 place-items-center rounded-full border border-line bg-paper text-red"
             >
-              {icon}
+              {p.icon}
             </span>
             <span data-copy className="text-[17px] italic text-body">
-              {p}
+              {p.text}
             </span>
             <span className="sr-only">Step {i + 1}</span>
           </li>

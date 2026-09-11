@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import NextImage from "next/image";
 import { SITE } from "@/lib/site";
 import type { Testimonial } from "@/lib/data/types";
+import { StarIcon, QuoteMarkIcon } from "@/components/icons";
 
 /**
  * Testimonials — reference layout: a giant grey ghost wordmark behind a photo
@@ -74,8 +75,21 @@ export default function Testimonials({
               animate={{ opacity: 1, y: 0 }}
               exit={reduced ? undefined : { opacity: 0, y: -12 }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-              className="mx-auto max-w-[62ch] text-center"
+              className="relative mx-auto max-w-[62ch] text-center"
             >
+              {/* Sits behind the words rather than above them — it should
+                  register as texture, not as another thing to read. */}
+              <QuoteMarkIcon
+                size={72}
+                className="pointer-events-none absolute -top-7 left-1/2 -z-10 -translate-x-1/2 text-graphite/[0.06]"
+              />
+
+              <div className="mb-5 flex justify-center gap-1 text-red">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <StarIcon key={i} size={15} />
+                ))}
+              </div>
+
               <p className="text-[16.5px] leading-[1.9] text-body">
                 {quote.quote}
               </p>

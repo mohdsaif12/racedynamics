@@ -11,6 +11,10 @@ import EngineeringPanel from "@/components/home/EngineeringPanel";
 import { formatPrice, STATUS_LABEL } from "@/lib/format";
 import { SITE } from "@/lib/site";
 import type { Bike, Category } from "@/lib/data/types";
+import {
+  RupeeNoteIcon, SoldBadgeIcon, PriceTagIcon, PaperworkIcon,
+  ChecklistIcon, CompareIcon, SpecsIcon,
+} from "@/components/icons";
 
 /* Homepage sections, matched to the reference site the client picked. Data
    (bikes/categories/counts) is fetched once in app/page.tsx and passed down
@@ -21,10 +25,18 @@ const WRAP = "mx-auto max-w-[1400px] px-5 lg:px-10";
 /* ------------------------------------------------- Planning to sell? ----- */
 function valueProps(bikeCount: number) {
   return [
-    { top: "Outright", bottom: "Sale" },
-    { top: <CountUp to={bikeCount} suffix="+" />, bottom: "Bikes Sold" },
-    { top: "Best", bottom: "Offer" },
-    { top: "Hassle Free", bottom: "Processing" },
+    { top: "Outright", bottom: "Sale", icon: <RupeeNoteIcon size={30} /> },
+    {
+      top: <CountUp to={bikeCount} suffix="+" />,
+      bottom: "Bikes Sold",
+      icon: <SoldBadgeIcon size={30} />,
+    },
+    { top: "Best", bottom: "Offer", icon: <PriceTagIcon size={30} /> },
+    {
+      top: "Hassle Free",
+      bottom: "Processing",
+      icon: <PaperworkIcon size={30} />,
+    },
   ];
 }
 
@@ -46,8 +58,8 @@ export function PlanningToSell({ bikes }: { bikes: Bike[] }) {
           <ul className="mt-10 grid gap-7 sm:grid-cols-2">
             {valueProps(bikes.length).map((v) => (
               <li key={v.bottom} className="flex items-center gap-4">
-                <span className="grid size-[74px] shrink-0 place-items-center border border-line">
-                  <BadgeMark />
+                <span className="grid size-[74px] shrink-0 place-items-center border border-line text-red transition-colors duration-200 group-hover:border-red">
+                  {v.icon}
                 </span>
                 <span className="leading-tight">
                   <span className="block text-[15px] text-slate">{v.top}</span>
@@ -84,9 +96,12 @@ export function PlanningToSell({ bikes }: { bikes: Bike[] }) {
 /* ------------------------------------------------- Browse the database --- */
 function dbPoints(bikeCount: number) {
   return [
-    "Full inspection report on every bike.",
-    "Compare any two machines side by side.",
-    `More than ${bikeCount} superbikes and their in-depth specifications.`,
+    { text: "Full inspection report on every bike.", icon: <ChecklistIcon size={32} /> },
+    { text: "Compare any two machines side by side.", icon: <CompareIcon size={32} /> },
+    {
+      text: `More than ${bikeCount} superbikes and their in-depth specifications.`,
+      icon: <SpecsIcon size={32} />,
+    },
   ];
 }
 
@@ -99,7 +114,7 @@ export function BrowseDatabase({ bikeCount }: { bikeCount: number }) {
           <span className="text-graphite">pre-owned superbikes</span> in India
         </MaskReveal>
 
-        <EngineeringPanel points={dbPoints(bikeCount)} icon={<BadgeMark />} />
+        <EngineeringPanel points={dbPoints(bikeCount)} />
 
         <TextReveal className="mt-10 text-center">
           <Link
@@ -399,18 +414,3 @@ export function BrandStrip() {
 }
 
 /* ------------------------------------------------------------- marks ---- */
-function BadgeMark() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="7" cy="16" r="4.2" stroke="#16161a" strokeWidth="1.3" />
-      <circle cx="18" cy="16" r="4.2" stroke="#16161a" strokeWidth="1.3" />
-      <path
-        d="M7 16 12.5 9h4.2l1.3 7"
-        stroke="#16161a"
-        strokeWidth="1.3"
-        strokeLinejoin="round"
-      />
-      <path d="M11 9h4" stroke="#16161a" strokeWidth="1.3" strokeLinecap="round" />
-    </svg>
-  );
-}

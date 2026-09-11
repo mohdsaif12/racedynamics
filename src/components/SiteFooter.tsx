@@ -2,6 +2,16 @@ import Link from "next/link";
 import RevealGroup from "@/components/Reveal";
 import { SITE } from "@/lib/site";
 import type { Category, SiteSettings } from "@/lib/data/types";
+import {
+  PinIcon, MailIcon, PhoneIcon,
+  InstagramIcon, FacebookIcon, YoutubeIcon,
+} from "@/components/icons";
+
+const SOCIALS = [
+  { key: "instagram", label: "Instagram", Icon: InstagramIcon },
+  { key: "facebook", label: "Facebook", Icon: FacebookIcon },
+  { key: "youtube", label: "YouTube", Icon: YoutubeIcon },
+] as const;
 
 /** Four-column dark footer, as on the reference site. */
 export default function SiteFooter({
@@ -75,27 +85,54 @@ export default function SiteFooter({
 
         <div>
           <h2 className="display text-xl text-white">Contact info</h2>
-          <address className="mt-5 flex flex-col gap-3 text-[14.5px] not-italic leading-relaxed text-ash">
-            <span>{settings.address}</span>
+          <address className="mt-5 flex flex-col gap-3.5 text-[14.5px] not-italic leading-relaxed text-ash">
+            <span className="flex items-start gap-3">
+              <PinIcon size={17} className="mt-0.5 shrink-0 text-red" />
+              {settings.address}
+            </span>
             <a
               href={`mailto:${settings.email}`}
-              className="transition-colors hover:text-red"
+              className="flex items-center gap-3 transition-colors hover:text-red"
             >
+              <MailIcon size={17} className="shrink-0 text-red" />
               {settings.email}
             </a>
             <a
               href={`tel:${settings.phonePrimary}`}
-              className="figure-nums transition-colors hover:text-red"
+              className="flex items-center gap-3 transition-colors hover:text-red"
             >
-              {settings.phonePrimary}
+              <PhoneIcon size={17} className="shrink-0 text-red" />
+              <span className="figure-nums">{settings.phonePrimary}</span>
             </a>
             <a
               href={`tel:${settings.phoneSecondary}`}
-              className="figure-nums transition-colors hover:text-red"
+              className="flex items-center gap-3 transition-colors hover:text-red"
             >
-              {settings.phoneSecondary}
+              {/* One phone icon in the column is enough to label the pair;
+                  repeating it would read as a second, different channel. */}
+              <span aria-hidden className="w-[17px] shrink-0" />
+              <span className="figure-nums">{settings.phoneSecondary}</span>
             </a>
           </address>
+
+          <div className="mt-7 flex gap-3">
+            {SOCIALS.map(({ key, label, Icon }) => {
+              const href = settings.social[key];
+              if (!href) return null;
+              return (
+                <a
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid size-10 place-items-center border border-line-dark text-ash transition-colors duration-200 hover:border-red hover:bg-red hover:text-white"
+                >
+                  <Icon size={17} />
+                </a>
+              );
+            })}
+          </div>
         </div>
       </RevealGroup>
 
