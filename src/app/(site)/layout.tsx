@@ -30,7 +30,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
     <SmoothScroll>
       <SiteHeader categories={categories} />
       <main className="flex-1">{children}</main>
-      <SiteFooter categories={categories} settings={settings} />
+      <SiteFooter settings={settings} />
       <ContactRail settings={settings} />
       <OrganizationJsonLd settings={settings} />
     </SmoothScroll>

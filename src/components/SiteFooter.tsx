@@ -1,7 +1,7 @@
 import Link from "next/link";
 import RevealGroup from "@/components/Reveal";
 import { SITE, mapEmbedSrc } from "@/lib/site";
-import type { Category, SiteSettings } from "@/lib/data/types";
+import type { SiteSettings } from "@/lib/data/types";
 import {
   PinIcon, MailIcon, PhoneIcon,
   InstagramIcon, FacebookIcon, YoutubeIcon,
@@ -13,14 +13,8 @@ const SOCIALS = [
   { key: "youtube", label: "YouTube", Icon: YoutubeIcon },
 ] as const;
 
-/** Four-column dark footer, as on the reference site. */
-export default function SiteFooter({
-  categories,
-  settings,
-}: {
-  categories: Category[];
-  settings: SiteSettings;
-}) {
+/** Three-column dark footer: about, quick links, and how to reach the shop. */
+export default function SiteFooter({ settings }: { settings: SiteSettings }) {
   return (
     <footer className="mt-auto bg-ink pb-16 pt-16 sm:pb-0">
       <RevealGroup
@@ -28,7 +22,7 @@ export default function SiteFooter({
         y={14}
         stagger={0.08}
         duration={0.45}
-        className="mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-4 lg:px-10"
+        className="mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-3 lg:px-10"
       >
         <div>
           <h2 className="display text-xl text-white">About us</h2>
@@ -61,22 +55,6 @@ export default function SiteFooter({
                   className="text-[14.5px] text-ash transition-colors hover:text-red"
                 >
                   {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <nav aria-label="Categories">
-          <h2 className="display text-xl text-white">Categories</h2>
-          <ul className="mt-5 flex flex-col gap-2.5">
-            {categories.map((c) => (
-              <li key={c.slug}>
-                <Link
-                  href={`/inventory?category=${c.slug}`}
-                  className="text-[14.5px] text-ash transition-colors hover:text-red"
-                >
-                  {c.name}
                 </Link>
               </li>
             ))}
