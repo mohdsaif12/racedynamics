@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
 import { Barlow, IBM_Plex_Mono, Saira_Condensed } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/SmoothScroll";
-import SiteChrome from "@/components/SiteChrome";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
-import ContactRail from "@/components/ContactRail";
 import { SITE } from "@/lib/site";
 import { SITE_URL } from "@/lib/url";
-import { OrganizationJsonLd } from "@/components/JsonLd";
-import { getCategories } from "@/lib/data/categories";
-import { getSiteSettings } from "@/lib/data/settings";
 
 /* Bold condensed display + a workmanlike grotesk for body, matching the
    reference site's voice. Mono is kept only for the showcase index rail. */
@@ -65,32 +57,23 @@ export const metadata: Metadata = {
 };
 
 /**
- * Categories and contact details are fetched once here and passed down to the
- * header, footer and floating contact rail — every page shares this one
- * request rather than each component re-fetching the same rows.
+ * The document shell, and nothing else.
+ *
+ * Both halves of this project live under it — the public site in (site), the
+ * dashboard in admin — because both need the same <html>, fonts and CSS. Every
+ * other thing that used to be here (smooth scrolling, the header, footer,
+ * contact rail, and the two Supabase queries that fed them) belongs to the
+ * public site alone and now lives in (site)/layout.tsx. The dashboard no
+ * longer pays for any of it.
  */
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [categories, settings] = await Promise.all([
-    getCategories(),
-    getSiteSettings(),
-  ]);
-
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={`${saira.variable} ${barlow.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-paper text-body">
-        <SmoothScroll>
-          <SiteChrome
-            header={<SiteHeader categories={categories} />}
-            footer={<SiteFooter categories={categories} settings={settings} />}
-            rail={<ContactRail settings={settings} />}
-            structuredData={<OrganizationJsonLd settings={settings} />}
-          >
-            {children}
-          </SiteChrome>
-        </SmoothScroll>
+        {children}
       </body>
     </html>
   );

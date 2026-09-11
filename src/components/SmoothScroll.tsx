@@ -16,12 +16,12 @@ gsap.registerPlugin(ScrollTrigger);
  * scroll position that is one frame stale. So we drive Lenis FROM gsap.ticker
  * and let Lenis tell ScrollTrigger when to update. One loop, one clock.
  *
- * It deliberately does NOT run on /admin. The dashboard is a tool, not a
- * showpiece — nobody wants eased scrolling while filling in a form — and
- * Lenis actively breaks it: the `html.lenis body { height: auto }` reset in
- * globals.css overrides the dashboard's own layout heights, and if Lenis is
- * ever stopped, `.lenis-stopped { overflow: hidden }` locks the page after a
- * scroll or two with no way to get further down.
+ * Mounted from (site)/layout.tsx only, never from the dashboard. That is not a
+ * detail: when this did run over /admin it broke it outright — the
+ * `html.lenis body { height: auto }` reset in globals.css overrode the
+ * dashboard's own layout heights, and `.lenis-stopped { overflow: hidden }`
+ * left the page dead after a scroll or two. Eased scrolling has no place in a
+ * form-filling tool anyway.
  */
 export default function SmoothScroll({
   children,
@@ -29,11 +29,8 @@ export default function SmoothScroll({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
 
   useEffect(() => {
-    if (isAdmin) return; // native scrolling in the dashboard
-
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -59,14 +56,11 @@ export default function SmoothScroll({
 
     return () => {
       gsap.ticker.remove(raf);
-      // Also strips the .lenis classes off <html>, which is what releases the
-      // height and overflow overrides above.
+      // Also strips the .lenis classes off <html>, releasing the height and
+      // overflow overrides they carry.
       lenis.destroy();
     };
-    // Keyed on the boolean, not the pathname, so Lenis is torn down and rebuilt
-    // only when crossing into or out of the dashboard — not on every
-    // navigation between marketing pages.
-  }, [isAdmin]);
+  }, []);
 
   // Route changes swap the whole document height out from under ScrollTrigger.
   useEffect(() => {

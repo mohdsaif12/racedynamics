@@ -670,8 +670,14 @@ function SpecGrid({
       <Cell label="Reg. State" value={bike.location} />
       <Cell label="Status" value={STATUS_LABEL[bike.status]} />
       {/* Owner-defined rows continue the same grid, so six fixed specs plus
-          three custom ones reads as one table rather than two. */}
-      {bike.extraSpecs.map((spec) => (
+          three custom ones reads as one table rather than two.
+
+          Guarded because this is the one field that can be absent from an
+          otherwise-valid bike: a payload rendered before the column existed,
+          or cached by a browser across a deploy that added it. Losing a few
+          custom rows is nothing; taking the whole page down over them — which
+          is exactly what happened — is not. */}
+      {(bike.extraSpecs ?? []).map((spec) => (
         <Cell key={spec.label} label={spec.label} value={spec.value} />
       ))}
     </dl>

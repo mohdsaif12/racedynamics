@@ -128,8 +128,9 @@ export default async function BikePage({ params }: PageProps<"/bike/[slug]">) {
             <SpecRow label="Engine" value={`${bike.engineCc} cc`} />
             <SpecRow label="Category" value={category?.name ?? "—"} />
             {/* Whatever the owner added for this bike in the dashboard —
-                owners, services, insurance — listed after the fixed specs. */}
-            {bike.extraSpecs.map((spec) => (
+                owners, services, insurance — listed after the fixed specs.
+                Guarded for the same reason as the inventory grid. */}
+            {(bike.extraSpecs ?? []).map((spec) => (
               <SpecRow key={spec.label} label={spec.label} value={spec.value} />
             ))}
           </dl>
