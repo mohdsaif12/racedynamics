@@ -669,6 +669,11 @@ function SpecGrid({
       />
       <Cell label="Reg. State" value={bike.location} />
       <Cell label="Status" value={STATUS_LABEL[bike.status]} />
+      {/* Owner-defined rows continue the same grid, so six fixed specs plus
+          three custom ones reads as one table rather than two. */}
+      {bike.extraSpecs.map((spec) => (
+        <Cell key={spec.label} label={spec.label} value={spec.value} />
+      ))}
     </dl>
   );
 }

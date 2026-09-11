@@ -1,5 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { bikeImageUrl } from "@/lib/supabase/storage";
+import type { ExtraSpec } from "@/lib/data/types";
 
 /**
  * Admin-only fetch: unlike src/lib/data/bikes.ts, this returns the raw
@@ -21,6 +22,7 @@ export type EditableBike = {
   status: "available" | "booked" | "sold" | "on-request";
   featured: boolean;
   images: { id: string; path: string; url: string }[];
+  extraSpecs: ExtraSpec[];
 };
 
 export async function getBikeForEdit(id: string): Promise<EditableBike | null> {
@@ -30,7 +32,7 @@ export async function getBikeForEdit(id: string): Promise<EditableBike | null> {
   const { data, error } = await supabase
     .from("bikes")
     .select(
-      "id, slug, brand, model, full_name, category_id, year, km, location, engine_cc, price_inr, status, featured, bike_images ( id, path, sort_order )",
+      "id, slug, brand, model, full_name, category_id, year, km, location, engine_cc, price_inr, status, featured, extra_specs, bike_images ( id, path, sort_order )",
     )
     .eq("id", id)
     .maybeSingle();
@@ -57,5 +59,10 @@ export async function getBikeForEdit(id: string): Promise<EditableBike | null> {
     status: data.status,
     featured: data.featured,
     images,
+    extraSpecs: Array.isArray(data.extra_specs)
+      ? (data.extra_specs as ExtraSpec[]).filter(
+          (r) => r && typeof r.label === "string" && typeof r.value === "string",
+        )
+      : [],
   };
 }

@@ -2,7 +2,7 @@ import { getSupabasePublic } from "@/lib/supabase/public";
 import { bikeImageUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
 import { BIKES as SEED_BIKES } from "@/lib/inventory";
-import type { Bike } from "./types";
+import type { Bike, ExtraSpec } from "./types";
 
 const DEFAULT_TINT = "#5B7FA8";
 
@@ -29,6 +29,7 @@ function fromSeed(): Bike[] {
     tint: b.tint ?? DEFAULT_TINT,
     image: b.image,
     images: b.image ? [b.image] : [],
+    extraSpecs: [],
   }));
 }
 
@@ -47,7 +48,27 @@ type Row = {
   featured: boolean;
   categories: { slug: string } | { slug: string }[] | null;
   bike_images: { path: string; sort_order: number }[] | null;
+  extra_specs: unknown;
 };
+
+/**
+ * jsonb comes back as whatever was stored, so every row is checked before it
+ * reaches a page. A single bad entry is dropped rather than failing the bike.
+ */
+function parseExtraSpecs(raw: unknown): ExtraSpec[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(
+      (s): s is ExtraSpec =>
+        !!s &&
+        typeof s === "object" &&
+        typeof (s as ExtraSpec).label === "string" &&
+        typeof (s as ExtraSpec).value === "string",
+    )
+    .map((s) => ({ label: s.label.trim(), value: s.value.trim() }))
+    .filter((s) => s.label && s.value)
+    .slice(0, 20);
+}
 
 function mapRow(row: Row): Bike {
   const cat = Array.isArray(row.categories) ? row.categories[0] : row.categories;
@@ -73,12 +94,13 @@ function mapRow(row: Row): Bike {
     tint: DEFAULT_TINT,
     image: images[0],
     images,
+    extraSpecs: parseExtraSpecs(row.extra_specs),
   };
 }
 
 const SELECT = `
   id, slug, brand, model, full_name, year, km, location, engine_cc,
-  price_inr, status, featured,
+  price_inr, status, featured, extra_specs,
   categories!inner ( slug ),
   bike_images ( path, sort_order )
 `;

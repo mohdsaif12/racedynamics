@@ -127,6 +127,11 @@ export default async function BikePage({ params }: PageProps<"/bike/[slug]">) {
           <dl className="mt-6">
             <SpecRow label="Engine" value={`${bike.engineCc} cc`} />
             <SpecRow label="Category" value={category?.name ?? "—"} />
+            {/* Whatever the owner added for this bike in the dashboard —
+                owners, services, insurance — listed after the fixed specs. */}
+            {bike.extraSpecs.map((spec) => (
+              <SpecRow key={spec.label} label={spec.label} value={spec.value} />
+            ))}
           </dl>
 
           <div className="mt-8 flex flex-wrap gap-3">

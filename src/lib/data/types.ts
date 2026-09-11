@@ -12,6 +12,9 @@ export type Category = {
   blurb: string;
 };
 
+/** An owner-defined row in the spec table, e.g. { label: "Owners", value: "2" }. */
+export type ExtraSpec = { label: string; value: string };
+
 export type Bike = {
   id: string;
   slug: string;
@@ -35,6 +38,8 @@ export type Bike = {
   image?: string;
   /** Public URLs of every photo, cover first. */
   images: string[];
+  /** Extra spec rows the owner added in the dashboard, in their order. */
+  extraSpecs: ExtraSpec[];
 };
 
 export type SiteSettings = {

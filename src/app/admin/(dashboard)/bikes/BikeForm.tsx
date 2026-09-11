@@ -8,6 +8,7 @@ import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
 import type { AdminCategory } from "@/lib/admin/categories";
 import type { EditableBike } from "@/lib/admin/bikes";
+import type { ExtraSpec } from "@/lib/data/types";
 import { revalidateSite } from "../../actions";
 import { hasTransparency } from "@/lib/admin/transparency";
 
@@ -54,6 +55,9 @@ export default function BikeForm(props: Props) {
   const [price, setPrice] = useState(bike?.priceINR != null ? String(bike.priceINR) : "");
   const [status, setStatus] = useState(bike?.status ?? "available");
   const [featured, setFeatured] = useState(bike?.featured ?? false);
+  const [extraSpecs, setExtraSpecs] = useState<ExtraSpec[]>(
+    bike?.extraSpecs ?? [],
+  );
 
   const [existingImages, setExistingImages] = useState(bike?.images ?? []);
   // The preview URL is created once, when a file is added, and stored
@@ -135,6 +139,11 @@ export default function BikeForm(props: Props) {
       price_inr: price.trim() ? Number(price) : null,
       status,
       featured,
+      // Blank rows are dropped rather than saved — someone who adds a row and
+      // changes their mind shouldn't get an empty cell on the live site.
+      extra_specs: extraSpecs
+        .map((r) => ({ label: r.label.trim(), value: r.value.trim() }))
+        .filter((r) => r.label && r.value),
     };
 
     let bikeId = bike?.id;
@@ -404,6 +413,76 @@ export default function BikeForm(props: Props) {
             Show in the homepage &ldquo;Popular bikes&rdquo; showroom
           </span>
         </label>
+      </Section>
+
+      {/* --------------------------------------------------- extra details */}
+      <Section title="Extra details">
+        <p className="-mt-1 mb-4 text-[13px] leading-relaxed text-slate">
+          Anything else worth listing for this bike — owners, services done,
+          insurance, tyres. These show up in the details table on the website,
+          in the order you put them here. Leave it empty and nothing changes.
+        </p>
+
+        {extraSpecs.length > 0 && (
+          <div className="flex flex-col gap-3">
+            {extraSpecs.map((row, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  value={row.label}
+                  onChange={(e) =>
+                    setExtraSpecs((prev) =>
+                      prev.map((r, n) =>
+                        n === i ? { ...r, label: e.target.value } : r,
+                      ),
+                    )
+                  }
+                  placeholder="Owners"
+                  aria-label={`Detail ${i + 1} name`}
+                  maxLength={40}
+                  className={`${inputClass} flex-1`}
+                />
+                <input
+                  value={row.value}
+                  onChange={(e) =>
+                    setExtraSpecs((prev) =>
+                      prev.map((r, n) =>
+                        n === i ? { ...r, value: e.target.value } : r,
+                      ),
+                    )
+                  }
+                  placeholder="2"
+                  aria-label={`Detail ${i + 1} value`}
+                  maxLength={60}
+                  className={`${inputClass} flex-1`}
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExtraSpecs((prev) => prev.filter((_, n) => n !== i))
+                  }
+                  aria-label={`Remove ${row.label || `detail ${i + 1}`}`}
+                  className="grid size-11 shrink-0 place-items-center rounded-xl border border-line text-slate transition-colors hover:border-red hover:text-red"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {extraSpecs.length < 20 && (
+          <button
+            type="button"
+            onClick={() =>
+              setExtraSpecs((prev) => [...prev, { label: "", value: "" }])
+            }
+            className={`rounded-xl border-2 border-dashed border-line px-5 py-3 text-[14px] font-bold text-slate transition-colors hover:border-red hover:text-red ${
+              extraSpecs.length > 0 ? "mt-3" : ""
+            }`}
+          >
+            + Add a detail
+          </button>
+        )}
       </Section>
 
       {error && (

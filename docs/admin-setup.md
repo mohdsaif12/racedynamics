@@ -18,8 +18,12 @@ about ten minutes, all through the browser.
 1. In the project, open **SQL Editor** in the left sidebar.
 2. Open `supabase/migrations/0001_init.sql` from this repo, copy the whole
    file, paste into a new query, click **Run**.
-3. Do the same for `0002_storage.sql`, then `0003_seed.sql`, in that order.
-   (Each depends on the one before it.)
+3. Do the same for every other file in `supabase/migrations/`, in number
+   order — `0002_storage.sql`, `0003_seed.sql`, `0004_sell_enquiries.sql`,
+   `0005_bike_extra_specs.sql`. Each depends on the one before it.
+
+   All of them are safe to run twice, so if you lose track, just run them
+   again in order.
 
 This creates every table, the two photo-storage buckets, and loads the same
 19 bikes that are currently hardcoded — so the site has real content the
@@ -101,6 +105,11 @@ created once, here:
 
 - **Bikes** — add one (photos, price, year, km, status), edit any field,
   flip a single switch to mark it sold, delete it.
+- **Extra details** — on any bike, add your own rows to the details table
+  (Owners / 2, Services done / 5, Insurance / valid to Mar 2027). Type a
+  name and a value, press **+ Add a detail** for another, **×** to remove
+  one. They appear on the website in the order you put them, and a bike
+  with none looks exactly as it does now.
 - **Enquiries** — everyone who fills in the form on the Sell your bike page,
   newest first, with buttons to call or WhatsApp them and a To call /
   Called / Done marker.
