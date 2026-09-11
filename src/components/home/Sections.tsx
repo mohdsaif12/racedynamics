@@ -380,31 +380,63 @@ export function AboutBand() {
 }
 
 /* ------------------------------------------------------------ Brands ---- */
+/* Wordmarks are public-domain (simple type carries no copyright); they are
+   still trademarks, shown here to say which marques this dealer actually
+   handles. Provenance per file is in public/brands/CREDITS.json.
+
+   Benelli has no motorcycle logo on Wikimedia Commons — only Benelli Armi,
+   the unrelated firearms company — so it stays a wordmark until the client
+   supplies the real one. The component handles that case rather than
+   shipping the wrong company's mark. */
 const BRANDS = [
-  "Ducati",
-  "BMW",
-  "Harley-Davidson",
-  "Kawasaki",
-  "Triumph",
-  "Aprilia",
-  "Indian",
-  "Suzuki",
-  "Benelli",
+  { name: "Ducati", logo: "/brands/ducati.svg" },
+  { name: "BMW", logo: "/brands/bmw.svg" },
+  { name: "Harley-Davidson", logo: "/brands/harley-davidson.svg" },
+  { name: "Kawasaki", logo: "/brands/kawasaki.svg" },
+  { name: "Triumph", logo: "/brands/triumph.svg" },
+  { name: "Aprilia", logo: "/brands/aprilia.svg" },
+  { name: "Indian", logo: "/brands/indian.svg" },
+  { name: "Suzuki", logo: "/brands/suzuki.svg" },
+  { name: "Benelli", logo: null },
 ] as const;
 
 export function BrandStrip() {
   return (
-    <section className="bg-mist py-16">
+    <section className="bg-mist py-14">
+      <p className="mb-9 text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-slate">
+        Marques we deal in
+      </p>
       <RevealGroup selector="li" stagger={0.05} y={16} duration={0.45}>
       <ul
-        className={`${WRAP} flex flex-wrap items-center justify-center gap-x-12 gap-y-6`}
+        className={`${WRAP} flex flex-wrap items-center justify-center gap-x-12 gap-y-9 lg:gap-x-16`}
       >
         {BRANDS.map((b) => (
-          <li
-            key={b}
-            className="display text-xl text-slate/70 transition-colors hover:text-graphite"
-          >
-            {b}
+          <li key={b.name} className="flex items-center">
+            {b.logo ? (
+              /* Grayscale at rest, true colour on hover. These marks disagree
+                 wildly — Aprilia is a red panel, BMW a blue roundel, Suzuki
+                 flat blue — and showing them raw makes a jumble. Muting them
+                 to one tone is what turns nine logos into one row.
+
+                 Bounded on BOTH axes because the aspect ratios run from
+                 Ducati's 0.94:1 to Kawasaki's 5.6:1; capping height alone
+                 would let the wide wordmarks dominate the row. */
+              /* eslint-disable-next-line @next/next/no-img-element -- local
+                 static SVGs of known size; next/image would need
+                 dangerouslyAllowSVG turned on globally to serve them, and
+                 there is nothing for it to optimise. */
+              <img
+                src={b.logo}
+                alt={b.name}
+                loading="lazy"
+                decoding="async"
+                className="h-8 w-auto max-w-[132px] object-contain opacity-55 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
+              />
+            ) : (
+              <span className="display text-xl text-slate/70 transition-colors hover:text-graphite">
+                {b.name}
+              </span>
+            )}
           </li>
         ))}
       </ul>

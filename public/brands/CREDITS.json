@@ -1,0 +1,47 @@
+{
+  "ducati": {
+    "file": "File:Ducati red logo.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Ducati_red_logo.svg"
+  },
+  "bmw": {
+    "file": "File:BMW.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:BMW.svg"
+  },
+  "harley-davidson": {
+    "file": "File:Harley-Davidson logo.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Harley-Davidson_logo.svg"
+  },
+  "kawasaki": {
+    "file": "File:Kawasaki-logo.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Kawasaki-logo.svg"
+  },
+  "triumph": {
+    "file": "File:Logo Triumph.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Logo_Triumph.svg"
+  },
+  "aprilia": {
+    "file": "File:Aprilia-logo.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Aprilia-logo.svg"
+  },
+  "suzuki": {
+    "file": "File:Suzuki Motor Corporation logo.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Suzuki_Motor_Corporation_logo.svg"
+  },
+  "indian": {
+    "file": "File:Indian Motorcycle logo.svg",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Indian_Motorcycle_logo.svg"
+  },
+  "benelli": {
+    "file": null,
+    "license": null,
+    "note": "No Benelli motorcycle logo on Wikimedia Commons (only Benelli Armi, the firearms company). Rendered as a text wordmark until the client supplies the real mark."
+  }
+}
