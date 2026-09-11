@@ -316,8 +316,8 @@ export default function HeroSequence() {
           <Image
             src="/brand/racedynamics.webp"
             alt={SITE.name}
-            width={1200}
-            height={400}
+            width={900}
+            height={220}
             priority
             unoptimized
             className="h-auto w-full"

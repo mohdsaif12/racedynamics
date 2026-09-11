@@ -54,8 +54,8 @@ function Shell({ children }: { children: React.ReactNode }) {
         <Image
           src="/brand/racedynamics.webp"
           alt="RaceDynamics"
-          width={1200}
-          height={400}
+          width={900}
+          height={220}
           unoptimized
           className="mx-auto h-8 w-auto"
         />

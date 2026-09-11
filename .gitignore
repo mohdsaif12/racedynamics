@@ -44,3 +44,10 @@ next-env.d.ts
 # hero source clips (large, not needed at runtime)
 *.mp4
 nsone_in__.html
+
+# Client-supplied CorelDRAW source. ~70MB of embedded bitmap data that git
+# cannot diff and nothing in the build reads — the exported logo in
+# public/brand/ is what the site actually uses.
+/Race Plate.cdr/
+/Race Plate.cdr.zip
+*.cdr
