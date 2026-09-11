@@ -13,7 +13,7 @@ const SOCIALS = [
   { key: "youtube", label: "YouTube", Icon: YoutubeIcon },
 ] as const;
 
-/** Three-column dark footer: about, quick links, and how to reach the shop. */
+/** Three-column dark footer: quick links, contact details, and the map. */
 export default function SiteFooter({ settings }: { settings: SiteSettings }) {
   return (
     <footer className="mt-auto bg-ink pb-16 pt-16 sm:pb-0">
@@ -24,21 +24,6 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
         duration={0.45}
         className="mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-3 lg:px-10"
       >
-        <div>
-          <h2 className="display text-xl text-white">About us</h2>
-          <p className="mt-5 max-w-[38ch] text-[14.5px] leading-[1.85] text-ash">
-            A complete solution to owning your dream superbike, cruiser,
-            adventure or classic — bought, inspected and delivered by{" "}
-            {SITE.name} in {SITE.city}.
-          </p>
-          <Link
-            href="/about"
-            className="mt-5 inline-block text-[13px] font-bold uppercase tracking-[0.14em] text-red hover:text-white"
-          >
-            Read more
-          </Link>
-        </div>
-
         <nav aria-label="Quick links">
           <h2 className="display text-xl text-white">Quick links</h2>
           <ul className="mt-5 flex flex-col gap-2.5">
@@ -93,28 +78,6 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
             </a>
           </address>
 
-          <div className="mt-6 overflow-hidden border border-line-dark">
-            <iframe
-              title={`Map to ${SITE.name}, ${SITE.city}`}
-              src={mapEmbedSrc()}
-              // The footer is on every page, so this would otherwise mean a
-              // third-party frame loading on every single view. Lazy defers
-              // it until someone actually scrolls to the bottom.
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="h-[168px] w-full grayscale-[0.4] transition-[filter] duration-300 hover:grayscale-0"
-            />
-          </div>
-          <a
-            href={SITE.maps.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-2 text-[13.5px] font-semibold text-red transition-colors hover:text-white"
-          >
-            <PinIcon size={15} />
-            Get directions
-          </a>
-
           <div className="mt-7 flex gap-3">
             {SOCIALS.map(({ key, label, Icon }) => {
               const href = settings.social[key];
@@ -133,6 +96,31 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
               );
             })}
           </div>
+        </div>
+
+        <div>
+          <h2 className="display text-xl text-white">Find us</h2>
+          <div className="mt-5 overflow-hidden border border-line-dark">
+            <iframe
+              title={`Map to ${SITE.name}, ${SITE.city}`}
+              src={mapEmbedSrc()}
+              // The footer is on every page, so this would otherwise mean a
+              // third-party frame loading on every single view. Lazy defers
+              // it until someone actually scrolls to the bottom.
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="h-[220px] w-full grayscale-[0.4] transition-[filter] duration-300 hover:grayscale-0"
+            />
+          </div>
+          <a
+            href={SITE.maps.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 text-[13.5px] font-semibold text-red transition-colors hover:text-white"
+          >
+            <PinIcon size={15} />
+            Get directions
+          </a>
         </div>
       </RevealGroup>
 
