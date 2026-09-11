@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getSiteSettings } from "@/lib/data/settings";
 import { telLink, whatsappLink } from "@/lib/data/links";
-import { SITE } from "@/lib/site";
+import { SITE, mapEmbedSrc } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -77,7 +77,9 @@ export default async function ContactPage() {
       <div className="mt-12 overflow-hidden border border-line">
         <iframe
           title={`Map to ${SITE.name}, ${SITE.city}`}
-          src={`https://www.google.com/maps?q=${encodeURIComponent(SITE.city + ", Uttar Pradesh, India")}&output=embed`}
+          // Was pointing at the city, which dropped a pin in the middle of
+          // Lucknow rather than at the shop.
+          src={mapEmbedSrc()}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           className="h-[380px] w-full grayscale-[0.35]"

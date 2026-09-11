@@ -1,6 +1,6 @@
 import Link from "next/link";
 import RevealGroup from "@/components/Reveal";
-import { SITE } from "@/lib/site";
+import { SITE, mapEmbedSrc } from "@/lib/site";
 import type { Category, SiteSettings } from "@/lib/data/types";
 import {
   PinIcon, MailIcon, PhoneIcon,
@@ -114,6 +114,28 @@ export default function SiteFooter({
               <span className="figure-nums">{settings.phoneSecondary}</span>
             </a>
           </address>
+
+          <div className="mt-6 overflow-hidden border border-line-dark">
+            <iframe
+              title={`Map to ${SITE.name}, ${SITE.city}`}
+              src={mapEmbedSrc()}
+              // The footer is on every page, so this would otherwise mean a
+              // third-party frame loading on every single view. Lazy defers
+              // it until someone actually scrolls to the bottom.
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="h-[168px] w-full grayscale-[0.4] transition-[filter] duration-300 hover:grayscale-0"
+            />
+          </div>
+          <a
+            href={SITE.maps.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-2 text-[13.5px] font-semibold text-red transition-colors hover:text-white"
+          >
+            <PinIcon size={15} />
+            Get directions
+          </a>
 
           <div className="mt-7 flex gap-3">
             {SOCIALS.map(({ key, label, Icon }) => {

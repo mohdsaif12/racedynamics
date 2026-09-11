@@ -43,6 +43,15 @@ export function OrganizationJsonLd({ settings }: { settings: SiteSettings }) {
           addressRegion: "Uttar Pradesh",
           addressCountry: "IN",
         },
+        // The coordinates and the Maps listing are what tie this markup to
+        // the real place Google already knows about, which is the difference
+        // between appearing in the local pack and not.
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: SITE.maps.lat,
+          longitude: SITE.maps.lng,
+        },
+        hasMap: SITE.maps.url,
         areaServed: "IN",
         priceRange: "₹₹₹",
         sameAs: [
