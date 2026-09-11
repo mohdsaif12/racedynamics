@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Barlow, IBM_Plex_Mono, Saira_Condensed } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import SiteChrome from "@/components/SiteChrome";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactRail from "@/components/ContactRail";
@@ -81,12 +82,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-paper text-body">
         <SmoothScroll>
-          <SiteHeader categories={categories} />
-          <main className="flex-1">{children}</main>
-          <SiteFooter categories={categories} settings={settings} />
-          <ContactRail settings={settings} />
+          <SiteChrome
+            header={<SiteHeader categories={categories} />}
+            footer={<SiteFooter categories={categories} settings={settings} />}
+            rail={<ContactRail settings={settings} />}
+            structuredData={<OrganizationJsonLd settings={settings} />}
+          >
+            {children}
+          </SiteChrome>
         </SmoothScroll>
-        <OrganizationJsonLd settings={settings} />
       </body>
     </html>
   );
