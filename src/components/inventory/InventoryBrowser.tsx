@@ -101,6 +101,12 @@ export default function InventoryBrowser({
   const safe = list.length ? Math.min(index, list.length - 1) : 0;
   const bike = list[safe];
 
+  /* images[0] is the cover — the cut-out that floats on the stage above. Only
+     what the owner added beyond it belongs in the detail gallery, so a bike
+     with a single photo shows no gallery at all rather than one repeated
+     thumbnail. */
+  const extras = bike?.images.slice(1) ?? [];
+
   useEffect(() => {
     if (firstRun.current) {
       firstRun.current = false;
@@ -371,12 +377,21 @@ export default function InventoryBrowser({
           </div>
 
           {bike && (
-            <a
-              href="#details"
-              className={`grid size-[76px] shrink-0 place-items-center text-[14px] font-bold uppercase tracking-[0.18em] text-white transition-colors duration-200 sm:size-[92px] ${A_BG} ${A_HOVER_BG}`}
-            >
-              Go
-            </a>
+            <div className="flex shrink-0 items-center gap-4 pb-0 pr-0">
+              {/* The GO block alone didn't read as "there is more below" —
+                  people took it for a decorative corner. */}
+              <span className="hidden pb-7 text-right text-[11px] leading-relaxed tracking-[0.14em] text-white/45 sm:block">
+                Scroll down for
+                <br />
+                full details
+              </span>
+              <a
+                href="#details"
+                className={`grid size-[76px] shrink-0 place-items-center text-[14px] font-bold uppercase tracking-[0.18em] text-white transition-colors duration-200 sm:size-[92px] ${A_BG} ${A_HOVER_BG}`}
+              >
+                Go
+              </a>
+            </div>
           )}
         </div>
       </section>
@@ -392,7 +407,11 @@ export default function InventoryBrowser({
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduced ? undefined : { opacity: 0, y: -12 }}
                 transition={{ duration: reduced ? 0 : 0.45, ease: EASE_OUT }}
-                className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"
+                className={
+                  extras.length > 0
+                    ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+                    : "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]"
+                }
               >
                 {/* identity */}
                 <div>
@@ -440,20 +459,24 @@ export default function InventoryBrowser({
                       Full page →
                     </Link>
                   </div>
+
+                  {/* With no extra photos the spec grid keeps the right-hand
+                      column to itself, exactly as before. Once the owner adds
+                      photos they take that column and the specs sit under the
+                      identity block instead. */}
+                  {extras.length > 0 && (
+                    <SpecGrid bike={bike} categories={categories} className="mt-10" />
+                  )}
                 </div>
 
-                {/* full specification */}
-                <dl className="grid grid-cols-2 gap-px self-start border border-line-dark bg-line-dark sm:grid-cols-3">
-                  <Cell label="Reg. Year" value={String(bike.year)} numeric />
-                  <Cell label="Odometer" value={formatKm(bike.km)} numeric />
-                  <Cell label="Engine" value={`${bike.engineCc} cc`} numeric />
-                  <Cell
-                    label="Category"
-                    value={categories.find((c) => c.slug === bike.category)?.name ?? "—"}
+                {extras.length > 0 ? (
+                  <BikeGallery
+                    photos={extras}
+                    name={`${bike.brand} ${bike.fullName}`}
                   />
-                  <Cell label="Reg. State" value={bike.location} />
-                  <Cell label="Status" value={STATUS_LABEL[bike.status]} />
-                </dl>
+                ) : (
+                  <SpecGrid bike={bike} categories={categories} />
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -621,5 +644,92 @@ function Socials({ settings }: { settings: SiteSettings }) {
         </a>
       ))}
     </>
+  );
+}
+
+function SpecGrid({
+  bike,
+  categories,
+  className = "",
+}: {
+  bike: Bike;
+  categories: Category[];
+  className?: string;
+}) {
+  return (
+    <dl
+      className={`grid grid-cols-2 gap-px self-start border border-line-dark bg-line-dark sm:grid-cols-3 ${className}`}
+    >
+      <Cell label="Reg. Year" value={String(bike.year)} numeric />
+      <Cell label="Odometer" value={formatKm(bike.km)} numeric />
+      <Cell label="Engine" value={`${bike.engineCc} cc`} numeric />
+      <Cell
+        label="Category"
+        value={categories.find((c) => c.slug === bike.category)?.name ?? "—"}
+      />
+      <Cell label="Reg. State" value={bike.location} />
+      <Cell label="Status" value={STATUS_LABEL[bike.status]} />
+    </dl>
+  );
+}
+
+/**
+ * The owner's own photographs of a specific bike — the real thing, shot on a
+ * forecourt, as opposed to the cut-out on the stage. One large lead image then
+ * a thumbnail row, so a bike with two photos still looks deliberate rather
+ * than like a grid with a hole in it.
+ */
+function BikeGallery({ photos, name }: { photos: string[]; name: string }) {
+  const [active, setActive] = useState(0);
+  const current = photos[Math.min(active, photos.length - 1)];
+
+  return (
+    <div className="self-start">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink-3">
+        <NextImage
+          key={current}
+          src={current}
+          alt={`${name} — photograph ${Math.min(active, photos.length - 1) + 1}`}
+          fill
+          sizes="(min-width: 1024px) 46vw, 100vw"
+          className="object-cover"
+        />
+      </div>
+
+      {photos.length > 1 && (
+        <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-5">
+          {photos.map((src, i) => (
+            <button
+              key={src}
+              type="button"
+              onClick={() => setActive(i)}
+              aria-label={`Show photograph ${i + 1} of ${photos.length}`}
+              aria-current={i === active}
+              className={`relative aspect-square overflow-hidden bg-ink-3 transition-opacity duration-200 ${
+                i === active ? "opacity-100" : "opacity-55 hover:opacity-85"
+              }`}
+            >
+              <NextImage
+                src={src}
+                alt=""
+                fill
+                sizes="120px"
+                className="object-cover"
+              />
+              {i === active && (
+                <span
+                  aria-hidden
+                  className={`absolute inset-x-0 bottom-0 h-[3px] ${A_BG}`}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <p className="mt-3 text-[11px] uppercase tracking-[0.14em] text-white/40">
+        {photos.length} owner photo{photos.length === 1 ? "" : "s"}
+      </p>
+    </div>
   );
 }
