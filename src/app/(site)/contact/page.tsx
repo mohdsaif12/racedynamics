@@ -32,9 +32,11 @@ export default async function ContactPage() {
             <a href={telLink(settings, settings.phonePrimary)} className="hover:text-graphite">
               {settings.phonePrimary}
             </a>
-            <a href={telLink(settings, settings.phoneSecondary)} className="hover:text-graphite">
-              {settings.phoneSecondary}
-            </a>
+            {Boolean(settings.phoneSecondary) && (
+              <a href={telLink(settings, settings.phoneSecondary)} className="hover:text-graphite">
+                {settings.phoneSecondary}
+              </a>
+            )}
           </p>
         </section>
 

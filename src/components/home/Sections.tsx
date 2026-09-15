@@ -345,7 +345,7 @@ export function AboutBand() {
           <ImageReveal className="aspect-[4/3] overflow-hidden bg-mist">
             <NextImage
               src="/about/workshop.webp"
-              alt={`Inside the ${SITE.name} workshop`}
+              alt={`Inside the ${SITE.name} showroom in ${SITE.city}`}
               width={1200}
               height={900}
               className="h-full w-full object-cover"
@@ -359,15 +359,10 @@ export function AboutBand() {
           </MaskReveal>
           <TextReveal delay={0.1} className="mt-6 flex max-w-[58ch] flex-col gap-4 text-[15.5px] leading-[1.85] text-body">
             <p>
-              {SITE.name} is a small team in {SITE.city} that buys and sells
-              pre-owned superbikes across India, and cares more about the machine
-              being right than about closing quickly.
+              Since 2014, {SITE.name} has grown from a motorcycle enthusiast’s dream into Lucknow’s leading destination for superbikes and premium pre-owned motorcycles, serving riders across India.
             </p>
             <p>
-              Every bike is inspected before it is listed — compression checked,
-              forks and linkages gone through, service history traced where it
-              exists and stated plainly where it doesn&rsquo;t. What a bike needs
-              is on the listing, not discovered afterwards.
+              From iconic superbikes to riding gear, accessories, and Pan-India delivery, every machine is carefully evaluated on condition, history, and authenticity so you can buy with total confidence.
             </p>
           </TextReveal>
           <p className="mt-8 font-display text-4xl italic tracking-wide text-graphite">

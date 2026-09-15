@@ -82,15 +82,15 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
               <PhoneIcon size={17} className="shrink-0 text-red" />
               <span className="figure-nums">{settings.phonePrimary}</span>
             </a>
-            <a
-              href={`tel:${settings.phoneSecondary}`}
-              className="flex items-center gap-3 transition-colors hover:text-red"
-            >
-              {/* One phone icon in the column is enough to label the pair;
-                  repeating it would read as a second, different channel. */}
-              <span aria-hidden className="w-[17px] shrink-0" />
-              <span className="figure-nums">{settings.phoneSecondary}</span>
-            </a>
+            {Boolean(settings.phoneSecondary) && (
+              <a
+                href={`tel:${settings.phoneSecondary}`}
+                className="flex items-center gap-3 transition-colors hover:text-red"
+              >
+                <span aria-hidden className="w-[17px] shrink-0" />
+                <span className="figure-nums">{settings.phoneSecondary}</span>
+              </a>
+            )}
           </address>
 
           <div className="mt-7 flex gap-3">

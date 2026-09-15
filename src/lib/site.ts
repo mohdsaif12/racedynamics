@@ -7,39 +7,32 @@
  * the deep link behaves on desktop.
  */
 export const SITE = {
-  name: "RaceDynamics",
+  name: "Race Dynamics",
   city: "Lucknow",
-  tagline: "Pre-owned superbikes, correctly sorted.",
+  tagline: "Lucknow’s Destination for Superbikes & Premium Motorcycles",
   description:
-    "RaceDynamics buys and sells pre-owned superbikes in Lucknow — sport, cruiser, adventure, touring, roadster and classic machines, inspected and delivered across India.",
+    "Since 2014, Race Dynamics is Lucknow’s premier destination for superbikes, performance motorcycles, and premium pre-owned bikes with Pan-India delivery.",
 
-  // TODO: confirm with client
-  phonePrimary: "+919000000000",
-  phoneSecondary: "+919000000001",
-  whatsapp: "919000000000",
-  email: "hello@racedynamic.in",
-  address: "Lucknow, Uttar Pradesh, India",
+  phonePrimary: "+91 98896 68858",
+  phoneSecondary: "",
+  whatsapp: "919889668858",
+  email: "racedynamicslucknow@gmail.com",
+  address: "Shop No. 529 D, Kalyanpur, Near Shukla Marble & Granite, Ring Road, Lucknow, UP 226022",
 
   /**
-   * The shop's real position, from the client's Google Maps listing.
-   *
-   * `query` is what the embeds search for — a place name resolves to the
-   * business card with its name, hours and reviews, where raw coordinates
-   * would drop an unlabelled pin. The coordinates are kept anyway: they go
-   * into the LocalBusiness structured data, which is what puts the shop on
-   * the map in a local search result.
+   * The shop's real position from Google Maps listing.
    */
   maps: {
-    query: "Race Dynamics Lucknow",
-    lat: 26.9033281,
-    lng: 80.964492,
-    url: "https://www.google.com/maps/place/Race+Dynamics+Lucknow/@26.9025875,80.96156,17z/data=!4m6!3m5!1s0x399957c1bce42487:0x9143685e8a96c9b8!8m2!3d26.9033281!4d80.964492!16s%2Fg%2F11cm060mg7",
+    query: "Race Dynamics Lucknow, Kalyanpur, Ring Road, Lucknow",
+    lat: 26.902746,
+    lng: 80.96405,
+    url: "https://www.google.com/maps/place/26%C2%B054'09.9%22N+80%C2%B057'50.6%22E/@26.902746,80.9614751,17z/data=!3m1!4b1!4m4!3m3!8m2!3d26.902746!4d80.96405",
   },
 
   social: {
-    instagram: "https://instagram.com/",
-    youtube: "https://youtube.com/",
-    facebook: "https://facebook.com/",
+    instagram: "https://www.instagram.com/racedynamicslucknow/?hl=en",
+    youtube: "https://www.youtube.com/@racedynamicslucknow",
+    facebook: "https://www.facebook.com/nitishprobikers/",
   },
 } as const;
 

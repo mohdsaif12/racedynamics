@@ -29,24 +29,33 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
   if (error || !data) return fromSeed();
 
+  const isDummy = (val?: string) =>
+    !val ||
+    val.includes("900000000") ||
+    val.includes("9000000001") ||
+    val.includes("hello@racedynamic.in") ||
+    val === "https://instagram.com/" ||
+    val === "https://facebook.com/" ||
+    val === "https://youtube.com/";
+
   return {
-    phonePrimary: data.phone_primary,
-    phoneSecondary: data.phone_secondary,
-    whatsapp: data.whatsapp,
-    email: data.email,
-    address: data.address,
-    tagline: data.tagline,
-    description: data.description,
+    phonePrimary: isDummy(data.phone_primary) ? SITE.phonePrimary : data.phone_primary,
+    phoneSecondary: isDummy(data.phone_secondary) ? "" : data.phone_secondary,
+    whatsapp: isDummy(data.whatsapp) ? SITE.whatsapp : data.whatsapp,
+    email: isDummy(data.email) ? SITE.email : data.email,
+    address: isDummy(data.address) || data.address === "Lucknow, Uttar Pradesh, India" ? SITE.address : data.address,
+    tagline: isDummy(data.tagline) ? SITE.tagline : data.tagline,
+    description: isDummy(data.description) ? SITE.description : data.description,
     stats: {
-      bikesSold: data.stat_bikes_sold,
-      yearsTrading: data.stat_years_trading,
-      cities: data.stat_cities,
-      avgDays: data.stat_avg_days,
+      bikesSold: data.stat_bikes_sold || 480,
+      yearsTrading: data.stat_years_trading || 10,
+      cities: data.stat_cities || 26,
+      avgDays: data.stat_avg_days || 11,
     },
     social: {
-      instagram: data.instagram_url,
-      facebook: data.facebook_url,
-      youtube: data.youtube_url,
+      instagram: isDummy(data.instagram_url) ? SITE.social.instagram : data.instagram_url,
+      facebook: isDummy(data.facebook_url) ? SITE.social.facebook : data.facebook_url,
+      youtube: isDummy(data.youtube_url) ? SITE.social.youtube : data.youtube_url,
     },
   };
 }
