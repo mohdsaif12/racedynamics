@@ -17,6 +17,13 @@ export function accessoryImageUrl(path: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/accessories/${path}`;
 }
 
+/** Category tile photos and standalone homepage content blocks share this
+ *  bucket — neither belongs to a bike, and both are edited from the same
+ *  "Website content" admin screen. */
+export function siteContentImageUrl(path: string) {
+  return `${SUPABASE_URL}/storage/v1/object/public/site-content/${path}`;
+}
+
 /** A collision-safe storage path: keeps the extension, randomises the name. */
 export function newStoragePath(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";

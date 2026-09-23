@@ -1,4 +1,5 @@
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { siteContentImageUrl } from "@/lib/supabase/storage";
 
 export type AdminCategory = {
   id: string;
@@ -6,6 +7,8 @@ export type AdminCategory = {
   name: string;
   blurb: string;
   sortOrder: number;
+  photoPath: string | null;
+  photoUrl: string | null;
 };
 
 export async function getCategoriesForAdmin(): Promise<AdminCategory[]> {
@@ -14,7 +17,7 @@ export async function getCategoriesForAdmin(): Promise<AdminCategory[]> {
 
   const { data, error } = await supabase
     .from("categories")
-    .select("id, slug, name, blurb, sort_order")
+    .select("id, slug, name, blurb, sort_order, photo_path")
     .order("sort_order", { ascending: true });
 
   if (error || !data) return [];
@@ -25,5 +28,7 @@ export async function getCategoriesForAdmin(): Promise<AdminCategory[]> {
     name: c.name,
     blurb: c.blurb,
     sortOrder: c.sort_order,
+    photoPath: c.photo_path,
+    photoUrl: c.photo_path ? siteContentImageUrl(c.photo_path) : null,
   }));
 }

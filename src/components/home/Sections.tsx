@@ -10,7 +10,7 @@ import Parallax from "@/components/Parallax";
 import EngineeringPanel from "@/components/home/EngineeringPanel";
 import { formatPrice, STATUS_LABEL } from "@/lib/format";
 import { SITE } from "@/lib/site";
-import type { Bike, Category } from "@/lib/data/types";
+import type { Bike, Category, SiteContentBlock } from "@/lib/data/types";
 import {
   RupeeNoteIcon, SoldBadgeIcon, PriceTagIcon, PaperworkIcon,
   ChecklistIcon, CompareIcon, SpecsIcon,
@@ -40,18 +40,34 @@ function valueProps(bikeCount: number) {
   ];
 }
 
-export function PlanningToSell({ bikes }: { bikes: Bike[] }) {
-  const photo = bikes.find((b) => b.image);
+/** The section's own default — the same cut-out shot it shipped with,
+ *  before this image was (accidentally) wired to whichever bike happened to
+ *  be first in stock. Used whenever no one has uploaded a replacement from
+ *  /admin/content yet. */
+const DEFAULT_SELL_IMAGE = "/bikes/diavel-1260s-2021.webp";
+
+export function PlanningToSell({
+  bikes,
+  content,
+}: {
+  bikes: Bike[];
+  /** Standalone content block — independent of inventory on purpose, see
+   *  DEFAULT_SELL_IMAGE above. */
+  content: SiteContentBlock | null;
+}) {
+  const image = content?.image ?? DEFAULT_SELL_IMAGE;
+  const heading = content?.heading || "Planning to sell?";
+  const subheading = content?.subheading || "Sell us your bike";
 
   return (
     <section className="bg-paper py-20 lg:py-28">
       <div className={`${WRAP} grid items-center gap-14 lg:grid-cols-2`}>
         <div>
           <MaskReveal as="h2" className="display text-[clamp(2.25rem,5.5vw,3.75rem)] text-graphite">
-            Planning to sell?
+            {heading}
           </MaskReveal>
           <TextReveal as="p" delay={0.08} className="mt-2 text-[15px] font-semibold uppercase tracking-[0.1em] text-slate">
-            Sell us your bike
+            {subheading}
           </TextReveal>
 
           <RevealGroup selector="li">
@@ -77,17 +93,15 @@ export function PlanningToSell({ bikes }: { bikes: Bike[] }) {
           </Link>
         </div>
 
-        <div className="relative grid min-h-72 place-items-center">
-          {photo?.image && (
-            <NextImage
-              src={photo.image}
-              alt={`${photo.brand} ${photo.fullName}`}
-              width={1400}
-              height={900}
-              className="h-auto w-[92%]"
-            />
-          )}
-        </div>
+        <ImageReveal className="relative grid min-h-72 place-items-center">
+          <NextImage
+            src={image}
+            alt={heading}
+            width={1400}
+            height={900}
+            className="h-auto w-[92%]"
+          />
+        </ImageReveal>
       </div>
     </section>
   );
@@ -163,6 +177,21 @@ export function TiltedStrip({ bikes }: { bikes: Bike[] }) {
 }
 
 /* ------------------------------------------------- Browse by category ---- */
+/** One representative photo per category, used only when the category has
+ *  no admin-uploaded tile of its own — same fallback role as
+ *  DEFAULT_SELL_IMAGE above, and to the same bug: this used to be a bike's
+ *  own photo, picked at random from whichever bike in that category
+ *  happened to have one, so it changed under a category's feet every time
+ *  stock changed. */
+const DEFAULT_CATEGORY_PHOTO: Record<string, string> = {
+  sport: "/bikes/panigale-v4.webp",
+  cruiser: "/bikes/fatbob-114-2022.webp",
+  adventure: "/bikes/r1300gs-adventure-2025.webp",
+  touring: "/bikes/k1600gt-2019.webp",
+  roadster: "/bikes/z900.webp",
+  classic: "/bikes/bonneville-t120-2018.webp",
+};
+
 export function BrowseByCategory({
   categories,
   bikes,
@@ -173,7 +202,7 @@ export function BrowseByCategory({
   const counts = categories.map((c) => ({
     ...c,
     count: bikes.filter((b) => b.category === c.slug).length,
-    photo: bikes.find((b) => b.category === c.slug && b.image)?.image,
+    photo: c.image ?? DEFAULT_CATEGORY_PHOTO[c.slug],
   }));
 
   return (

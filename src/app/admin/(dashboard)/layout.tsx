@@ -7,6 +7,7 @@ import SignOutButton from "./SignOutButton";
 const NAV = [
   { href: "/admin/bikes", label: "Bikes", icon: BikeIcon },
   { href: "/admin/accessories", label: "Accessories", icon: BoxIcon },
+  { href: "/admin/content", label: "Website content", icon: ImageIcon },
   { href: "/admin/enquiries", label: "Enquiries", icon: InboxIcon },
   { href: "/admin/categories", label: "Categories", icon: TagIcon },
   { href: "/admin/testimonials", label: "Reviews", icon: StarIcon },
@@ -83,7 +84,7 @@ export default async function AdminLayout({
       </aside>
 
       {/* ------------------------------------------------------- mobile nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-line bg-white lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-7 border-t border-line bg-white lg:hidden">
         {NAV.map((item) => (
           <Link
             key={item.href}
@@ -114,6 +115,15 @@ function BikeIcon() {
       <circle cx="5.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.6" />
       <circle cx="18.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.6" />
       <path d="M5.5 17.5 10 8h5l3.5 9.5M10 8l2 4.5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function ImageIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="3.5" y="4.5" width="17" height="15" rx="1.6" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="8.3" cy="9.3" r="1.6" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M4 16.5 8.5 12l3 3 4-4.5L20 15" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
     </svg>
   );
 }

@@ -21,8 +21,8 @@ about ten minutes, all through the browser.
 3. Do the same for every other file in `supabase/migrations/`, in number
    order — `0002_storage.sql`, `0003_seed.sql`, `0004_sell_enquiries.sql`,
    `0005_bike_extra_specs.sql`, `0006_wa_agent_dashboard.sql`,
-   `0007_accessories.sql`, `0008_accessories_seed.sql`. Each depends on the
-   one before it.
+   `0007_accessories.sql`, `0008_accessories_seed.sql`,
+   `0009_site_content.sql`. Each depends on the one before it.
 
    All of them are safe to run twice, so if you lose track, just run them
    again in order.
@@ -111,6 +111,11 @@ created once, here:
   photo, a price (or blank for "On request"), and an in-stock switch. Shows
   as a grid at `/accessories`, with a "Show on the homepage" checkbox per
   item.
+- **Website content** — the homepage "Planning to sell?" photo/headline and
+  each category circle's photo. These are deliberately **not** the same
+  photos as any bike's — editing a bike here can never change what shows on
+  the homepage, and leaving one blank just keeps the photo the site launched
+  with instead of going empty.
 - **Extra details** — on any bike, add your own rows to the details table
   (Owners / 2, Services done / 5, Insurance / valid to Mar 2027). Type a
   name and a value, press **+ Add a detail** for another, **×** to remove

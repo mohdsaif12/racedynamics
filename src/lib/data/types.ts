@@ -10,6 +10,10 @@ export type Category = {
   slug: string;
   name: string;
   blurb: string;
+  /** Public URL of the admin-uploaded tile photo, if one's been set. Falls
+   *  back to a bundled default per category — see Sections.tsx — so an
+   *  unset category never renders blank. */
+  image?: string;
 };
 
 /** An owner-defined row in the spec table, e.g. { label: "Owners", value: "2" }. */
@@ -73,6 +77,20 @@ export type Accessory = {
   status: "in-stock" | "out-of-stock";
   featured: boolean;
   /** Public URL of the cover photo, if one's been uploaded. */
+  image?: string;
+};
+
+/**
+ * A standalone, admin-editable homepage block — an image and/or text that
+ * doesn't belong to any bike, category or other content row. Identified by
+ * a fixed `key` rather than an id, since each one is a singleton slot on the
+ * page (there is exactly one "planning_to_sell" block, not a list of them).
+ */
+export type SiteContentBlock = {
+  key: string;
+  heading: string | null;
+  subheading: string | null;
+  /** Public URL of the admin-uploaded image, if one's been set. */
   image?: string;
 };
 

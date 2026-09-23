@@ -55,7 +55,15 @@ export default function CategoryManager({ initial }: { initial: AdminCategory[] 
 
     setCategories((prev) => [
       ...prev,
-      { id: data.id, slug: data.slug, name: data.name, blurb: data.blurb, sortOrder: data.sort_order },
+      {
+        id: data.id,
+        slug: data.slug,
+        name: data.name,
+        blurb: data.blurb,
+        sortOrder: data.sort_order,
+        photoPath: null,
+        photoUrl: null,
+      },
     ]);
     setName("");
     setBlurb("");
