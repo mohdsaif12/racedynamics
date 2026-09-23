@@ -7,6 +7,7 @@ import AccessoriesBrowser from "./AccessoriesBrowser";
 export const metadata: Metadata = {
   title: "Accessories",
   description: `Riding gear and bike accessories from ${SITE.name}, ${SITE.city} — helmets, riding jackets, gloves and more.`,
+  alternates: { canonical: "/accessories" },
 };
 
 export default async function AccessoriesPage() {

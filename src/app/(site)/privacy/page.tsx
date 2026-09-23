@@ -4,6 +4,7 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Privacy",
   description: `How ${SITE.name} handles the information you send us.`,
+  alternates: { canonical: "/privacy" },
 };
 
 /** Skeleton — needs review by the client before launch. */

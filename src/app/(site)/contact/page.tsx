@@ -6,6 +6,7 @@ import { SITE, mapEmbedSrc } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact",
   description: `Visit ${SITE.name} in ${SITE.city}, or reach us on WhatsApp and phone.`,
+  alternates: { canonical: "/contact" },
 };
 
 /** No animation on this route by design — people arrive here with intent. */

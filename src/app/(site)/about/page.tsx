@@ -7,6 +7,7 @@ import { ChecklistIcon, PaperworkIcon, SoldBadgeIcon, SpecsIcon } from "@/compon
 export const metadata: Metadata = {
   title: "About Us",
   description: `Lucknow’s Destination for Superbikes & Premium Motorcycles. Established in 2014. Pan-India Delivery.`,
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

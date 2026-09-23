@@ -3,7 +3,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactRail from "@/components/ContactRail";
 import ClosedBanner from "@/components/ClosedBanner";
-import { OrganizationJsonLd } from "@/components/JsonLd";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/JsonLd";
 import { getCategories } from "@/lib/data/categories";
 import { getSiteSettings } from "@/lib/data/settings";
 import { getSiteContentBlock } from "@/lib/data/siteContent";
@@ -37,6 +37,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       <SiteFooter settings={settings} aboutBody={footerAbout?.body ?? null} />
       <ContactRail settings={settings} />
       <OrganizationJsonLd settings={settings} />
+      <WebSiteJsonLd />
     </SmoothScroll>
   );
 }

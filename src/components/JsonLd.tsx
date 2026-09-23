@@ -32,10 +32,24 @@ export function OrganizationJsonLd({ settings }: { settings: SiteSettings }) {
         "@type": "AutoDealer",
         "@id": absoluteUrl("/#dealer"),
         name: SITE.name,
+        // Every way someone actually types the brand into a search box —
+        // squashed together, with the city appended, with "motorcycles"
+        // instead of "dynamics" trailing off. This is what lets a search for
+        // any of them resolve to the same knowledge-panel entity rather than
+        // Google guessing.
+        alternateName: [
+          "RaceDynamics",
+          "Race Dynamics Lucknow",
+          "RaceDynamics Lucknow",
+          "Race Dynamics Motorcycles",
+        ],
         description: settings.description,
         url: absoluteUrl("/"),
+        logo: absoluteUrl("/brand/racedynamics.png"),
+        image: absoluteUrl("/brand/racedynamics.png"),
         telephone: settings.phonePrimary,
         email: settings.email,
+        foundingDate: "2014",
         address: {
           "@type": "PostalAddress",
           streetAddress: settings.address,
@@ -58,7 +72,39 @@ export function OrganizationJsonLd({ settings }: { settings: SiteSettings }) {
           settings.social.instagram,
           settings.social.facebook,
           settings.social.youtube,
+          SITE.maps.url,
         ].filter(Boolean),
+      }}
+    />
+  );
+}
+
+/**
+ * Separate from AutoDealer above (which describes the *business*) — this
+ * describes the *website* itself, and is what makes Google consider showing
+ * a search box directly under the homepage result for a branded query.
+ * Points at a real, working search: /inventory?search= actually pre-fills
+ * and runs the inventory search box, it isn't a dead query param.
+ */
+export function WebSiteJsonLd() {
+  return (
+    <Script
+      data={{
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": absoluteUrl("/#website"),
+        name: SITE.name,
+        alternateName: ["RaceDynamics", "Race Dynamics Lucknow"],
+        url: absoluteUrl("/"),
+        publisher: { "@id": absoluteUrl("/#dealer") },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: absoluteUrl("/inventory?search={search_term_string}"),
+          },
+          "query-input": "required name=search_term_string",
+        },
       }}
     />
   );

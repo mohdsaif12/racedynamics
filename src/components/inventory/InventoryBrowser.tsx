@@ -69,16 +69,20 @@ export default function InventoryBrowser({
   settings,
   initialCategory,
   initialBike,
+  initialSearch,
 }: {
   bikes: Bike[];
   categories: Category[];
   settings: SiteSettings;
   initialCategory: string;
   initialBike?: string;
+  /** Pre-fills and opens the search box — how ?search= from a shared link
+   *  or the homepage's sitelinks searchbox lands on a real result. */
+  initialSearch?: string;
 }) {
   const [cat, setCat] = useState(initialCategory);
-  const [q, setQ] = useState("");
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [q, setQ] = useState(initialSearch ?? "");
+  const [searchOpen, setSearchOpen] = useState(Boolean(initialSearch));
   const [index, setIndex] = useState(() => {
     if (!initialBike) return 0;
     const at = bikes

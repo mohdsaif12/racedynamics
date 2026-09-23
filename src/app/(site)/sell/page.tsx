@@ -7,6 +7,7 @@ import SellForm from "./SellForm";
 export const metadata: Metadata = {
   title: "Sell your bike",
   description: `Sell your superbike outright to ${SITE.name}, ${SITE.city}. Send photos, get a quote in 24 hours, paid on collection.`,
+  alternates: { canonical: "/sell" },
 };
 
 const STEPS = [

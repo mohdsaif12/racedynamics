@@ -307,15 +307,24 @@ export default function HeroSequence() {
           />
         </div>
 
-        {/* The reveal. Lands on the empty stage and stays for good. */}
+        {/* The reveal. Lands on the empty stage and stays for good.
+
+            The logo wordmark carries the visual weight, but a screen reader
+            or a crawler needs actual words to know what this page is about —
+            not just a brand name, but brand + place + what's sold here. The
+            sr-only span supplies that; the image goes alt="" (decorative)
+            underneath it so the h1's text isn't announced twice. */}
         <h1
           ref={wordRef}
           className="relative z-10 w-[min(82vw,54rem)] px-5"
           style={reduced ? undefined : { opacity: 0 }}
         >
+          <span className="sr-only">
+            {SITE.name} — {SITE.tagline}
+          </span>
           <Image
             src="/brand/racedynamics.webp"
-            alt={SITE.name}
+            alt=""
             width={1800}
             height={477}
             priority

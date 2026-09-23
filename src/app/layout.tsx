@@ -54,6 +54,17 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+  // Proves ownership to Search Console / Bing Webmaster Tools, which is what
+  // actually gets this site crawled, indexed and eligible to rank in the
+  // first place — see docs/seo-checklist.md for where these codes come from
+  // and what to do with them once verified. Both env vars are optional; an
+  // unset one is simply omitted rather than rendering an empty meta tag.
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION }
+      : undefined,
+  },
 };
 
 /**

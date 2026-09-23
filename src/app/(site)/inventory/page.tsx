@@ -10,6 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Inventory",
     description: `All ${bikes.length} pre-owned superbikes currently in stock at ${SITE.name}, ${SITE.city}. Filter by category or search by make, model and city.`,
+    alternates: { canonical: "/inventory" },
   };
 }
 
@@ -20,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InventoryPage({
   searchParams,
 }: PageProps<"/inventory">) {
-  const { category, bike } = await searchParams;
+  const { category, bike, search } = await searchParams;
 
   const [bikes, categories, settings] = await Promise.all([
     getAllBikes(),
@@ -32,11 +33,12 @@ export default async function InventoryPage({
   const cat =
     typeof category === "string" && slugs.has(category) ? category : "all";
   const initialBike = typeof bike === "string" ? bike : undefined;
+  const initialSearch = typeof search === "string" ? search : undefined;
 
   return (
     <>
       <h1 className="sr-only">
-        {SITE.name} inventory — {bikes.length} superbikes in stock
+        {SITE.name} inventory in {SITE.city} — {bikes.length} pre-owned superbikes in stock
       </h1>
       <InventoryBrowser
         bikes={bikes}
@@ -44,6 +46,7 @@ export default async function InventoryPage({
         settings={settings}
         initialCategory={cat}
         initialBike={initialBike}
+        initialSearch={initialSearch}
       />
     </>
   );
