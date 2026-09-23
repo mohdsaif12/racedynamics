@@ -21,7 +21,8 @@ about ten minutes, all through the browser.
 3. Do the same for every other file in `supabase/migrations/`, in number
    order — `0002_storage.sql`, `0003_seed.sql`, `0004_sell_enquiries.sql`,
    `0005_bike_extra_specs.sql`, `0006_wa_agent_dashboard.sql`,
-   `0007_accessories.sql`. Each depends on the one before it.
+   `0007_accessories.sql`, `0008_accessories_seed.sql`. Each depends on the
+   one before it.
 
    All of them are safe to run twice, so if you lose track, just run them
    again in order.
