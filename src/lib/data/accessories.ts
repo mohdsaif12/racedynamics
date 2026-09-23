@@ -8,6 +8,7 @@ type Row = {
   slug: string;
   name: string;
   description: string;
+  category: string;
   price_inr: number | null;
   status: Accessory["status"];
   featured: boolean;
@@ -20,6 +21,7 @@ function mapRow(row: Row): Accessory {
     slug: row.slug,
     name: row.name,
     description: row.description,
+    category: row.category,
     priceINR: row.price_inr,
     status: row.status,
     featured: row.featured,
@@ -27,7 +29,7 @@ function mapRow(row: Row): Accessory {
   };
 }
 
-const SELECT = "id, slug, name, description, price_inr, status, featured, photo_path";
+const SELECT = "id, slug, name, description, category, price_inr, status, featured, photo_path";
 
 /**
  * Every accessory in stock, in the order the owner arranged them. No seed

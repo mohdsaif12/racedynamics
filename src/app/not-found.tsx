@@ -47,7 +47,7 @@ export default async function NotFound() {
         </Link>
       </div>
       </main>
-      <SiteFooter settings={settings} />
+      <SiteFooter settings={settings} aboutBody={null} />
     </>
   );
 }

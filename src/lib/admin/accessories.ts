@@ -6,6 +6,7 @@ export type AdminAccessory = {
   slug: string;
   name: string;
   description: string;
+  category: string;
   priceINR: number | null;
   status: "in-stock" | "out-of-stock";
   featured: boolean;
@@ -13,13 +14,14 @@ export type AdminAccessory = {
   photoUrl: string | null;
 };
 
-const SELECT = "id, slug, name, description, price_inr, status, featured, photo_path";
+const SELECT = "id, slug, name, description, category, price_inr, status, featured, photo_path";
 
 function mapRow(row: {
   id: string;
   slug: string;
   name: string;
   description: string;
+  category: string;
   price_inr: number | null;
   status: AdminAccessory["status"];
   featured: boolean;
@@ -30,6 +32,7 @@ function mapRow(row: {
     slug: row.slug,
     name: row.name,
     description: row.description,
+    category: row.category,
     priceINR: row.price_inr,
     status: row.status,
     featured: row.featured,
@@ -49,6 +52,12 @@ export async function getAccessoriesForAdmin(): Promise<AdminAccessory[]> {
 
   if (error || !data) return [];
   return data.map(mapRow);
+}
+
+/** Distinct categories already in use, for the form's autocomplete list. */
+export async function getAccessoryCategories(): Promise<string[]> {
+  const all = await getAccessoriesForAdmin();
+  return Array.from(new Set(all.map((a) => a.category).filter(Boolean))).sort();
 }
 
 export async function getAccessoryForEdit(id: string): Promise<AdminAccessory | null> {

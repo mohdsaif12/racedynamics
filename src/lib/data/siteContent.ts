@@ -16,7 +16,7 @@ export async function getSiteContentBlock(key: string): Promise<SiteContentBlock
   const supabase = getSupabasePublic();
   const { data, error } = await supabase!
     .from("site_content")
-    .select("key, heading, subheading, image_path")
+    .select("key, heading, subheading, body, image_path")
     .eq("key", key)
     .maybeSingle();
 
@@ -26,6 +26,32 @@ export async function getSiteContentBlock(key: string): Promise<SiteContentBlock
     key: data.key,
     heading: data.heading,
     subheading: data.subheading,
+    body: data.body,
     image: data.image_path ? siteContentImageUrl(data.image_path) : undefined,
   };
+}
+
+/** Every block at once — one round trip for the homepage instead of four. */
+export async function getAllSiteContentBlocks(): Promise<Record<string, SiteContentBlock>> {
+  if (!hasSupabase) return {};
+
+  const supabase = getSupabasePublic();
+  const { data, error } = await supabase!
+    .from("site_content")
+    .select("key, heading, subheading, body, image_path");
+
+  if (error || !data) return {};
+
+  return Object.fromEntries(
+    data.map((row) => [
+      row.key,
+      {
+        key: row.key,
+        heading: row.heading,
+        subheading: row.subheading,
+        body: row.body,
+        image: row.image_path ? siteContentImageUrl(row.image_path) : undefined,
+      },
+    ]),
+  );
 }

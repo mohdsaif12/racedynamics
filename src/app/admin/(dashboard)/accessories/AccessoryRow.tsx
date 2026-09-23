@@ -73,9 +73,10 @@ export default function AccessoryRow({ accessory }: { accessory: AdminAccessory 
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-bold text-graphite">{accessory.name}</p>
-        {accessory.featured && (
-          <p className="mt-0.5 text-[12px] font-semibold text-red">Featured on homepage</p>
-        )}
+        <p className="mt-0.5 text-[13px] text-slate">
+          {accessory.category || "Uncategorised"}
+          {accessory.featured && <span className="ml-2 font-semibold text-red">Featured on homepage</span>}
+        </p>
         <p className="mt-0.5 text-[14px] font-bold text-graphite">
           {formatPrice(accessory.priceINR)}
         </p>

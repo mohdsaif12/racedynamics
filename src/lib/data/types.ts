@@ -72,6 +72,8 @@ export type Accessory = {
   slug: string;
   name: string;
   description: string;
+  /** Free text, e.g. "Helmets" — blank means uncategorised. */
+  category: string;
   /** null when priced on request. */
   priceINR: number | null;
   status: "in-stock" | "out-of-stock";
@@ -90,6 +92,8 @@ export type SiteContentBlock = {
   key: string;
   heading: string | null;
   subheading: string | null;
+  /** Longer copy — a paragraph, or several separated by a blank line. */
+  body: string | null;
   /** Public URL of the admin-uploaded image, if one's been set. */
   image?: string;
 };

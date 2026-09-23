@@ -13,8 +13,16 @@ const SOCIALS = [
   { key: "youtube", label: "YouTube", Icon: YoutubeIcon },
 ] as const;
 
+const DEFAULT_ABOUT_BODY = `A complete solution to owning your dream superbike, cruiser, adventure or classic — bought, inspected and delivered by ${SITE.name} in ${SITE.city}.`;
+
 /** Four-column dark footer: about, quick links, contact details, and the map. */
-export default function SiteFooter({ settings }: { settings: SiteSettings }) {
+export default function SiteFooter({
+  settings,
+  aboutBody,
+}: {
+  settings: SiteSettings;
+  aboutBody: string | null;
+}) {
   return (
     <footer className="mt-auto bg-ink pb-16 pt-16 sm:pb-0">
       <RevealGroup
@@ -27,9 +35,7 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
         <div>
           <h2 className="display text-xl text-white">About us</h2>
           <p className="mt-5 max-w-[38ch] text-[14.5px] leading-[1.85] text-ash">
-            A complete solution to owning your dream superbike, cruiser,
-            adventure or classic — bought, inspected and delivered by{" "}
-            {SITE.name} in {SITE.city}.
+            {aboutBody || DEFAULT_ABOUT_BODY}
           </p>
           <Link
             href="/about"

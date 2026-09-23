@@ -10,8 +10,8 @@ import type { AdminAccessory } from "@/lib/admin/accessories";
 import { revalidateSite } from "../../actions";
 
 type Props =
-  | { mode: "create" }
-  | { mode: "edit"; accessory: AdminAccessory };
+  | { mode: "create"; existingCategories: string[] }
+  | { mode: "edit"; accessory: AdminAccessory; existingCategories: string[] };
 
 const STATUS_OPTIONS = [
   { value: "in-stock", label: "In stock" },
@@ -38,6 +38,7 @@ export default function AccessoryForm(props: Props) {
 
   const [name, setName] = useState(item?.name ?? "");
   const [description, setDescription] = useState(item?.description ?? "");
+  const [category, setCategory] = useState(item?.category ?? "");
   const [price, setPrice] = useState(item?.priceINR != null ? String(item.priceINR) : "");
   const [status, setStatus] = useState(item?.status ?? "in-stock");
   const [featured, setFeatured] = useState(item?.featured ?? false);
@@ -101,6 +102,7 @@ export default function AccessoryForm(props: Props) {
     const payload = {
       name: name.trim(),
       description: description.trim(),
+      category: category.trim(),
       price_inr: price.trim() ? Number(price) : null,
       status,
       featured,
@@ -247,9 +249,25 @@ export default function AccessoryForm(props: Props) {
       </Section>
 
       <Section title="Details">
-        <Field label="Name">
-          <Input value={name} onChange={setName} placeholder="AGV K3 Helmet" required />
-        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Name">
+            <Input value={name} onChange={setName} placeholder="AGV K3 Helmet" required />
+          </Field>
+          <Field label="Category">
+            <input
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Helmets"
+              list="accessory-categories"
+              className={inputClass}
+            />
+            <datalist id="accessory-categories">
+              {props.existingCategories.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </Field>
+        </div>
 
         <Field label="Description" className="mt-4">
           <textarea

@@ -250,7 +250,10 @@ export function BrowseByCategory({
 }
 
 /* --------------------------------------------------------- Trust band --- */
-export function TrustBand() {
+export function TrustBand({ content }: { content: SiteContentBlock | null }) {
+  const heading = content?.heading || "Trust us to deliver excellence with every purchase";
+  const subheading = content?.subheading || `Buy your dream bike with ${SITE.name} confidence`;
+
   return (
     <section className="relative overflow-hidden bg-paper py-16">
       <span
@@ -263,10 +266,10 @@ export function TrustBand() {
 
       <div className={`${WRAP} relative text-center`}>
         <ScaleReveal as="h2" className="display mx-auto max-w-[20ch] text-center text-[clamp(1.85rem,4.6vw,3.25rem)] text-graphite">
-          Trust us to deliver excellence with every purchase
+          {heading}
         </ScaleReveal>
         <TextReveal as="p" delay={0.14} className="mt-4 text-[15px] text-slate">
-          Buy your dream bike with {SITE.name} confidence
+          {subheading}
         </TextReveal>
         <TextReveal delay={0.26} className="mt-9">
           <Link href="/inventory" className="btn-red hover:bg-red-dark">
@@ -366,14 +369,26 @@ function SpecCell({
 }
 
 /* ------------------------------------------------------------- About ---- */
-export function AboutBand() {
+const DEFAULT_ABOUT_IMAGE = "/about/workshop.webp";
+const DEFAULT_ABOUT_BODY = `Since 2014, ${SITE.name} has grown from a motorcycle enthusiast’s dream into Lucknow’s leading destination for superbikes and premium pre-owned motorcycles, serving riders across India.
+
+From iconic superbikes to riding gear, accessories, and Pan-India delivery, every machine is carefully evaluated on condition, history, and authenticity so you can buy with total confidence.`;
+
+export function AboutBand({ content }: { content: SiteContentBlock | null }) {
+  const heading = content?.heading || `About ${SITE.name}`;
+  const image = content?.image ?? DEFAULT_ABOUT_IMAGE;
+  const paragraphs = (content?.body || DEFAULT_ABOUT_BODY)
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
   return (
     <section className="bg-paper py-16">
       <div className={`${WRAP} grid items-center gap-14 lg:grid-cols-2`}>
         <Parallax distance={22}>
           <ImageReveal className="aspect-[4/3] overflow-hidden bg-mist">
             <NextImage
-              src="/about/workshop.webp"
+              src={image}
               alt={`Inside the ${SITE.name} showroom in ${SITE.city}`}
               width={1200}
               height={900}
@@ -384,15 +399,12 @@ export function AboutBand() {
 
         <div>
           <MaskReveal as="h2" className="display text-[clamp(1.85rem,4.6vw,3rem)] text-graphite">
-            About {SITE.name}
+            {heading}
           </MaskReveal>
           <TextReveal delay={0.1} className="mt-6 flex max-w-[58ch] flex-col gap-4 text-[15.5px] leading-[1.85] text-body">
-            <p>
-              Since 2014, {SITE.name} has grown from a motorcycle enthusiast’s dream into Lucknow’s leading destination for superbikes and premium pre-owned motorcycles, serving riders across India.
-            </p>
-            <p>
-              From iconic superbikes to riding gear, accessories, and Pan-India delivery, every machine is carefully evaluated on condition, history, and authenticity so you can buy with total confidence.
-            </p>
+            {paragraphs.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
           </TextReveal>
           <p className="mt-8 font-display text-4xl italic tracking-wide text-graphite">
             {SITE.name}

@@ -22,7 +22,8 @@ about ten minutes, all through the browser.
    order — `0002_storage.sql`, `0003_seed.sql`, `0004_sell_enquiries.sql`,
    `0005_bike_extra_specs.sql`, `0006_wa_agent_dashboard.sql`,
    `0007_accessories.sql`, `0008_accessories_seed.sql`,
-   `0009_site_content.sql`. Each depends on the one before it.
+   `0009_site_content.sql`, `0010_content_and_accessory_categories.sql`.
+   Each depends on the one before it.
 
    All of them are safe to run twice, so if you lose track, just run them
    again in order.
@@ -108,14 +109,17 @@ created once, here:
 - **Bikes** — add one (photos, price, year, km, status), edit any field,
   flip a single switch to mark it sold, delete it.
 - **Accessories** — helmets, jackets, gloves and the like, each with one
-  photo, a price (or blank for "On request"), and an in-stock switch. Shows
-  as a grid at `/accessories`, with a "Show on the homepage" checkbox per
-  item.
-- **Website content** — the homepage "Planning to sell?" photo/headline and
-  each category circle's photo. These are deliberately **not** the same
-  photos as any bike's — editing a bike here can never change what shows on
-  the homepage, and leaving one blank just keeps the photo the site launched
-  with instead of going empty.
+  photo, a category (type a new one or pick an existing one), a price (or
+  blank for "On request"), and an in-stock switch. Shows as a searchable,
+  filterable grid at `/accessories`, with a "Show on the homepage" checkbox
+  per item.
+- **Website content** — every homepage photo and paragraph that isn't tied
+  to a specific bike, review or listing: the "Planning to sell?" panel, the
+  category circles, the About section's photo and copy, the "Trust us"
+  banner, and the footer's About-us blurb. These are deliberately **not**
+  the same photos as any bike's — editing a bike here can never change what
+  shows on the homepage, and leaving any of these blank just keeps what the
+  site launched with instead of going empty.
 - **Extra details** — on any bike, add your own rows to the details table
   (Owners / 2, Services done / 5, Insurance / valid to Mar 2027). Type a
   name and a value, press **+ Add a detail** for another, **×** to remove

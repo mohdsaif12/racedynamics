@@ -6,6 +6,7 @@ import ClosedBanner from "@/components/ClosedBanner";
 import { OrganizationJsonLd } from "@/components/JsonLd";
 import { getCategories } from "@/lib/data/categories";
 import { getSiteSettings } from "@/lib/data/settings";
+import { getSiteContentBlock } from "@/lib/data/siteContent";
 
 /**
  * The public site: smooth scrolling, header, footer, floating contact rail.
@@ -22,9 +23,10 @@ import { getSiteSettings } from "@/lib/data/settings";
  * the same rows.
  */
 export default async function SiteLayout({ children }: LayoutProps<"/">) {
-  const [categories, settings] = await Promise.all([
+  const [categories, settings, footerAbout] = await Promise.all([
     getCategories(),
     getSiteSettings(),
+    getSiteContentBlock("footer_about"),
   ]);
 
   return (
@@ -32,7 +34,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       <ClosedBanner settings={settings} />
       <SiteHeader categories={categories} />
       <main className="flex-1">{children}</main>
-      <SiteFooter settings={settings} />
+      <SiteFooter settings={settings} aboutBody={footerAbout?.body ?? null} />
       <ContactRail settings={settings} />
       <OrganizationJsonLd settings={settings} />
     </SmoothScroll>

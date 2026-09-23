@@ -14,7 +14,7 @@ import {
 import { getAllBikes, getFeaturedBikes } from "@/lib/data/bikes";
 import { getCategories } from "@/lib/data/categories";
 import { getTestimonials } from "@/lib/data/testimonials";
-import { getSiteContentBlock } from "@/lib/data/siteContent";
+import { getAllSiteContentBlocks } from "@/lib/data/siteContent";
 
 /**
  * Homepage — animation hierarchy:
@@ -29,12 +29,12 @@ import { getSiteContentBlock } from "@/lib/data/siteContent";
  * so the page still renders before a Supabase project exists.
  */
 export default async function HomePage() {
-  const [bikes, categories, featured, testimonials, sellContent] = await Promise.all([
+  const [bikes, categories, featured, testimonials, content] = await Promise.all([
     getAllBikes(),
     getCategories(),
     getFeaturedBikes(),
     getTestimonials(),
-    getSiteContentBlock("planning_to_sell"),
+    getAllSiteContentBlocks(),
   ]);
 
   return (
@@ -46,7 +46,7 @@ export default async function HomePage() {
           first; BrowseByCategory rises over it and pins in turn.    */}
       <div className="relative">
         <SectionCard tone="paper" dwell={45}>
-          <PlanningToSell bikes={bikes} content={sellContent} />
+          <PlanningToSell bikes={bikes} content={content.planning_to_sell ?? null} />
         </SectionCard>
 
         <SectionCard tone="ink" dwell={50}>
@@ -58,9 +58,9 @@ export default async function HomePage() {
           Standard scroll with subtle reveals. No sticky pinning.    */}
       <BrowseDatabase bikeCount={bikes.length} />
       <TiltedStrip bikes={bikes} />
-      <TrustBand />
+      <TrustBand content={content.trust_band ?? null} />
       <PopularBikesCarousel bikes={featured} />
-      <AboutBand />
+      <AboutBand content={content.about_band ?? null} />
       <Testimonials testimonials={testimonials} />
       <BrandStrip />
     </>
