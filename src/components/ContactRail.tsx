@@ -5,9 +5,9 @@ import { telLink, whatsappLink } from "@/lib/data/links";
 import type { SiteSettings } from "@/lib/data/types";
 
 /**
- * Fixed WhatsApp + call buttons pinned to the right edge, exactly as on the
- * reference site. On phones it becomes a full-width bottom bar instead, since
- * a right-edge rail eats thumb space.
+ * Fixed WhatsApp + call + directions buttons pinned to the right edge,
+ * exactly as on the reference site. On phones it becomes a full-width bottom
+ * bar instead, since a right-edge rail eats thumb space.
  */
 export default function ContactRail({ settings }: { settings: SiteSettings }) {
   return (
@@ -30,10 +30,19 @@ export default function ContactRail({ settings }: { settings: SiteSettings }) {
         >
           <PhoneIcon />
         </a>
+        <a
+          href={SITE.maps.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Get directions to the shop"
+          className="grid size-11 place-items-center bg-ink text-white transition-colors hover:bg-ink-3"
+        >
+          <LocationIcon />
+        </a>
       </div>
 
       {/* phones — bottom bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 sm:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 sm:hidden">
         <a
           href={whatsappLink(settings)}
           target="_blank"
@@ -47,6 +56,14 @@ export default function ContactRail({ settings }: { settings: SiteSettings }) {
           className="flex items-center justify-center gap-2 bg-red py-3.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-white"
         >
           <PhoneIcon /> Call
+        </a>
+        <a
+          href={SITE.maps.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 bg-ink py-3.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-white"
+        >
+          <LocationIcon /> Location
         </a>
       </div>
     </>
@@ -65,6 +82,14 @@ function PhoneIcon() {
   return (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.03-.24c1.12.37 2.33.57 3.56.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.44.57 3.56a1 1 0 0 1-.25 1.03l-2.2 2.2Z" />
+    </svg>
+  );
+}
+
+function LocationIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 2a7 7 0 0 0-7 7c0 5.5 7 13 7 13s7-7.5 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" />
     </svg>
   );
 }

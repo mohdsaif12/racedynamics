@@ -8,6 +8,7 @@ import type { Category } from "@/lib/data/types";
 
 const NAV = [
   { href: "/inventory", label: "Inventory" },
+  { href: "/accessories", label: "Accessories" },
   { href: "/sell", label: "Sell Us" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },

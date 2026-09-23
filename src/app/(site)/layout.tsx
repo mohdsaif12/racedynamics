@@ -2,6 +2,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactRail from "@/components/ContactRail";
+import ClosedBanner from "@/components/ClosedBanner";
 import { OrganizationJsonLd } from "@/components/JsonLd";
 import { getCategories } from "@/lib/data/categories";
 import { getSiteSettings } from "@/lib/data/settings";
@@ -28,6 +29,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
 
   return (
     <SmoothScroll>
+      <ClosedBanner settings={settings} />
       <SiteHeader categories={categories} />
       <main className="flex-1">{children}</main>
       <SiteFooter settings={settings} />

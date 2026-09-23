@@ -63,6 +63,19 @@ export type SiteSettings = {
   };
 };
 
+export type Accessory = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  /** null when priced on request. */
+  priceINR: number | null;
+  status: "in-stock" | "out-of-stock";
+  featured: boolean;
+  /** Public URL of the cover photo, if one's been uploaded. */
+  image?: string;
+};
+
 export type Testimonial = {
   id: string;
   quote: string;

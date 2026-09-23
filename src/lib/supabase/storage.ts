@@ -13,6 +13,10 @@ export function ownerImageUrl(path: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/owners/${path}`;
 }
 
+export function accessoryImageUrl(path: string) {
+  return `${SUPABASE_URL}/storage/v1/object/public/accessories/${path}`;
+}
+
 /** A collision-safe storage path: keeps the extension, randomises the name. */
 export function newStoragePath(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";

@@ -20,7 +20,8 @@ about ten minutes, all through the browser.
    file, paste into a new query, click **Run**.
 3. Do the same for every other file in `supabase/migrations/`, in number
    order — `0002_storage.sql`, `0003_seed.sql`, `0004_sell_enquiries.sql`,
-   `0005_bike_extra_specs.sql`. Each depends on the one before it.
+   `0005_bike_extra_specs.sql`, `0006_wa_agent_dashboard.sql`,
+   `0007_accessories.sql`. Each depends on the one before it.
 
    All of them are safe to run twice, so if you lose track, just run them
    again in order.
@@ -105,6 +106,10 @@ created once, here:
 
 - **Bikes** — add one (photos, price, year, km, status), edit any field,
   flip a single switch to mark it sold, delete it.
+- **Accessories** — helmets, jackets, gloves and the like, each with one
+  photo, a price (or blank for "On request"), and an in-stock switch. Shows
+  as a grid at `/accessories`, with a "Show on the homepage" checkbox per
+  item.
 - **Extra details** — on any bike, add your own rows to the details table
   (Owners / 2, Services done / 5, Insurance / valid to Mar 2027). Type a
   name and a value, press **+ Add a detail** for another, **×** to remove

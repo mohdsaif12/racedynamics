@@ -46,6 +46,7 @@ export default function SiteFooter({ settings }: { settings: SiteSettings }) {
               { href: "/", label: "Home" },
               { href: "/about", label: "About us" },
               { href: "/inventory", label: "Inventory" },
+              { href: "/accessories", label: "Accessories" },
               { href: "/sell", label: "Sell us" },
               { href: "/contact", label: "Contact" },
             ].map((l) => (
