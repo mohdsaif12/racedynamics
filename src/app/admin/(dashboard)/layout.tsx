@@ -8,6 +8,7 @@ const NAV = [
   { href: "/admin/bikes", label: "Bikes", icon: BikeIcon },
   { href: "/admin/accessories", label: "Accessories", icon: BoxIcon },
   { href: "/admin/content", label: "Website content", icon: ImageIcon },
+  { href: "/admin/appointments", label: "Appointments", icon: CalendarIcon },
   { href: "/admin/enquiries", label: "Enquiries", icon: InboxIcon },
   { href: "/admin/categories", label: "Categories", icon: TagIcon },
   { href: "/admin/testimonials", label: "Reviews", icon: StarIcon },
@@ -84,7 +85,7 @@ export default async function AdminLayout({
       </aside>
 
       {/* ------------------------------------------------------- mobile nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-7 border-t border-line bg-white lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-8 border-t border-line bg-white lg:hidden">
         {NAV.map((item) => (
           <Link
             key={item.href}
@@ -102,6 +103,14 @@ export default async function AdminLayout({
   );
 }
 
+function CalendarIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="3.5" y="5" width="17" height="15" rx="1.6" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
 function InboxIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
