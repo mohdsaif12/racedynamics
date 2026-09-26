@@ -11,8 +11,14 @@
 const FALLBACK = "http://localhost:3000";
 
 function resolve() {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/+$/, "");
+  // Tolerate a bare domain ("www.example.com") — new URL() in the root
+  // layout's metadataBase throws on anything without a scheme, which fails
+  // the whole build.
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (explicit) {
+    const withScheme = /^https?:\/\//i.test(explicit) ? explicit : `https://${explicit}`;
+    return withScheme.replace(/\/+$/, "");
+  }
 
   const vercel = process.env.NEXT_PUBLIC_VERCEL_URL ?? process.env.VERCEL_URL;
   if (vercel) return `https://${vercel.replace(/^https?:\/\//, "").replace(/\/+$/, "")}`;
