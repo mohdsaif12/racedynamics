@@ -347,6 +347,27 @@ export default function InventoryBrowser({
                 </motion.div>
               </AnimatePresence>
             </dl>
+
+            {/* Phones never reach the lg: spec column above, and the detail
+                band with the same info sits a full viewport of scrolling
+                away — so give the essentials right here, compact. */}
+            <dl className="col-span-2 px-4 pb-2 lg:hidden">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={bike.slug}
+                  initial={reduced ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduced ? undefined : { opacity: 0, y: -8 }}
+                  transition={{ ...swap, delay: reduced ? 0 : 0.05 }}
+                  className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-center"
+                >
+                  <span className="text-[13px] font-bold text-white">{bike.fullName}</span>
+                  <span className="figure-nums text-[12px] text-white/60">
+                    {formatKm(bike.km)} · {bike.year}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
+            </dl>
           </div>
         ) : (
           <div className="relative flex flex-1 items-center justify-center px-5 text-center">
@@ -384,7 +405,7 @@ export default function InventoryBrowser({
             <div className="flex shrink-0 items-center gap-4 pb-0 pr-0">
               {/* The GO block alone didn't read as "there is more below" —
                   people took it for a decorative corner. */}
-              <span className="hidden pb-7 text-right text-[11px] leading-relaxed tracking-[0.14em] text-white/45 sm:block">
+              <span className="max-w-[7rem] pb-7 text-right text-[10px] leading-relaxed tracking-[0.14em] text-white/45 sm:max-w-none sm:text-[11px]">
                 Scroll down for
                 <br />
                 full details

@@ -9,6 +9,13 @@ export function bikeImageUrl(path: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/bikes/${path}`;
 }
 
+/** Homepage showcase-card videos — see supabase/migrations/0012. Bucket id
+ *  is literally "bike videos" (with a space), so both segments need
+ *  encoding for a valid URL. */
+export function bikeVideoUrl(path: string) {
+  return `${SUPABASE_URL}/storage/v1/object/public/${encodeURIComponent("bike videos")}/${encodeURIComponent(path)}`;
+}
+
 export function ownerImageUrl(path: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/owners/${path}`;
 }

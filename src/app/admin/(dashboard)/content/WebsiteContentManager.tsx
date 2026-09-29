@@ -35,6 +35,19 @@ type BlockConfig = {
 /** Each editable homepage block, in the order it appears on the page. */
 const BLOCKS: BlockConfig[] = [
   {
+    key: "about_page",
+    title: "About page",
+    description: "The header, hero photo and opening paragraphs on the standalone /about page.",
+    heading: { label: "Headline (H1)", placeholder: "Lucknow’s Destination for Superbikes & Premium Motorcycles" },
+    subheading: { label: "Intro line", placeholder: "Since 2014, Race Dynamics has been driven by one thing — a genuine passion for exceptional motorcycles." },
+    body: { label: "Opening paragraphs", placeholder: "One paragraph per line. Leave a blank line between paragraphs.", rows: 6 },
+    image: {
+      defaultSrc: "/about/workshop.webp",
+      help: "The wide showcase banner near the top of the page — a normal photo, no cut-out needed.",
+      requireCutout: false,
+    },
+  },
+  {
     key: "planning_to_sell",
     title: "Homepage — “Planning to sell?”",
     description: "The panel near the top of the homepage that sends people to the sell-your-bike page.",

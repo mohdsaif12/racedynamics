@@ -151,12 +151,22 @@ export default function SiteFooter({
           © {new Date().getFullYear()} {SITE.name}, {SITE.city}. All rights
           reserved.
         </p>
-        <Link
-          href="/privacy"
-          className="text-[12.5px] text-slate transition-colors hover:text-red"
-        >
-          Privacy policy
-        </Link>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <Link
+            href="/privacy"
+            className="text-[12.5px] text-slate transition-colors hover:text-red"
+          >
+            Privacy policy
+          </Link>
+          <a
+            href="https://taskkshiftai.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[12px] text-slate/70 transition-colors hover:text-red"
+          >
+            Powered by <span className="font-semibold text-slate">Task Shift AI</span>
+          </a>
+        </div>
       </div>
     </footer>
   );

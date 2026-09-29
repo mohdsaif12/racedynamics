@@ -15,6 +15,7 @@ import { getAllBikes, getFeaturedBikes } from "@/lib/data/bikes";
 import { getCategories } from "@/lib/data/categories";
 import { getTestimonials } from "@/lib/data/testimonials";
 import { getAllSiteContentBlocks } from "@/lib/data/siteContent";
+import { getShowcaseVideos } from "@/lib/data/videos";
 
 /**
  * Homepage — animation hierarchy:
@@ -29,12 +30,13 @@ import { getAllSiteContentBlocks } from "@/lib/data/siteContent";
  * so the page still renders before a Supabase project exists.
  */
 export default async function HomePage() {
-  const [bikes, categories, featured, testimonials, content] = await Promise.all([
+  const [bikes, categories, featured, testimonials, content, showcaseVideos] = await Promise.all([
     getAllBikes(),
     getCategories(),
     getFeaturedBikes(),
     getTestimonials(),
     getAllSiteContentBlocks(),
+    getShowcaseVideos(),
   ]);
 
   return (
@@ -57,7 +59,7 @@ export default async function HomePage() {
       {/* ── NORMAL ZONE ─────────────────────────────────────────────
           Standard scroll with subtle reveals. No sticky pinning.    */}
       <BrowseDatabase bikeCount={bikes.length} />
-      <TiltedStrip bikes={bikes} />
+      <TiltedStrip bikes={bikes} videos={showcaseVideos} />
       <TrustBand content={content.trust_band ?? null} />
       <PopularBikesCarousel bikes={featured} />
       <AboutBand content={content.about_band ?? null} />

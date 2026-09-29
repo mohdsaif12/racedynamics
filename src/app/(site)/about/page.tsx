@@ -3,6 +3,7 @@ import NextImage from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 import { ChecklistIcon, PaperworkIcon, SoldBadgeIcon, SpecsIcon } from "@/components/icons";
+import { getSiteContentBlock } from "@/lib/data/siteContent";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -10,24 +11,43 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
-export default function AboutPage() {
+const DEFAULT_HEADING = "Lucknow’s Destination for Superbikes & Premium Motorcycles";
+const DEFAULT_SUBHEADING =
+  "Since 2014, Race Dynamics has been driven by one thing — a genuine passion for exceptional motorcycles.";
+const DEFAULT_BODY = [
+  "Over the years, we have grown from a motorcycle enthusiast’s dream into one of the leading destinations for superbikes and premium pre-owned motorcycles in Lucknow, serving riders across India.",
+  "From iconic superbikes and performance motorcycles to carefully selected premium pre-owned machines, we bring together motorcycles that stand out for their performance, character and desirability.",
+  "And with Pan-India delivery, your next dream motorcycle is never too far away.",
+].join("\n\n");
+const DEFAULT_IMAGE = "/about/workshop.webp";
+
+export default async function AboutPage() {
+  const content = await getSiteContentBlock("about_page");
+  const heading = content?.heading || DEFAULT_HEADING;
+  const subheading = content?.subheading || DEFAULT_SUBHEADING;
+  const paragraphs = (content?.body || DEFAULT_BODY)
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const image = content?.image || DEFAULT_IMAGE;
+
   return (
     <article className="mx-auto max-w-[1200px] px-5 py-14 lg:px-10">
       {/* Editorial Header */}
       <header className="mx-auto max-w-3xl text-center">
         <span className="eyebrow text-red tracking-[0.2em]">ESTABLISHED 2014 · LUCKNOW</span>
         <h1 className="display mt-3 text-[clamp(2.25rem,5vw,3.75rem)] text-graphite leading-[1.15]">
-          Lucknow’s Destination for Superbikes & Premium Motorcycles
+          {heading}
         </h1>
         <p className="mt-5 text-[18px] font-medium leading-relaxed text-slate">
-          Since 2014, Race Dynamics has been driven by one thing — a genuine passion for exceptional motorcycles.
+          {subheading}
         </p>
       </header>
 
       {/* Main Showcase Banner */}
       <div className="mt-12 overflow-hidden border border-line bg-mist shadow-sm aspect-[16/9] lg:aspect-[21/9] relative">
         <NextImage
-          src="/about/workshop.webp"
+          src={image}
           alt={`Inside the ${SITE.name} showroom and workshop in ${SITE.city}`}
           fill
           sizes="100vw"
@@ -58,17 +78,11 @@ export default function AboutPage() {
 
       {/* Unified Reading Stream */}
       <div className="mx-auto mt-14 max-w-3xl space-y-12 text-[17px] leading-[1.85] text-body">
-        {/* Section 1 */}
+        {/* Section 1 — admin-editable via Website content → About page */}
         <section className="space-y-4">
-          <p>
-            Over the years, we have grown from a motorcycle enthusiast’s dream into one of the leading destinations for superbikes and premium pre-owned motorcycles in Lucknow, serving riders across India.
-          </p>
-          <p>
-            From iconic superbikes and performance motorcycles to carefully selected premium pre-owned machines, we bring together motorcycles that stand out for their performance, character and desirability.
-          </p>
-          <p>
-            And with <strong>Pan-India delivery</strong>, your next dream motorcycle is never too far away.
-          </p>
+          {paragraphs.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
         </section>
 
         {/* Section 2 */}
