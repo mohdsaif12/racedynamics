@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: absoluteUrl("/inventory"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: absoluteUrl("/accessories"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: absoluteUrl("/sell"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: absoluteUrl("/about"), lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: absoluteUrl("/contact"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },

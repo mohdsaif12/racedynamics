@@ -160,11 +160,18 @@ export function TiltedStrip({ bikes, videos }: { bikes: Bike[]; videos: string[]
     <section className="overflow-hidden bg-paper py-14 lg:py-20">
       <Parallax distance={34}>
       <RevealGroup selector="li" stagger={0.08} y={40}>
-        <ul className={`${WRAP} flex items-center justify-center gap-5`}>
+        {/* Mobile: horizontal scroll with fixed-size cards. 5 equal-width flex
+            items plus gaps always exceed 100% of the container, so flexbox
+            shrinks them all back down to roughly the same size no matter what
+            percentage width is requested — the only way to make them
+            genuinely bigger on a phone is to stop forcing all 5 into one row. */}
+        <ul
+          className={`${WRAP} flex items-center gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory sm:justify-center sm:gap-5 sm:overflow-visible sm:pb-0 sm:snap-none`}
+        >
           {Array.from({ length: count }, (_, i) => (
             <li
               key={useVideos ? videos[i] : strip[i].slug}
-              className="grid aspect-[3/5] w-1/5 max-w-56 place-items-center overflow-hidden bg-mist shadow-sm"
+              className="grid aspect-[3/5] w-40 shrink-0 snap-center place-items-center overflow-hidden bg-mist shadow-sm sm:w-1/5 sm:max-w-56 sm:shrink"
               style={{ transform: `rotate(-8deg) translateY(${i % 2 ? 34 : 0}px)` }}
             >
               {useVideos ? (

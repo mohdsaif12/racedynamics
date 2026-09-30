@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { bikeVideoUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
@@ -13,18 +14,22 @@ const VIDEO_EXT = /\.(mp4|webm|mov|m4v)$/i;
  * upload screen for these yet; drop a file in via the Supabase dashboard and
  * it shows up on the next request.
  */
-export async function getShowcaseVideos(limit = 5): Promise<string[]> {
-  if (!hasSupabase) return [];
+export const getShowcaseVideos = unstable_cache(
+  async (limit = 5): Promise<string[]> => {
+    if (!hasSupabase) return [];
 
-  const supabase = getSupabasePublic();
-  const { data, error } = await supabase!.storage
-    .from("bike videos")
-    .list("", { limit: 100, sortBy: { column: "name", order: "asc" } });
+    const supabase = getSupabasePublic();
+    const { data, error } = await supabase!.storage
+      .from("bike videos")
+      .list("", { limit: 100, sortBy: { column: "name", order: "asc" } });
 
-  if (error || !data) return [];
+    if (error || !data) return [];
 
-  return data
-    .filter((f) => VIDEO_EXT.test(f.name))
-    .slice(0, limit)
-    .map((f) => bikeVideoUrl(f.name));
-}
+    return data
+      .filter((f) => VIDEO_EXT.test(f.name))
+      .slice(0, limit)
+      .map((f) => bikeVideoUrl(f.name));
+  },
+  ["showcase-videos"],
+  { revalidate: 60, tags: ["videos"] },
+);

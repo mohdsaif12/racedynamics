@@ -58,3 +58,11 @@ export function reducedMotion(): boolean {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 }
+
+/** True on touch / stylus screens — coarse pointer = phone or tablet. */
+export function coarsePointer(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}

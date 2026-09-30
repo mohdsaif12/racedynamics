@@ -94,8 +94,23 @@ export default function InventoryBrowser({
   const reduced = useReducedMotion() ?? false;
   const searchRef = useRef<HTMLInputElement>(null);
   const firstRun = useRef(true);
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const tabsMounted = useRef(false);
 
   const TABS = [{ slug: ALL, name: "All" }, ...categories];
+
+  /* Keeps the active category tab scrolled into the centre of the strip —
+     on a phone the row overflows and centring it via `justify-center` alone
+     clips both ends instead of letting you scroll to them, so this drives it
+     with scrollIntoView instead. Instant on mount, smooth on every tap after. */
+  useEffect(() => {
+    tabRefs.current[cat]?.scrollIntoView({
+      behavior: tabsMounted.current ? "smooth" : "auto",
+      inline: "center",
+      block: "nearest",
+    });
+    tabsMounted.current = true;
+  }, [cat]);
 
   const list = bikes.filter(
     (b) => (cat === ALL || b.category === cat) && matches(b, q),
@@ -188,17 +203,20 @@ export default function InventoryBrowser({
 
           <nav
             aria-label="Categories"
-            className="flex flex-1 justify-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="flex flex-1 gap-1 overflow-x-auto scroll-px-5 snap-x snap-proximity [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:justify-center"
           >
             {TABS.map((t) => {
               const on = t.slug === cat;
               return (
                 <button
                   key={t.slug}
+                  ref={(el) => {
+                    tabRefs.current[t.slug] = el;
+                  }}
                   type="button"
                   onClick={() => chooseCategory(t.slug)}
                   aria-pressed={on}
-                  className={`shrink-0 px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.16em] transition-colors duration-200 ${
+                  className={`shrink-0 snap-center px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.16em] transition-colors duration-200 ${
                     on ? A_TEXT : "text-white/75 hover:text-white"
                   }`}
                 >
@@ -251,7 +269,7 @@ export default function InventoryBrowser({
 
         {/* -------------------------------------------------------- stage */}
         {bike ? (
-          <div className="relative grid flex-1 grid-cols-[64px_minmax(0,1fr)] items-center lg:grid-cols-[130px_minmax(0,1fr)_230px]">
+          <div className="relative grid flex-1 grid-cols-[64px_minmax(0,1fr)] items-center gap-x-3 lg:grid-cols-[130px_minmax(0,1fr)_230px] lg:gap-x-0">
             <nav
               aria-label="Machine index"
               className="flex flex-col items-center gap-12 pl-2 lg:items-start lg:gap-16 lg:pl-10"
@@ -404,8 +422,12 @@ export default function InventoryBrowser({
           {bike && (
             <div className="flex shrink-0 items-center gap-4 pb-0 pr-0">
               {/* The GO block alone didn't read as "there is more below" —
-                  people took it for a decorative corner. */}
-              <span className="max-w-[7rem] pb-7 text-right text-[10px] leading-relaxed tracking-[0.14em] text-white/45 sm:max-w-none sm:text-[11px]">
+                  people took it for a decorative corner. Hidden below sm:
+                  on a narrow phone this text plus the social icons/counter
+                  on the other side don't both fit on one row, so this and
+                  the GO block collided with each other. The red block alone
+                  still reads as a CTA on its own at that width. */}
+              <span className="hidden max-w-none pb-7 text-right text-[11px] leading-relaxed tracking-[0.14em] text-white/45 sm:block">
                 Scroll down for
                 <br />
                 full details

@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { bikeImageUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
@@ -105,35 +106,44 @@ const SELECT = `
   bike_images ( path, sort_order )
 `;
 
-/** Every bike in stock, newest first. */
-export async function getAllBikes(): Promise<Bike[]> {
-  if (!hasSupabase) return fromSeed();
+/** Every bike in stock, newest first. Cached for 60 s to avoid a Supabase
+ *  round-trip on every page load while keeping inventory reasonably fresh. */
+export const getAllBikes = unstable_cache(
+  async (): Promise<Bike[]> => {
+    if (!hasSupabase) return fromSeed();
 
-  const supabase = getSupabasePublic();
-  const { data, error } = await supabase!
-    .from("bikes")
-    .select(SELECT)
-    .order("created_at", { ascending: false });
+    const supabase = getSupabasePublic();
+    const { data, error } = await supabase!
+      .from("bikes")
+      .select(SELECT)
+      .order("created_at", { ascending: false });
 
-  if (error || !data) return fromSeed();
-  return (data as unknown as Row[]).map(mapRow);
-}
+    if (error || !data) return fromSeed();
+    return (data as unknown as Row[]).map(mapRow);
+  },
+  ["all-bikes"],
+  { revalidate: 60, tags: ["bikes"] },
+);
 
-export async function getBikeBySlug(slug: string): Promise<Bike | undefined> {
-  if (!hasSupabase) return fromSeed().find((b) => b.slug === slug);
+export const getBikeBySlug = unstable_cache(
+  async (slug: string): Promise<Bike | undefined> => {
+    if (!hasSupabase) return fromSeed().find((b) => b.slug === slug);
 
-  const supabase = getSupabasePublic();
-  const { data, error } = await supabase!
-    .from("bikes")
-    .select(SELECT)
-    .eq("slug", slug)
-    .maybeSingle();
+    const supabase = getSupabasePublic();
+    const { data, error } = await supabase!
+      .from("bikes")
+      .select(SELECT)
+      .eq("slug", slug)
+      .maybeSingle();
 
-  if (error || !data) return undefined;
-  return mapRow(data as unknown as Row);
-}
+    if (error || !data) return undefined;
+    return mapRow(data as unknown as Row);
+  },
+  ["bike-by-slug"],
+  { revalidate: 60, tags: ["bikes"] },
+);
 
-/** The three-or-so bikes marked `featured`, for the homepage showroom. */
+/** Featured bikes — reuses the cached getAllBikes result, zero extra queries. */
 export async function getFeaturedBikes(): Promise<Bike[]> {
   const all = await getAllBikes();
   const featured = all.filter((b) => b.image && b.featured);

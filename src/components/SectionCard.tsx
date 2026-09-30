@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { coarsePointer } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -68,7 +69,10 @@ export default function SectionCard({
     () => {
       const el = ref.current;
       if (!el) return;
+      // Skip scroll-scrubbed border-radius on touch devices — this animation
+      // runs on every scroll tick and is a measurable source of mobile jank.
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (coarsePointer()) return;
 
       // The rounded edge is pronounced while the card is rising and flattens
       // as it locks against the top of the viewport.

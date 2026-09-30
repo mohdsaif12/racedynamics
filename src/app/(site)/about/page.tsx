@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import NextImage from "next/image";
 import Link from "next/link";
 import { SITE } from "@/lib/site";
-import { ChecklistIcon, PaperworkIcon, SoldBadgeIcon, SpecsIcon } from "@/components/icons";
 import { getSiteContentBlock } from "@/lib/data/siteContent";
 
 export const metadata: Metadata = {

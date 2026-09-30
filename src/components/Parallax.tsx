@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { EASE, PARALLAX, reducedMotion } from "@/lib/motion";
+import { EASE, PARALLAX, reducedMotion, coarsePointer } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -13,6 +13,10 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  *
  * Travel is capped at a few dozen pixels — enough to read as depth, far short
  * of the exaggerated parallax that makes a page feel unstable.
+ *
+ * Disabled on touch/mobile — scroll-scrubbed transforms on coarse-pointer
+ * devices burn through the main thread during momentum scrolling, causing
+ * visible stutter. The visual payoff is too small to justify it.
  */
 export default function Parallax({
   children,
@@ -29,7 +33,8 @@ export default function Parallax({
   useGSAP(
     () => {
       const el = ref.current;
-      if (!el || reducedMotion()) return;
+      // Skip on touch devices (phone/tablet) and reduced-motion prefs.
+      if (!el || reducedMotion() || coarsePointer()) return;
 
       gsap.fromTo(
         el,

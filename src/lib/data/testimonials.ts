@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { ownerImageUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
@@ -102,22 +103,26 @@ const SEED: Testimonial[] = [
   },
 ];
 
-export async function getTestimonials(): Promise<Testimonial[]> {
-  if (!hasSupabase) return SEED;
+export const getTestimonials = unstable_cache(
+  async (): Promise<Testimonial[]> => {
+    if (!hasSupabase) return SEED;
 
-  const supabase = getSupabasePublic();
-  const { data, error } = await supabase!
-    .from("testimonials")
-    .select("id, quote, name, bike_bought, photo_path")
-    .order("sort_order", { ascending: true });
+    const supabase = getSupabasePublic();
+    const { data, error } = await supabase!
+      .from("testimonials")
+      .select("id, quote, name, bike_bought, photo_path")
+      .order("sort_order", { ascending: true });
 
-  if (error || !data || data.length === 0) return SEED;
+    if (error || !data || data.length === 0) return SEED;
 
-  return data.map((row) => ({
-    id: row.id,
-    quote: row.quote,
-    name: row.name,
-    bikeBought: row.bike_bought,
-    photo: row.photo_path ? ownerImageUrl(row.photo_path) : undefined,
-  }));
-}
+    return data.map((row) => ({
+      id: row.id,
+      quote: row.quote,
+      name: row.name,
+      bikeBought: row.bike_bought,
+      photo: row.photo_path ? ownerImageUrl(row.photo_path) : undefined,
+    }));
+  },
+  ["testimonials"],
+  { revalidate: 60, tags: ["testimonials"] },
+);
