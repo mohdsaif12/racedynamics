@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { AdminAppointment, AppointmentStatus } from "@/lib/appointments";
 import { formatDay, monthGrid, monthKey, monthLabel } from "@/lib/calendar";
 import AppointmentCard, { STATUS_DOT } from "./AppointmentCard";
 import NewBookingForm from "./NewBookingForm";
+import { getMonthAppointments } from "./actions";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -23,10 +24,11 @@ export default function AppointmentCalendar({
   year,
   month,
   today,
-  appointments,
+  appointments: initialAppointments,
   undated,
   bikes,
   webhookConfigured,
+  stats,
 }: {
   year: number;
   month: number;
@@ -35,13 +37,73 @@ export default function AppointmentCalendar({
   undated: AdminAppointment[];
   bikes: { id: string; label: string }[];
   webhookConfigured: boolean;
+  /** Agent analytics, rendered between the header and the month grid. */
+  stats?: React.ReactNode;
 }) {
-  const cells = useMemo(() => monthGrid(year, month), [year, month]);
-  const isCurrentMonth = monthKey(year, month) === today.slice(0, 7);
-  const [selected, setSelected] = useState(
-    isCurrentMonth ? today : cells.find((c) => c.inMonth)!.iso,
-  );
+  const todayKey = today.slice(0, 7);
+  const [view, setView] = useState({ year, month });
+  const viewKey = monthKey(view.year, view.month);
+  const cells = useMemo(() => monthGrid(view.year, view.month), [view.year, view.month]);
+  const isCurrentMonth = viewKey === todayKey;
+  const [selected, setSelected] = useState(isCurrentMonth ? today : `${viewKey}-01`);
   const [booking, setBooking] = useState(false);
+
+  // Months are switched client-side and loaded through a Server Action, so
+  // the grid changes instantly instead of waiting on a full page render.
+  const [months, setMonths] = useState<Record<string, AdminAppointment[]>>(() => ({
+    [monthKey(year, month)]: initialAppointments,
+  }));
+  const [serverData, setServerData] = useState(initialAppointments);
+  const [serverView, setServerView] = useState({ year, month });
+  const source = useRef(initialAppointments);
+  const inFlight = useRef(new Set<string>());
+  if (serverData !== initialAppointments) {
+    // The page re-rendered on the server (e.g. a status change revalidated
+    // it): take its month as fresh and drop the others so they reload.
+    setServerData(initialAppointments);
+    setMonths({ [monthKey(year, month)]: initialAppointments });
+    // A real navigation (e.g. the sidebar link) can land on another month.
+    if (serverView.year !== year || serverView.month !== month) {
+      setServerView({ year, month });
+      setView({ year, month });
+      setSelected(monthKey(year, month) === todayKey ? today : `${monthKey(year, month)}-01`);
+    }
+  }
+
+  useEffect(() => {
+    // Responses fetched before a server re-render are stale; ignore them.
+    if (source.current !== serverData) {
+      source.current = serverData;
+      inFlight.current = new Set();
+    }
+    const snapshot = serverData;
+    const pending = inFlight.current;
+    // Load the visible month first, then prefetch its neighbours.
+    const wanted = [viewKey, monthKey(view.year, view.month - 1), monthKey(view.year, view.month + 1)];
+    for (const key of wanted) {
+      if (months[key] || pending.has(key)) continue;
+      pending.add(key);
+      getMonthAppointments(key)
+        .then((list) => {
+          if (source.current === snapshot) setMonths((prev) => ({ ...prev, [key]: list }));
+        })
+        .catch(() => {})
+        .finally(() => pending.delete(key));
+    }
+  }, [viewKey, view.year, view.month, months, serverData]);
+
+  const monthList = months[viewKey];
+  const appointments = useMemo(() => monthList ?? [], [monthList]);
+  const loading = !monthList;
+
+  function goTo(y: number, m: number) {
+    const d = new Date(Date.UTC(y, m, 1));
+    const next = { year: d.getUTCFullYear(), month: d.getUTCMonth() };
+    const key = monthKey(next.year, next.month);
+    setView(next);
+    setSelected(key === todayKey ? today : `${key}-01`);
+    window.history.replaceState(null, "", key === todayKey ? "/admin/appointments" : `?month=${key}`);
+  }
 
   const byDay = useMemo(() => {
     const map = new Map<string, AdminAppointment[]>();
@@ -98,28 +160,35 @@ export default function AppointmentCalendar({
         />
       )}
 
+      {stats}
+
       {/* ---------------------------------------------------- month nav */}
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-bold text-graphite">{monthLabel(year, month)}</h2>
+        <h2 className="text-xl font-bold text-graphite">{monthLabel(view.year, view.month)}</h2>
         <div className="flex items-center gap-2">
-          <MonthLink href={`?month=${monthKey(year, month - 1)}`} label="Previous month">
+          <MonthButton onClick={() => goTo(view.year, view.month - 1)} label="Previous month">
             <Chevron dir="left" />
-          </MonthLink>
-          <Link
-            href="/admin/appointments"
-            onClick={() => isCurrentMonth && setSelected(today)}
+          </MonthButton>
+          <button
+            type="button"
+            onClick={() => goTo(Number(today.slice(0, 4)), Number(today.slice(5, 7)) - 1)}
             className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold text-graphite hover:border-graphite"
           >
             Today
-          </Link>
-          <MonthLink href={`?month=${monthKey(year, month + 1)}`} label="Next month">
+          </button>
+          <MonthButton onClick={() => goTo(view.year, view.month + 1)} label="Next month">
             <Chevron dir="right" />
-          </MonthLink>
+          </MonthButton>
         </div>
       </div>
 
       {/* --------------------------------------------------------- grid */}
-      <div className="mt-4 overflow-x-auto rounded-2xl bg-white p-3 shadow-sm">
+      <div
+        aria-busy={loading}
+        className={`mt-4 overflow-x-auto rounded-2xl bg-white p-3 shadow-sm transition-opacity ${
+          loading ? "opacity-60" : ""
+        }`}
+      >
         <div className="min-w-[42rem]">
           <div className="grid grid-cols-7 gap-1.5 pb-1.5">
             {WEEKDAYS.map((d) => (
@@ -213,7 +282,7 @@ export default function AppointmentCalendar({
         </h3>
         {selectedList.length === 0 ? (
           <div className="mt-3 rounded-2xl border border-dashed border-line p-8 text-center text-[14px] text-slate">
-            Nothing booked on this day.
+            {loading ? "Loading…" : "Nothing booked on this day."}
           </div>
         ) : (
           <div className="mt-3 flex flex-col gap-3">
@@ -244,23 +313,24 @@ export default function AppointmentCalendar({
   );
 }
 
-function MonthLink({
-  href,
+function MonthButton({
+  onClick,
   label,
   children,
 }: {
-  href: string;
+  onClick: () => void;
   label: string;
   children: React.ReactNode;
 }) {
   return (
-    <Link
-      href={href}
+    <button
+      type="button"
+      onClick={onClick}
       aria-label={label}
       className="grid size-10 place-items-center rounded-full border border-line bg-white text-graphite hover:border-graphite"
     >
       {children}
-    </Link>
+    </button>
   );
 }
 
