@@ -169,13 +169,6 @@ export default function AppointmentCalendar({
           <MonthButton onClick={() => goTo(view.year, view.month - 1)} label="Previous month">
             <Chevron dir="left" />
           </MonthButton>
-          <button
-            type="button"
-            onClick={() => goTo(Number(today.slice(0, 4)), Number(today.slice(5, 7)) - 1)}
-            className="rounded-full border border-line bg-white px-4 py-2 text-[14px] font-semibold text-graphite hover:border-graphite"
-          >
-            Today
-          </button>
           <MonthButton onClick={() => goTo(view.year, view.month + 1)} label="Next month">
             <Chevron dir="right" />
           </MonthButton>
