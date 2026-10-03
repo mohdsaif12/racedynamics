@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { DUR, EASE, SHIFT, START, reducedMotion } from "@/lib/motion";
+import { DUR, EASE, SHIFT, reducedMotion, revealDur, revealStart } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -34,10 +34,10 @@ export default function TextReveal({
       gsap.to(el, {
         autoAlpha: 1,
         y: 0,
-        duration: DUR.reveal,
-        delay,
+        duration: revealDur(DUR.reveal),
+        delay: revealDur(delay),
         ease: EASE.out,
-        scrollTrigger: { trigger: el, start: START, once: true },
+        scrollTrigger: { trigger: el, start: revealStart(), once: true },
       });
     },
     { scope: ref },

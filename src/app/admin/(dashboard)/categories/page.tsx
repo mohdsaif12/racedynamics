@@ -8,11 +8,8 @@ export default async function AdminCategoriesPage() {
       <h1 className="text-2xl font-bold text-graphite">Categories</h1>
       <p className="mt-1 text-[14px] text-slate">
         These show up as the tabs across the top of the Inventory page and the
-        circles on the homepage. To change a circle&rsquo;s photo, go to{" "}
-        <a href="/admin/content" className="font-semibold text-red hover:underline">
-          Website content
-        </a>
-        .
+        circles on the homepage. Press <strong>Edit</strong> on a category to
+        add or change its photo.
       </p>
       <CategoryManager initial={categories} />
     </div>

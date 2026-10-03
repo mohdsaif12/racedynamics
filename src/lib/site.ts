@@ -15,6 +15,13 @@ export const SITE = {
 
   phonePrimary: "+91 98896 68858",
   phoneSecondary: "",
+  /** Default grouped numbers, as the client sent them. The live list is
+   *  edited from /admin/settings — see supabase/migrations/0014. */
+  phoneGroups: [
+    { label: "Sales team", numbers: ["+91 63921 68237", "+91 93362 29652"] },
+    { label: "For selling your bike", numbers: ["+91 91184 52729"] },
+    { label: "Lamination & servicing", numbers: ["+91 95556 33948"] },
+  ],
   whatsapp: "919889668858",
   email: "racedynamicslucknow@gmail.com",
   address: "Shop No. 529 D, Kalyanpur, Near Shukla Marble & Granite, Ring Road, Lucknow, UP 226022",
@@ -28,6 +35,14 @@ export const SITE = {
     lng: 80.96405,
     url: "https://www.google.com/maps/place/26%C2%B054'09.9%22N+80%C2%B057'50.6%22E/@26.902746,80.9614751,17z/data=!3m1!4b1!4m4!3m3!8m2!3d26.902746!4d80.96405",
   },
+
+  /** Shown on the contact page and footer, and mirrored in the JSON-LD.
+   *  Closed every Wednesday — see also ClosedBanner. */
+  hours: [
+    { days: "Mon, Tue, Thu – Sat", time: "10:00 – 19:30" },
+    { days: "Wednesday", time: "Closed" },
+    { days: "Sunday", time: "By appointment" },
+  ],
 
   social: {
     instagram: "https://www.instagram.com/racedynamicslucknow/?hl=en",

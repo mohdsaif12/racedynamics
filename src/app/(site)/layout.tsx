@@ -32,7 +32,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <SmoothScroll>
       <ClosedBanner settings={settings} />
-      <SiteHeader categories={categories} />
+      <SiteHeader categories={categories} logoUrl={settings.logoUrl} />
       <main className="flex-1">{children}</main>
       <SiteFooter settings={settings} aboutBody={footerAbout?.body ?? null} />
       <ContactRail settings={settings} />

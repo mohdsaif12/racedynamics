@@ -73,6 +73,13 @@ export default async function AdminLayout({
 
         <div className="border-t border-white/10 p-3">
           <Link
+            href="/admin/settings#password"
+            className="flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <KeyIcon />
+            Change password
+          </Link>
+          <Link
             href="/"
             target="_blank"
             className="flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-semibold text-white/60 transition-colors hover:bg-white/10 hover:text-white"
@@ -164,6 +171,14 @@ function GearIcon() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
       <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1.6" />
       <path d="M19 12a7 7 0 0 0-.15-1.4l2-1.5-2-3.4-2.4.9a7 7 0 0 0-2.4-1.4L13.6 3h-3.2l-.45 2.2a7 7 0 0 0-2.4 1.4l-2.4-.9-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .48.05.95.15 1.4l-2 1.5 2 3.4 2.4-.9a7 7 0 0 0 2.4 1.4l.45 2.2h3.2l.45-2.2a7 7 0 0 0 2.4-1.4l2.4.9 2-3.4-2-1.5c.1-.45.15-.92.15-1.4Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function KeyIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="8" cy="15" r="4" stroke="currentColor" strokeWidth="1.6" />
+      <path d="m11 12 8.5-8.5M16 7l2.5 2.5M14 9l2 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }

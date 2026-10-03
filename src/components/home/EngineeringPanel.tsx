@@ -4,21 +4,22 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { DUR, EASE, SHIFT, reducedMotion } from "@/lib/motion";
+import { DUR, EASE, SHIFT, STAGGER, coarsePointer, reducedMotion } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /**
- * The technical panel — the one section driven directly by scroll position
- * rather than fired once on entry.
+ * The technical panel — three icon nodes, each with a line of copy.
  *
- * As you scroll: a connector line draws left to right between the nodes, each
- * node lights up as the line reaches it, and its copy resolves in behind. The
- * intent is a precision instrument coming online, not a flourish.
+ * Desktop: scrubbed to scroll position — each node lights up in turn and its
+ * copy resolves in behind it.
  *
- * The connector is measured from the live DOM (first node centre to last node
- * centre) rather than hard-coded from the grid maths, so it stays correct
- * across breakpoints and if the node count changes.
+ * There used to be a connector rule drawn between the nodes as well; it ran
+ * straight through the middle of the copy beside each node, so it's gone.
+ *
+ * Touch: no scrub. The column of nodes is taller than a phone screen, so a
+ * scrub tied to the whole panel left the lower rows blank until you'd
+ * already scrolled past them. Each row now simply fades in as it enters.
  */
 export default function EngineeringPanel({
   points,
@@ -28,100 +29,61 @@ export default function EngineeringPanel({
   points: readonly { text: string; icon: React.ReactNode }[];
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const lineRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
       const wrap = wrapRef.current;
-      const line = lineRef.current;
-      if (!wrap) return;
+      if (!wrap || reducedMotion()) return;
 
-      const nodes = Array.from(
-        wrap.querySelectorAll<HTMLElement>("[data-node]"),
-      );
+      const rows = Array.from(wrap.querySelectorAll<HTMLElement>("li"));
+      const nodes = Array.from(wrap.querySelectorAll<HTMLElement>("[data-node]"));
       const copy = Array.from(wrap.querySelectorAll<HTMLElement>("[data-copy]"));
       if (!nodes.length) return;
 
-      /* Measure the connector against the real node positions. */
-      const layoutLine = () => {
-        if (!line) return;
-        const host = wrap.getBoundingClientRect();
-        const first = nodes[0].getBoundingClientRect();
-        const last = nodes[nodes.length - 1].getBoundingClientRect();
-        const startX = first.left - host.left + first.width / 2;
-        const endX = last.left - host.left + last.width / 2;
-        const midY = first.top - host.top + first.height / 2;
-
-        // Stacked layout: the nodes sit in a column, so a horizontal rule
-        // would be meaningless. Hide it and let the nodes reveal on their own.
-        const horizontal = Math.abs(last.top - first.top) < 4;
-        line.style.opacity = horizontal ? "1" : "0";
-        line.style.left = `${startX}px`;
-        line.style.width = `${Math.max(endX - startX, 0)}px`;
-        line.style.top = `${midY}px`;
-      };
-
-      layoutLine();
-      window.addEventListener("resize", layoutLine);
-
-      if (reducedMotion()) {
-        return () => window.removeEventListener("resize", layoutLine);
+      if (coarsePointer()) {
+        gsap.set(nodes, { borderColor: "var(--color-red)" });
+        rows.forEach((row) => {
+          gsap.from(row, {
+            autoAlpha: 0,
+            y: SHIFT.sm,
+            duration: DUR.micro * 2,
+            ease: EASE.out,
+            scrollTrigger: { trigger: row, start: "top bottom", once: true },
+          });
+        });
+        return;
       }
 
       gsap.set(nodes, { borderColor: "var(--color-line)", scale: 0.96 });
       gsap.set(copy, { autoAlpha: 0, y: SHIFT.sm });
-      if (line) gsap.set(line, { scaleX: 0, transformOrigin: "left center" });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: wrap,
-          start: "top 78%",
-          end: "top 32%",
-          scrub: 0.5,
+          start: "top 85%",
+          end: "top 45%",
+          scrub: 0.4,
         },
       });
 
-      if (line) {
-        tl.to(line, { scaleX: 1, duration: 1, ease: EASE.scrub }, 0);
-      }
-
-      // Each node lights as the line arrives at it.
       nodes.forEach((node, i) => {
-        const at = (i / Math.max(nodes.length - 1, 1)) * 0.82;
+        const at = i * STAGGER.loose * 2;
         tl.to(
           node,
-          {
-            borderColor: "var(--color-red)",
-            scale: 1,
-            duration: 0.16,
-            ease: EASE.out,
-          },
+          { borderColor: "var(--color-red)", scale: 1, duration: 0.2, ease: EASE.out },
           at,
         );
         if (copy[i]) {
-          tl.to(
-            copy[i],
-            { autoAlpha: 1, y: 0, duration: 0.2, ease: EASE.out },
-            at + 0.04,
-          );
+          tl.to(copy[i], { autoAlpha: 1, y: 0, duration: 0.25, ease: EASE.out }, at + 0.05);
         }
       });
-
-      return () => window.removeEventListener("resize", layoutLine);
     },
     { scope: wrapRef },
   );
 
   return (
     <div ref={wrapRef} className="relative mt-10">
-      {/* connector — measured and positioned in JS */}
-      <span
-        ref={lineRef}
-        aria-hidden
-        className="pointer-events-none absolute z-0 hidden h-px bg-red/60 lg:block"
-      />
-
-      <ul className="relative z-10 grid gap-8 lg:grid-cols-3">
+      <ul className="grid gap-8 lg:grid-cols-3">
         {points.map((p, i) => (
           <li key={p.text} className="flex items-center gap-5">
             <span

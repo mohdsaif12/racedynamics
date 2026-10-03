@@ -66,6 +66,24 @@ export function OrganizationJsonLd({ settings }: { settings: SiteSettings }) {
           longitude: SITE.maps.lng,
         },
         hasMap: SITE.maps.url,
+        // Mirrors SITE.hours: closed Wednesdays, Sunday by appointment only
+        // (so not listed as open).
+        openingHoursSpecification: [
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Thursday", "Friday", "Saturday"],
+            opens: "10:00",
+            closes: "19:30",
+          },
+        ],
+        contactPoint: settings.phoneGroups.flatMap((g) =>
+          g.numbers.map((n) => ({
+            "@type": "ContactPoint",
+            telephone: n,
+            contactType: g.label,
+            areaServed: "IN",
+          })),
+        ),
         areaServed: "IN",
         priceRange: "₹₹₹",
         sameAs: [

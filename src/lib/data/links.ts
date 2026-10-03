@@ -16,3 +16,9 @@ export function whatsappLink(settings: SiteSettings, subject?: string) {
 export function telLink(settings: SiteSettings, number?: string) {
   return `tel:${number ?? settings.phonePrimary}`;
 }
+
+/** tel: href for a number as typed by a person — spaces and dashes are fine
+ *  to display but not every dialer accepts them in the link. */
+export function telHref(number: string) {
+  return `tel:${number.replace(/[^\d+]/g, "")}`;
+}

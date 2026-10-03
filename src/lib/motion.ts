@@ -49,6 +49,22 @@ export const SHIFT = {
 /** Where a reveal fires as the element scrolls up into view. */
 export const START = "top 85%";
 
+/**
+ * Reveal trigger point for the current device. On touch screens a flick
+ * scrolls far faster than a mouse wheel, so waiting until the element is 15%
+ * of the way up the screen meant content was still invisible — or still
+ * fading in — as it scrolled past. On touch it fires the moment the element's
+ * top edge enters the screen instead.
+ */
+export function revealStart(): string {
+  return coarsePointer() ? "top bottom" : START;
+}
+
+/** Shortens reveal durations and delays on touch, for the same reason. */
+export function revealDur(seconds: number): number {
+  return coarsePointer() ? seconds * 0.55 : seconds;
+}
+
 /** Parallax range for large visual sections. Depth, not distraction. */
 export const PARALLAX = 28;
 

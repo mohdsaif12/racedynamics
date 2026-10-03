@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { DUR, EASE, START, reducedMotion } from "@/lib/motion";
+import { DUR, EASE, reducedMotion, revealDur, revealStart } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -48,10 +48,10 @@ export default function MaskReveal({
       gsap.to(inner, {
         yPercent: 0,
         opacity: 1,
-        duration: DUR.reveal,
-        delay,
+        duration: revealDur(DUR.reveal),
+        delay: revealDur(delay),
         ease: EASE.out,
-        scrollTrigger: { trigger: el, start: START, once: true },
+        scrollTrigger: { trigger: el, start: revealStart(), once: true },
       });
     },
     { scope: ref },

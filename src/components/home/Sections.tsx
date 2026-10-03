@@ -8,7 +8,7 @@ import ImageReveal from "@/components/ImageReveal";
 import ScaleReveal from "@/components/ScaleReveal";
 import Parallax from "@/components/Parallax";
 import EngineeringPanel from "@/components/home/EngineeringPanel";
-import ShowcaseVideo from "@/components/home/ShowcaseVideo";
+import ShowcaseStrip, { type ShowcaseItem } from "@/components/home/ShowcaseStrip";
 import { formatPrice, STATUS_LABEL } from "@/lib/format";
 import { SITE } from "@/lib/site";
 import type { Bike, Category, SiteContentBlock } from "@/lib/data/types";
@@ -152,45 +152,20 @@ export function BrowseDatabase({ bikeCount }: { bikeCount: number }) {
  * blank before videos are uploaded.
  */
 export function TiltedStrip({ bikes, videos }: { bikes: Bike[]; videos: string[] }) {
-  const useVideos = videos.length > 0;
-  const strip = bikes.filter((b) => b.image).slice(0, 5);
-  const count = useVideos ? videos.length : strip.length;
+  const items: ShowcaseItem[] =
+    videos.length > 0
+      ? videos.map((src) => ({ kind: "video", src }))
+      : bikes
+          .filter((b) => b.image)
+          .slice(0, 5)
+          .map((b) => ({ kind: "image", src: b.image!, alt: `${b.brand} ${b.fullName}` }));
 
   return (
     <section className="overflow-hidden bg-paper py-14 lg:py-20">
       <Parallax distance={34}>
-      <RevealGroup selector="li" stagger={0.08} y={40}>
-        {/* Mobile: horizontal scroll with fixed-size cards. 5 equal-width flex
-            items plus gaps always exceed 100% of the container, so flexbox
-            shrinks them all back down to roughly the same size no matter what
-            percentage width is requested — the only way to make them
-            genuinely bigger on a phone is to stop forcing all 5 into one row. */}
-        <ul
-          className={`${WRAP} flex items-center gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory sm:justify-center sm:gap-5 sm:overflow-visible sm:pb-0 sm:snap-none`}
-        >
-          {Array.from({ length: count }, (_, i) => (
-            <li
-              key={useVideos ? videos[i] : strip[i].slug}
-              className="grid aspect-[3/5] w-40 shrink-0 snap-center place-items-center overflow-hidden bg-mist shadow-sm sm:w-1/5 sm:max-w-56 sm:shrink"
-              style={{ transform: `rotate(-8deg) translateY(${i % 2 ? 34 : 0}px)` }}
-            >
-              {useVideos ? (
-                <ShowcaseVideo src={videos[i]} />
-              ) : (
-                strip[i].image && (
-                  <NextImage
-                    src={strip[i].image}
-                    alt={`${strip[i].brand} ${strip[i].fullName}`}
-                    width={1400}
-                    height={900}
-                    className="h-auto w-[165%] max-w-none"
-                  />
-                )
-              )}
-            </li>
-          ))}
-        </ul>
-      </RevealGroup>
+        <RevealGroup selector="li" stagger={0.08} y={40}>
+          <ShowcaseStrip items={items} />
+        </RevealGroup>
       </Parallax>
     </section>
   );

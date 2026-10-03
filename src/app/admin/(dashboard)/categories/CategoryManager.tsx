@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
+import { newStoragePath } from "@/lib/supabase/storage";
 import type { AdminCategory } from "@/lib/admin/categories";
 import { revalidateSite } from "../../actions";
 
@@ -101,6 +103,12 @@ export default function CategoryManager({ initial }: { initial: AdminCategory[] 
           category={c}
           onSave={(name, blurb) => updateCategory(c.id, name, blurb)}
           onDelete={() => deleteCategory(c.id)}
+          onPhotoChange={async (photoPath, photoUrl) => {
+            setCategories((prev) =>
+              prev.map((x) => (x.id === c.id ? { ...x, photoPath, photoUrl } : x)),
+            );
+            await refresh();
+          }}
         />
       ))}
 
@@ -143,18 +151,116 @@ function CategoryRow({
   category,
   onSave,
   onDelete,
+  onPhotoChange,
 }: {
   category: AdminCategory;
   onSave: (name: string, blurb: string) => void;
   onDelete: () => void;
+  onPhotoChange: (photoPath: string | null, photoUrl: string | null) => Promise<void>;
 }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(category.name);
   const [blurb, setBlurb] = useState(category.blurb);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  /* Photos save immediately rather than waiting on "Save" — same as the
+     category tiles on /admin/content, which edit the same column. */
+  const onPickPhoto = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    setPhotoBusy(true);
+
+    const supabase = getSupabaseBrowser();
+    const path = newStoragePath(file);
+    const { error: uploadErr } = await supabase.storage
+      .from("site-content")
+      .upload(path, file, { cacheControl: "31536000" });
+    if (uploadErr) {
+      setPhotoBusy(false);
+      alert("Couldn't upload that photo. Try again.");
+      return;
+    }
+
+    const { error: updateErr } = await supabase
+      .from("categories")
+      .update({ photo_path: path })
+      .eq("id", category.id);
+    if (updateErr) {
+      await supabase.storage.from("site-content").remove([path]);
+      setPhotoBusy(false);
+      alert("Couldn't save that photo. Try again.");
+      return;
+    }
+
+    if (category.photoPath) {
+      await supabase.storage.from("site-content").remove([category.photoPath]);
+    }
+    await onPhotoChange(path, URL.createObjectURL(file));
+    setPhotoBusy(false);
+  };
+
+  const onRemovePhoto = async () => {
+    if (!category.photoPath) return;
+    if (!confirm(`Remove ${category.name}'s photo and go back to the default?`)) return;
+    setPhotoBusy(true);
+
+    const supabase = getSupabaseBrowser();
+    const { error } = await supabase
+      .from("categories")
+      .update({ photo_path: null })
+      .eq("id", category.id);
+    if (error) {
+      setPhotoBusy(false);
+      alert("Couldn't remove that photo. Try again.");
+      return;
+    }
+    await supabase.storage.from("site-content").remove([category.photoPath]);
+    await onPhotoChange(null, null);
+    setPhotoBusy(false);
+  };
 
   if (editing) {
     return (
       <div className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="mb-4 flex items-center gap-4">
+          <Thumb url={category.photoUrl} size="size-20" />
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[13px] font-semibold text-slate">
+              Photo on the homepage circle
+            </span>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={photoBusy}
+                className="rounded-full border border-line px-4 py-1.5 text-[13px] font-bold text-graphite hover:border-red hover:text-red disabled:opacity-60"
+              >
+                {photoBusy ? "Uploading…" : category.photoUrl ? "Change photo" : "Add photo"}
+              </button>
+              {category.photoUrl && (
+                <button
+                  type="button"
+                  onClick={onRemovePhoto}
+                  disabled={photoBusy}
+                  className="rounded-full px-3 py-1.5 text-[13px] font-bold text-slate hover:text-red disabled:opacity-60"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              onPickPhoto(e.target.files);
+              e.target.value = "";
+            }}
+          />
+        </div>
         <div className="flex flex-col gap-3">
           <input
             value={name}
@@ -192,7 +298,8 @@ function CategoryRow({
 
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm">
-      <div className="min-w-0">
+      <Thumb url={category.photoUrl} size="size-12" />
+      <div className="min-w-0 flex-1">
         <p className="font-bold text-graphite">{category.name}</p>
         {category.blurb && (
           <p className="mt-0.5 truncate text-[13px] text-slate">{category.blurb}</p>
@@ -214,6 +321,18 @@ function CategoryRow({
           Delete
         </button>
       </div>
+    </div>
+  );
+}
+
+function Thumb({ url, size }: { url: string | null; size: string }) {
+  return (
+    <div className={`relative ${size} shrink-0 overflow-hidden rounded-full bg-mist`}>
+      {url ? (
+        <Image src={url} alt="" fill unoptimized className="object-contain p-1" />
+      ) : (
+        <div className="grid h-full place-items-center text-[9px] text-slate">Default</div>
+      )}
     </div>
   );
 }

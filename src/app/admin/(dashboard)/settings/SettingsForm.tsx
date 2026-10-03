@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
-import type { SiteSettings } from "@/lib/data/types";
+import type { PhoneGroup, SiteSettings } from "@/lib/data/types";
 import { revalidateSite } from "../../actions";
 
 export default function SettingsForm({ initial }: { initial: SiteSettings }) {
@@ -20,12 +20,22 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
     setSaving(true);
     setSaved(false);
 
+    // Blank rows are what "add number" leaves behind if nothing gets typed
+    // in — drop them rather than saving an empty line to the footer.
+    const phoneGroups = form.phoneGroups
+      .map((g) => ({
+        label: g.label.trim(),
+        numbers: g.numbers.map((n) => n.trim()).filter(Boolean),
+      }))
+      .filter((g) => g.numbers.length > 0);
+
     const supabase = getSupabaseBrowser();
     const { error } = await supabase
       .from("site_settings")
       .update({
         phone_primary: form.phonePrimary,
         phone_secondary: form.phoneSecondary,
+        phone_groups: phoneGroups,
         whatsapp: form.whatsapp,
         email: form.email,
         address: form.address,
@@ -43,7 +53,11 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
 
     setSaving(false);
     if (error) {
-      alert("Couldn't save. Check your connection and try again.");
+      alert(
+        error.message.includes("phone_groups")
+          ? "The database needs updating before phone groups can be saved (supabase/migrations/0014_phone_groups_and_logo.sql)."
+          : "Couldn't save. Check your connection and try again.",
+      );
       return;
     }
     setSaved(true);
@@ -54,14 +68,9 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
   return (
     <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-6">
       <Section title="Contact">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Primary phone">
-            <Input value={form.phonePrimary} onChange={(v) => set("phonePrimary", v)} />
-          </Field>
-          <Field label="Secondary phone">
-            <Input value={form.phoneSecondary} onChange={(v) => set("phoneSecondary", v)} />
-          </Field>
-        </div>
+        <Field label="Main number (used by the floating Call button)">
+          <Input value={form.phonePrimary} onChange={(v) => set("phonePrimary", v)} />
+        </Field>
         <Field label="WhatsApp number (digits only, with country code)" className="mt-4">
           <Input value={form.whatsapp} onChange={(v) => set("whatsapp", v)} placeholder="919000000000" />
         </Field>
@@ -71,6 +80,17 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
         <Field label="Address" className="mt-4">
           <Input value={form.address} onChange={(v) => set("address", v)} />
         </Field>
+      </Section>
+
+      <Section title="Phone numbers">
+        <p className="-mt-2 mb-4 text-[13px] text-slate">
+          Shown in the footer and on the Contact page, grouped by what each
+          line is for. Add as many groups and numbers as you need.
+        </p>
+        <PhoneGroupsEditor
+          groups={form.phoneGroups}
+          onChange={(groups) => set("phoneGroups", groups)}
+        />
       </Section>
 
       <Section title="Homepage stats">
@@ -132,6 +152,124 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
         {saved && <span className="text-[14px] font-semibold text-red">Saved.</span>}
       </div>
     </form>
+  );
+}
+
+function PhoneGroupsEditor({
+  groups,
+  onChange,
+}: {
+  groups: PhoneGroup[];
+  onChange: (groups: PhoneGroup[]) => void;
+}) {
+  const update = (i: number, patch: Partial<PhoneGroup>) =>
+    onChange(groups.map((g, j) => (j === i ? { ...g, ...patch } : g)));
+
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= groups.length) return;
+    const next = [...groups];
+    [next[i], next[j]] = [next[j], next[i]];
+    onChange(next);
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      {groups.map((g, i) => (
+        <div key={i} className="rounded-xl border border-line p-4">
+          <div className="flex items-end gap-2">
+            <Field label="Group name" className="flex-1">
+              <Input
+                value={g.label}
+                onChange={(v) => update(i, { label: v })}
+                placeholder="e.g. Sales team"
+              />
+            </Field>
+            <IconButton label="Move up" onClick={() => move(i, -1)} disabled={i === 0}>
+              ↑
+            </IconButton>
+            <IconButton label="Move down" onClick={() => move(i, 1)} disabled={i === groups.length - 1}>
+              ↓
+            </IconButton>
+            <IconButton
+              label="Remove group"
+              onClick={() => {
+                if (confirm(`Remove "${g.label || "this group"}" and its numbers?`)) {
+                  onChange(groups.filter((_, j) => j !== i));
+                }
+              }}
+            >
+              ✕
+            </IconButton>
+          </div>
+
+          <div className="mt-3 flex flex-col gap-2">
+            {g.numbers.map((n, k) => (
+              <div key={k} className="flex gap-2">
+                <input
+                  value={n}
+                  onChange={(e) =>
+                    update(i, {
+                      numbers: g.numbers.map((x, m) => (m === k ? e.target.value : x)),
+                    })
+                  }
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  aria-label={`${g.label || "Group"} number ${k + 1}`}
+                  className={inputClass}
+                />
+                <IconButton
+                  label="Remove number"
+                  onClick={() => update(i, { numbers: g.numbers.filter((_, m) => m !== k) })}
+                >
+                  ✕
+                </IconButton>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => update(i, { numbers: [...g.numbers, ""] })}
+              className="self-start text-[13px] font-bold text-red hover:underline"
+            >
+              + Add number
+            </button>
+          </div>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={() => onChange([...groups, { label: "", numbers: [""] }])}
+        className="rounded-xl border-2 border-dashed border-line py-3 text-[14px] font-bold text-graphite transition-colors hover:border-red hover:text-red"
+      >
+        + Add group
+      </button>
+    </div>
+  );
+}
+
+function IconButton({
+  label,
+  onClick,
+  disabled,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+      className="grid size-[50px] shrink-0 place-items-center rounded-xl border border-line text-[15px] font-bold text-slate transition-colors hover:border-red hover:text-red disabled:opacity-30 disabled:hover:border-line disabled:hover:text-slate"
+    >
+      {children}
+    </button>
   );
 }
 

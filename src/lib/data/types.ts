@@ -46,9 +46,20 @@ export type Bike = {
   extraSpecs: ExtraSpec[];
 };
 
+/** A labelled set of numbers, e.g. "Sales team" → two lines. */
+export type PhoneGroup = { label: string; numbers: string[] };
+
 export type SiteSettings = {
   phonePrimary: string;
   phoneSecondary: string;
+  /** Every contact number, grouped by what it's for. Never empty — falls
+   *  back to the primary/secondary pair when none have been set. */
+  phoneGroups: PhoneGroup[];
+  /** Admin-uploaded header logo, if one replaces the bundled one. */
+  logoUrl?: string;
+  /** Storage path behind logoUrl — the dashboard needs it to replace or
+   *  remove the file. */
+  logoPath?: string;
   whatsapp: string;
   email: string;
   address: string;

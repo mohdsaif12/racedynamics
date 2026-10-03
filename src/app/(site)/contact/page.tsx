@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getSiteSettings } from "@/lib/data/settings";
-import { telLink, whatsappLink } from "@/lib/data/links";
+import { telHref, telLink, whatsappLink } from "@/lib/data/links";
 import { SITE, mapEmbedSrc } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -28,26 +28,17 @@ export default async function ContactPage() {
         </section>
 
         <section>
-          <h2 className="eyebrow text-slate">Phone</h2>
-          <p className="figure-nums mt-3 flex flex-col gap-1 text-sm text-body">
-            <a href={telLink(settings, settings.phonePrimary)} className="hover:text-graphite">
-              {settings.phonePrimary}
-            </a>
-            {Boolean(settings.phoneSecondary) && (
-              <a href={telLink(settings, settings.phoneSecondary)} className="hover:text-graphite">
-                {settings.phoneSecondary}
-              </a>
-            )}
-          </p>
-        </section>
-
-        <section>
           <h2 className="eyebrow text-slate">Hours</h2>
-          <p className="mt-3 text-sm text-body">
-            Monday to Saturday, 10:00 – 19:30
-            <br />
-            Sunday by appointment
-          </p>
+          <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm text-body">
+            {SITE.hours.map((h) => (
+              <div key={h.days} className="contents">
+                <dt>{h.days}</dt>
+                <dd className={h.time === "Closed" ? "font-semibold text-red" : undefined}>
+                  {h.time}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </section>
 
         <section>
@@ -59,6 +50,24 @@ export default async function ContactPage() {
           </p>
         </section>
       </div>
+
+      <section className="mt-12">
+        <h2 className="eyebrow text-slate">Phone</h2>
+        <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {settings.phoneGroups.map((g, i) => (
+            <div key={`${g.label}-${i}`} className="border-l-2 border-red pl-4">
+              <p className="text-[13px] font-semibold text-graphite">{g.label}</p>
+              <p className="figure-nums mt-1.5 flex flex-col gap-1 text-sm text-body">
+                {g.numbers.map((n) => (
+                  <a key={n} href={telHref(n)} className="hover:text-red">
+                    {n}
+                  </a>
+                ))}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <div className="mt-12 flex flex-wrap gap-2">
         <a

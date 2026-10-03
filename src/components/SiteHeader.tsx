@@ -15,7 +15,14 @@ const NAV = [
 ] as const;
 
 /** Dark bar, red wordmark, wide-tracked uppercase nav — as on the reference. */
-export default function SiteHeader({ categories }: { categories: Category[] }) {
+export default function SiteHeader({
+  categories,
+  logoUrl,
+}: {
+  categories: Category[];
+  /** Admin-uploaded replacement for the bundled logo, if any. */
+  logoUrl?: string;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -23,15 +30,27 @@ export default function SiteHeader({ categories }: { categories: Category[] }) {
     <header className="sticky top-0 z-50 bg-ink">
       <div className="mx-auto flex max-w-[1400px] items-center gap-8 px-5 py-4 lg:px-10">
         <Link href="/" className="shrink-0" aria-label="RaceDynamics — home">
-          <Image
-            src="/brand/racedynamics.webp"
-            alt="RaceDynamics"
-            width={1800}
-            height={477}
-            priority
-            unoptimized
-            className="h-7 w-auto lg:h-8"
-          />
+          {logoUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element -- an
+               uploaded file of unknown dimensions; next/image would need
+               them up front. */
+            <img
+              src={logoUrl}
+              alt="RaceDynamics"
+              fetchPriority="high"
+              className="h-10 w-auto max-w-[200px] object-contain lg:h-12 lg:max-w-[260px]"
+            />
+          ) : (
+            <Image
+              src="/brand/racedynamics.webp"
+              alt="RaceDynamics"
+              width={1800}
+              height={477}
+              priority
+              unoptimized
+              className="h-7 w-auto lg:h-8"
+            />
+          )}
         </Link>
 
         <nav className="mx-auto hidden items-center gap-9 lg:flex" aria-label="Main">

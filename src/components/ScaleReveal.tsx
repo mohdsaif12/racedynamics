@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { DUR, EASE, START, reducedMotion } from "@/lib/motion";
+import { DUR, EASE, reducedMotion, revealDur, revealStart } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -37,10 +37,10 @@ export default function ScaleReveal({
       gsap.to(el, {
         autoAlpha: 1,
         scale: 1,
-        duration: DUR.slow,
-        delay,
+        duration: revealDur(DUR.slow),
+        delay: revealDur(delay),
         ease: EASE.outQuart,
-        scrollTrigger: { trigger: el, start: START, once: true },
+        scrollTrigger: { trigger: el, start: revealStart(), once: true },
       });
     },
     { scope: ref },

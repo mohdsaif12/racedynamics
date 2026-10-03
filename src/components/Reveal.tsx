@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { DUR, EASE, SHIFT, STAGGER, START, reducedMotion } from "@/lib/motion";
+import { DUR, EASE, SHIFT, STAGGER, reducedMotion, revealDur, revealStart } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -49,10 +49,10 @@ export default function RevealGroup({
       gsap.to(items, {
         autoAlpha: 1,
         y: 0,
-        duration,
+        duration: revealDur(duration),
         ease: EASE.out,
-        stagger,
-        scrollTrigger: { trigger: host, start: START, once: true },
+        stagger: revealDur(stagger),
+        scrollTrigger: { trigger: host, start: revealStart(), once: true },
       });
     },
     { scope: ref },

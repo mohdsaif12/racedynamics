@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { DUR, EASE, START, reducedMotion } from "@/lib/motion";
+import { DUR, EASE, reducedMotion, revealDur, revealStart } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -37,17 +37,17 @@ export default function ImageReveal({
       gsap.set(inner, { scale: 1.05 });
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: el, start: START, once: true },
-        delay,
+        scrollTrigger: { trigger: el, start: revealStart(), once: true },
+        delay: revealDur(delay),
       });
 
       tl.to(el, {
         clipPath: "inset(0% 0% 0% 0%)",
-        duration: DUR.slow,
+        duration: revealDur(DUR.slow),
         ease: EASE.outQuart,
       }).to(
         inner,
-        { scale: 1, duration: DUR.cinematic, ease: EASE.out },
+        { scale: 1, duration: revealDur(DUR.cinematic), ease: EASE.out },
         0,
       );
     },

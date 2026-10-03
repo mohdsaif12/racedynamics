@@ -1,6 +1,7 @@
 import Link from "next/link";
 import RevealGroup from "@/components/Reveal";
 import { SITE, mapEmbedSrc } from "@/lib/site";
+import { telHref } from "@/lib/data/links";
 import type { SiteSettings } from "@/lib/data/types";
 import {
   PinIcon, MailIcon, PhoneIcon,
@@ -82,22 +83,38 @@ export default function SiteFooter({
               <MailIcon size={17} className="shrink-0 text-red" />
               {settings.email}
             </a>
-            <a
-              href={`tel:${settings.phonePrimary}`}
-              className="flex items-center gap-3 transition-colors hover:text-red"
-            >
-              <PhoneIcon size={17} className="shrink-0 text-red" />
-              <span className="figure-nums">{settings.phonePrimary}</span>
-            </a>
-            {Boolean(settings.phoneSecondary) && (
-              <a
-                href={`tel:${settings.phoneSecondary}`}
-                className="flex items-center gap-3 transition-colors hover:text-red"
-              >
-                <span aria-hidden className="w-[17px] shrink-0" />
-                <span className="figure-nums">{settings.phoneSecondary}</span>
-              </a>
-            )}
+            {settings.phoneGroups.map((g, i) => (
+              <div key={`${g.label}-${i}`} className="flex items-start gap-3">
+                <PhoneIcon size={17} className="mt-0.5 shrink-0 text-red" />
+                <span className="flex flex-col">
+                  <span className="text-[11.5px] font-semibold uppercase tracking-[0.12em] text-slate">
+                    {g.label}
+                  </span>
+                  {g.numbers.map((n) => (
+                    <a
+                      key={n}
+                      href={telHref(n)}
+                      className="figure-nums transition-colors hover:text-red"
+                    >
+                      {n}
+                    </a>
+                  ))}
+                </span>
+              </div>
+            ))}
+            <span className="flex items-start gap-3">
+              <ClockIcon />
+              <span className="flex flex-col">
+                {SITE.hours.map((h) => (
+                  <span key={h.days}>
+                    {h.days}:{" "}
+                    <span className={h.time === "Closed" ? "font-semibold text-red" : undefined}>
+                      {h.time}
+                    </span>
+                  </span>
+                ))}
+              </span>
+            </span>
           </address>
 
           <div className="mt-7 flex gap-3">
@@ -169,5 +186,14 @@ export default function SiteFooter({
         </div>
       </div>
     </footer>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden className="mt-0.5 shrink-0 text-red">
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M12 7.5V12l3 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
   );
 }

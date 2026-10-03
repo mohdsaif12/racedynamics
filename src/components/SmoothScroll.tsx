@@ -7,6 +7,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePathname } from "next/navigation";
 
 gsap.registerPlugin(ScrollTrigger);
+// Phones resize the viewport as the address bar slides in and out; without
+// this every one of those recalculates every trigger mid-scroll.
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 /**
  * Build Manual §06 — Lenis owns scroll and nothing else.
@@ -59,6 +62,28 @@ export default function SmoothScroll({
       // Also strips the .lenis classes off <html>, releasing the height and
       // overflow overrides they carry.
       lenis.destroy();
+    };
+  }, []);
+
+  // Images, videos and lazy sections keep changing the page height after
+  // load. ScrollTrigger measures trigger positions once, so every shift
+  // left the triggers below it firing late (or early) — on phones that's
+  // what made sections appear only after you'd scrolled past them.
+  // Re-measure whenever the document actually changes height.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let lastHeight = document.body.scrollHeight;
+    const ro = new ResizeObserver(() => {
+      const h = document.body.scrollHeight;
+      if (Math.abs(h - lastHeight) < 2) return;
+      lastHeight = h;
+      clearTimeout(timer);
+      timer = setTimeout(() => ScrollTrigger.refresh(), 150);
+    });
+    ro.observe(document.body);
+    return () => {
+      clearTimeout(timer);
+      ro.disconnect();
     };
   }, []);
 
