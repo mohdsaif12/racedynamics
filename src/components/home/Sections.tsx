@@ -9,6 +9,7 @@ import ScaleReveal from "@/components/ScaleReveal";
 import Parallax from "@/components/Parallax";
 import EngineeringPanel from "@/components/home/EngineeringPanel";
 import ShowcaseStrip, { type ShowcaseItem } from "@/components/home/ShowcaseStrip";
+import type { ShowcaseVideo as ShowcaseVideoFile } from "@/lib/data/videos";
 import { formatPrice, STATUS_LABEL } from "@/lib/format";
 import { SITE } from "@/lib/site";
 import type { Bike, Category, SiteContentBlock } from "@/lib/data/types";
@@ -146,15 +147,15 @@ export function BrowseDatabase({ bikeCount }: { bikeCount: number }) {
 
 /* -------------------------------------------------- Tilted photo strip --- */
 /**
- * Autoplays whatever's in the "bike-videos" Supabase bucket (see
- * src/lib/data/videos.ts) — not tied to individual bikes. Falls back to the
+ * Autoplays the showcase videos (see src/lib/data/videos.ts) — not tied to
+ * individual bikes. Falls back to the
  * bike-photo strip when the bucket is empty, so the section never renders
  * blank before videos are uploaded.
  */
-export function TiltedStrip({ bikes, videos }: { bikes: Bike[]; videos: string[] }) {
+export function TiltedStrip({ bikes, videos }: { bikes: Bike[]; videos: ShowcaseVideoFile[] }) {
   const items: ShowcaseItem[] =
     videos.length > 0
-      ? videos.map((src) => ({ kind: "video", src }))
+      ? videos.map((v) => ({ kind: "video", src: v.src, poster: v.poster }))
       : bikes
           .filter((b) => b.image)
           .slice(0, 5)

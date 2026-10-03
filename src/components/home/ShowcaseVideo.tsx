@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
  * viewport, and playback pauses again once it scrolls back out — so only the
  * cards actually on screen are ever decoding at once.
  */
-export default function ShowcaseVideo({ src }: { src: string }) {
+export default function ShowcaseVideo({ src, poster }: { src: string; poster?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
 
@@ -43,6 +43,7 @@ export default function ShowcaseVideo({ src }: { src: string }) {
     <video
       ref={ref}
       src={inView ? src : undefined}
+      poster={poster}
       muted
       loop
       playsInline

@@ -1,6 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Public files are otherwise served with max-age=0, so a returning visitor
+  // re-checks every showcase video. A day's cache (then a background
+  // re-check) keeps repeat visits free while still picking up a replaced
+  // file within a day.
+  async headers() {
+    return [
+      {
+        source: "/showcase/:file*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

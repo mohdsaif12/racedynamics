@@ -2,7 +2,7 @@ import NextImage from "next/image";
 import ShowcaseVideo from "@/components/home/ShowcaseVideo";
 
 export type ShowcaseItem =
-  | { kind: "video"; src: string }
+  | { kind: "video"; src: string; poster?: string }
   | { kind: "image"; src: string; alt: string };
 
 /**
@@ -32,7 +32,7 @@ export default function ShowcaseStrip({ items }: { items: ShowcaseItem[] }) {
             }`}
           >
             {item.kind === "video" ? (
-              <ShowcaseVideo src={item.src} />
+              <ShowcaseVideo src={item.src} poster={item.poster} />
             ) : (
               <NextImage
                 src={item.src}

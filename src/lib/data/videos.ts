@@ -1,35 +1,28 @@
-import { unstable_cache } from "next/cache";
-import { getSupabasePublic } from "@/lib/supabase/public";
-import { bikeVideoUrl } from "@/lib/supabase/storage";
-import { hasSupabase } from "@/lib/supabase/env";
-
-const VIDEO_EXT = /\.(mp4|webm|mov|m4v)$/i;
-
 /**
- * Public URLs for the homepage's autoplaying showcase-card videos. Not tied
- * to individual bikes — just whatever's sitting in the "bike videos" bucket
- * (see supabase/migrations/0012_bike_videos_bucket.sql — yes, the bucket id
- * has a literal space in it, confirmed from the Supabase dashboard). Reads
- * the bucket listing directly rather than a DB table, since there's no admin
- * upload screen for these yet; drop a file in via the Supabase dashboard and
- * it shows up on the next request.
+ * The homepage's autoplaying showcase-card videos, served from /public — i.e.
+ * Vercel's CDN — not from Supabase Storage.
+ *
+ * They used to stream straight out of the "bike videos" Supabase bucket at
+ * full 720p (~35 MB for all five), so every visitor who scrolled past the
+ * strip spent ~35 MB of the free plan's 5 GB monthly egress: a few hundred
+ * visitors a month would have exhausted it. The cards are at most 224px
+ * wide, so these are re-encoded copies at 432px wide (2x for retina), no
+ * audio track (the cards are always muted) — ~9 MB total — each with a
+ * poster frame so a card isn't blank while its video loads.
+ *
+ * To change a video: re-encode the new clip the same way, e.g.
+ *   ffmpeg -i in.mp4 -an -vf "scale=432:-2,fps=30" -c:v libx264 -preset slow \
+ *     -crf 30 -pix_fmt yuv420p -movflags +faststart public/showcase/N.mp4
+ *   ffmpeg -ss 1 -i public/showcase/N.mp4 -frames:v 1 -q:v 4 public/showcase/N.jpg
+ * and list it below.
  */
-export const getShowcaseVideos = unstable_cache(
-  async (limit = 5): Promise<string[]> => {
-    if (!hasSupabase) return [];
+export type ShowcaseVideo = { src: string; poster: string };
 
-    const supabase = getSupabasePublic();
-    const { data, error } = await supabase!.storage
-      .from("bike videos")
-      .list("", { limit: 100, sortBy: { column: "name", order: "asc" } });
+const SHOWCASE = [1, 2, 3, 4, 5];
 
-    if (error || !data) return [];
-
-    return data
-      .filter((f) => VIDEO_EXT.test(f.name))
-      .slice(0, limit)
-      .map((f) => bikeVideoUrl(f.name));
-  },
-  ["showcase-videos"],
-  { revalidate: 60, tags: ["videos"] },
-);
+export async function getShowcaseVideos(): Promise<ShowcaseVideo[]> {
+  return SHOWCASE.map((n) => ({
+    src: `/showcase/${n}.mp4`,
+    poster: `/showcase/${n}.jpg`,
+  }));
+}
