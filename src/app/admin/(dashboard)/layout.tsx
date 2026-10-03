@@ -3,16 +3,18 @@ import Image from "next/image";
 import { requireAdmin } from "@/lib/admin/auth";
 import { hasSupabase } from "@/lib/supabase/env";
 import SignOutButton from "./SignOutButton";
+import AdminMobileNav from "./AdminMobileNav";
 
+/** `short` is the label in the phone bottom bar, where space is tight. */
 const NAV = [
-  { href: "/admin/bikes", label: "Bikes", icon: BikeIcon },
-  { href: "/admin/accessories", label: "Accessories", icon: BoxIcon },
-  { href: "/admin/content", label: "Website content", icon: ImageIcon },
-  { href: "/admin/appointments", label: "Appointments", icon: CalendarIcon },
-  { href: "/admin/enquiries", label: "Enquiries", icon: InboxIcon },
-  { href: "/admin/categories", label: "Categories", icon: TagIcon },
-  { href: "/admin/testimonials", label: "Reviews", icon: StarIcon },
-  { href: "/admin/settings", label: "Site settings", icon: GearIcon },
+  { href: "/admin/bikes", label: "Bikes", short: "Bikes", icon: BikeIcon },
+  { href: "/admin/accessories", label: "Accessories", short: "Accessories", icon: BoxIcon },
+  { href: "/admin/content", label: "Website content", short: "Content", icon: ImageIcon },
+  { href: "/admin/appointments", label: "Appointments", short: "Bookings", icon: CalendarIcon },
+  { href: "/admin/enquiries", label: "Enquiries", short: "Enquiries", icon: InboxIcon },
+  { href: "/admin/categories", label: "Categories", short: "Categories", icon: TagIcon },
+  { href: "/admin/testimonials", label: "Reviews", short: "Reviews", icon: StarIcon },
+  { href: "/admin/settings", label: "Site settings", short: "Settings", icon: GearIcon },
 ] as const;
 
 /**
@@ -92,20 +94,15 @@ export default async function AdminLayout({
       </aside>
 
       {/* ------------------------------------------------------- mobile nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-8 border-t border-line bg-white lg:hidden">
-        {NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex flex-col items-center gap-1 py-3 text-[11px] font-semibold text-graphite"
-          >
-            <item.icon />
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      <AdminMobileNav
+        items={NAV.map((item) => ({
+          href: item.href,
+          label: item.short,
+          icon: <item.icon />,
+        }))}
+      />
 
-      <main className="min-w-0 flex-1 pb-20 lg:pb-0">{children}</main>
+      <main className="min-w-0 flex-1 pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</main>
     </div>
   );
 }

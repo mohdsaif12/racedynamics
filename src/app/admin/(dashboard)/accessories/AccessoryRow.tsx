@@ -59,7 +59,7 @@ export default function AccessoryRow({ accessory }: { accessory: AdminAccessory 
 
   return (
     <li
-      className={`flex items-center gap-4 rounded-2xl bg-white p-3 shadow-sm transition-opacity sm:p-4 ${
+      className={`flex flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl bg-white p-3 shadow-sm transition-opacity sm:flex-nowrap sm:p-4 ${
         deleting ? "pointer-events-none opacity-40" : ""
       }`}
     >
@@ -82,8 +82,10 @@ export default function AccessoryRow({ accessory }: { accessory: AdminAccessory 
         </p>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3 sm:gap-5">
-        <label className="flex flex-col items-center gap-1.5">
+      {/* Phones: controls drop to their own line so the name and details
+          get the full width instead of being squeezed to a few letters. */}
+      <div className="flex w-full items-center gap-3 border-t border-line pt-3 sm:w-auto sm:shrink-0 sm:gap-5 sm:border-0 sm:pt-0">
+        <label className="mr-auto flex items-center gap-2 sm:mr-0 sm:flex-col sm:gap-1.5">
           <span className="text-[10px] font-bold uppercase tracking-wide text-slate">
             {outOfStock ? "Out" : "In stock"}
           </span>
