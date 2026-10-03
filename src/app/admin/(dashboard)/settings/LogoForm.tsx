@@ -6,7 +6,7 @@ import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
 import { revalidateSite } from "../../actions";
 
-const DEFAULT_LOGO = "/brand/racedynamics.webp";
+const DEFAULT_LOGO = "/brand/racedynamics-full.svg";
 
 /**
  * Header logo. Saves the moment a file is picked, like the category photos

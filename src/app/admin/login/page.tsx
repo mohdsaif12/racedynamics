@@ -52,12 +52,12 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="grid min-h-svh place-items-center bg-ink px-5">
       <div className="w-full max-w-sm">
         <Image
-          src="/brand/racedynamics.webp"
+          src="/brand/racedynamics-full.svg"
           alt="RaceDynamics"
-          width={1800}
-          height={477}
+          width={1200}
+          height={581}
           unoptimized
-          className="mx-auto h-8 w-auto"
+          className="mx-auto h-24 w-auto"
         />
         <div className="mt-10 rounded-2xl border border-white/10 bg-ink-3 p-7">
           {children}

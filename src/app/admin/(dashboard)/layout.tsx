@@ -51,12 +51,12 @@ export default async function AdminLayout({
       <aside className="hidden w-64 shrink-0 flex-col bg-ink lg:flex">
         <Link href="/admin" className="flex items-center gap-2 px-6 py-6">
           <Image
-            src="/brand/racedynamics.webp"
+            src="/brand/racedynamics-full.svg"
             alt="RaceDynamics"
-            width={1800}
-            height={477}
+            width={1200}
+            height={581}
             unoptimized
-            className="h-6 w-auto"
+            className="h-14 w-auto"
           />
         </Link>
 

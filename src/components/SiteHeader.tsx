@@ -28,7 +28,10 @@ export default function SiteHeader({
 
   return (
     <header className="sticky top-0 z-50 bg-ink">
-      <div className="mx-auto flex max-w-[1400px] items-center gap-8 px-5 py-4 lg:px-10">
+      {/* 76px tall: the full logo (helmet over the badge) is close to 2:1, so
+          it needs more height than the old wide wordmark to stay legible.
+          InventoryBrowser offsets by this height — keep them in step. */}
+      <div className="mx-auto flex h-[76px] max-w-[1400px] items-center gap-8 px-5 lg:px-10">
         <Link href="/" className="shrink-0" aria-label="RaceDynamics — home">
           {logoUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element -- an
@@ -38,17 +41,17 @@ export default function SiteHeader({
               src={logoUrl}
               alt="RaceDynamics"
               fetchPriority="high"
-              className="h-10 w-auto max-w-[200px] object-contain lg:h-12 lg:max-w-[260px]"
+              className="h-[60px] w-auto max-w-[200px] object-contain lg:max-w-[260px]"
             />
           ) : (
             <Image
-              src="/brand/racedynamics.webp"
+              src="/brand/racedynamics-full.svg"
               alt="RaceDynamics"
-              width={1800}
-              height={477}
+              width={1200}
+              height={581}
               priority
               unoptimized
-              className="h-7 w-auto lg:h-8"
+              className="h-[60px] w-auto"
             />
           )}
         </Link>

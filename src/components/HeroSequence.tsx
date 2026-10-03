@@ -316,17 +316,17 @@ export default function HeroSequence() {
             underneath it so the h1's text isn't announced twice. */}
         <h1
           ref={wordRef}
-          className="relative z-10 w-[min(82vw,54rem)] px-5"
+          className="relative z-10 w-[min(82vw,34rem)] px-5"
           style={reduced ? undefined : { opacity: 0 }}
         >
           <span className="sr-only">
             {SITE.name} — {SITE.tagline}
           </span>
           <Image
-            src="/brand/racedynamics.webp"
+            src="/brand/racedynamics-full.svg"
             alt=""
-            width={1800}
-            height={477}
+            width={1200}
+            height={581}
             priority
             unoptimized
             className="h-auto w-full"

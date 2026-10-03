@@ -179,7 +179,7 @@ export default function InventoryBrowser({
     <>
       {/* ================================================= showcase panel === */}
       <section
-        className="relative isolate flex min-h-[calc(100svh-68px)] flex-col overflow-hidden"
+        className="relative isolate flex min-h-[calc(100svh-76px)] flex-col overflow-hidden"
         style={{ background: STAGE_BG }}
       >
         {/* real smoke texture, desaturated and screened so it stays grey */}
@@ -445,7 +445,7 @@ export default function InventoryBrowser({
 
       {/* =================================================== detail band === */}
       {bike && (
-        <section id="details" className="scroll-mt-[68px] bg-ink py-14 lg:py-16">
+        <section id="details" className="scroll-mt-[76px] bg-ink py-14 lg:py-16">
           <div className="mx-auto max-w-[1400px] px-5 lg:px-12">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
