@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
 import type { AdminCategory } from "@/lib/admin/categories";
@@ -17,7 +16,6 @@ function slugify(s: string) {
 }
 
 export default function CategoryManager({ initial }: { initial: AdminCategory[] }) {
-  const router = useRouter();
   const [categories, setCategories] = useState(initial);
   const [name, setName] = useState("");
   const [blurb, setBlurb] = useState("");
@@ -26,7 +24,6 @@ export default function CategoryManager({ initial }: { initial: AdminCategory[] 
 
   const refresh = async () => {
     await revalidateSite();
-    router.refresh();
   };
 
   const addCategory = async (e: React.FormEvent) => {

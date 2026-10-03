@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import type { PhoneGroup, SiteSettings } from "@/lib/data/types";
 import { revalidateSite } from "../../actions";
 
 export default function SettingsForm({ initial }: { initial: SiteSettings }) {
-  const router = useRouter();
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -62,7 +60,6 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
     }
     setSaved(true);
     await revalidateSite();
-    router.refresh();
   };
 
   return (

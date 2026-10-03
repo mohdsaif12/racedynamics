@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { formatKm, formatPrice } from "@/lib/format";
@@ -20,7 +19,6 @@ export default function BikeRow({
   bike: Bike;
   categories: Category[];
 }) {
-  const router = useRouter();
   const [sold, setSold] = useState(bike.status === "sold" || bike.status === "booked");
   const [busy, startTransition] = useTransition();
   const [deleting, setDeleting] = useState(false);
@@ -43,7 +41,6 @@ export default function BikeRow({
         return;
       }
       await revalidateSite();
-      router.refresh();
     });
   };
 
@@ -61,7 +58,6 @@ export default function BikeRow({
         return;
       }
       await revalidateSite();
-      router.refresh();
     });
   };
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
 import { revalidateSite } from "../../actions";
@@ -21,7 +20,6 @@ export default function LogoForm({
   initialPath?: string;
   initialUrl?: string;
 }) {
-  const router = useRouter();
   const [path, setPath] = useState(initialPath ?? null);
   const [url, setUrl] = useState(initialUrl ?? null);
   const [busy, setBusy] = useState(false);
@@ -70,7 +68,6 @@ export default function LogoForm({
     setUrl(URL.createObjectURL(file));
     setBusy(false);
     await revalidateSite();
-    router.refresh();
   };
 
   const onReset = async () => {
@@ -81,7 +78,6 @@ export default function LogoForm({
       setPath(null);
       setUrl(null);
       await revalidateSite();
-      router.refresh();
     }
     setBusy(false);
   };

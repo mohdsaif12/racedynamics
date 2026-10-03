@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { formatPrice } from "@/lib/format";
@@ -11,7 +10,6 @@ import { revalidateSite } from "../../actions";
 
 /** One row per accessory. Flip the switch to mark in / out of stock. */
 export default function AccessoryRow({ accessory }: { accessory: AdminAccessory }) {
-  const router = useRouter();
   const [outOfStock, setOutOfStock] = useState(accessory.status === "out-of-stock");
   const [busy, startTransition] = useTransition();
   const [deleting, setDeleting] = useState(false);
@@ -32,7 +30,6 @@ export default function AccessoryRow({ accessory }: { accessory: AdminAccessory 
         return;
       }
       await revalidateSite();
-      router.refresh();
     });
   };
 
@@ -53,7 +50,6 @@ export default function AccessoryRow({ accessory }: { accessory: AdminAccessory 
         return;
       }
       await revalidateSite();
-      router.refresh();
     });
   };
 

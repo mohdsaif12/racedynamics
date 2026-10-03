@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getAllBikes } from "@/lib/data/bikes";
 import { getCategories } from "@/lib/data/categories";
-import BikeRow from "./BikeRow";
+import BikesList from "./BikesList";
 
 export default async function AdminBikesPage() {
   const [bikes, categories] = await Promise.all([getAllBikes(), getCategories()]);
@@ -32,11 +32,7 @@ export default async function AdminBikesPage() {
           </p>
         </div>
       ) : (
-        <ul className="mt-6 flex flex-col gap-3">
-          {bikes.map((bike) => (
-            <BikeRow key={bike.id} bike={bike} categories={categories} />
-          ))}
-        </ul>
+        <BikesList bikes={bikes} categories={categories} />
       )}
     </div>
   );

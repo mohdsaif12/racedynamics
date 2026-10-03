@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import type { AdminEnquiry, EnquiryStatus } from "@/lib/admin/enquiries";
 
@@ -14,11 +13,20 @@ const STATUSES: { value: EnquiryStatus; label: string }[] = [
 const inr = new Intl.NumberFormat("en-IN");
 
 /** A single lead, with the two things the client actually needs: a way to ring
- *  them, and a way to mark that they did. */
-export default function EnquiryCard({ enquiry }: { enquiry: AdminEnquiry }) {
-  const router = useRouter();
+ *  them, and a way to mark that they did. The list owns the rows, so changes
+ *  are reported up instead of re-fetching the whole page. */
+export default function EnquiryCard({
+  enquiry,
+  onStatusChange,
+  onDeleted,
+}: {
+  enquiry: AdminEnquiry;
+  onStatusChange: (status: EnquiryStatus) => void;
+  onDeleted: () => void;
+}) {
   const [status, setStatus] = useState<EnquiryStatus>(enquiry.status);
   const [pending, startTransition] = useTransition();
+  const [deleting, setDeleting] = useState(false);
 
   const setTo = (next: EnquiryStatus) => {
     if (next === status) return;
@@ -37,7 +45,26 @@ export default function EnquiryCard({ enquiry }: { enquiry: AdminEnquiry }) {
         alert("Couldn't update that. Check your connection and try again.");
         return;
       }
-      router.refresh();
+      onStatusChange(next);
+    });
+  };
+
+  const remove = () => {
+    if (!confirm(`Delete the enquiry from ${enquiry.name} (${enquiry.bike})? This can't be undone.`)) {
+      return;
+    }
+    setDeleting(true);
+    startTransition(async () => {
+      const { error } = await getSupabaseBrowser()
+        .from("sell_enquiries")
+        .delete()
+        .eq("id", enquiry.id);
+      if (error) {
+        setDeleting(false);
+        alert("Couldn't delete that. Check your connection and try again.");
+        return;
+      }
+      onDeleted();
     });
   };
 
@@ -56,7 +83,7 @@ export default function EnquiryCard({ enquiry }: { enquiry: AdminEnquiry }) {
   return (
     <article
       className={`rounded-2xl bg-white p-5 shadow-sm transition-opacity sm:p-6 ${
-        pending ? "opacity-60" : ""
+        pending || deleting ? "pointer-events-none opacity-60" : ""
       }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -108,7 +135,7 @@ export default function EnquiryCard({ enquiry }: { enquiry: AdminEnquiry }) {
         )}
       </div>
 
-      <div className="mt-4 flex gap-2 border-t border-line pt-4">
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-4">
         {STATUSES.map((s) => (
           <button
             key={s.value}
@@ -123,6 +150,22 @@ export default function EnquiryCard({ enquiry }: { enquiry: AdminEnquiry }) {
             {s.label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={remove}
+          className="ml-auto flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold text-slate transition-colors hover:bg-red/10 hover:text-red"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path
+              d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-12"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          Delete
+        </button>
       </div>
     </article>
   );

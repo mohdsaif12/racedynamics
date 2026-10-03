@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getAccessoriesForAdmin } from "@/lib/admin/accessories";
-import AccessoryRow from "./AccessoryRow";
+import AccessoriesList from "./AccessoriesList";
 
 export default async function AdminAccessoriesPage() {
   const accessories = await getAccessoriesForAdmin();
@@ -31,11 +31,7 @@ export default async function AdminAccessoriesPage() {
           </p>
         </div>
       ) : (
-        <ul className="mt-6 flex flex-col gap-3">
-          {accessories.map((a) => (
-            <AccessoryRow key={a.id} accessory={a} />
-          ))}
-        </ul>
+        <AccessoriesList accessories={accessories} />
       )}
     </div>
   );

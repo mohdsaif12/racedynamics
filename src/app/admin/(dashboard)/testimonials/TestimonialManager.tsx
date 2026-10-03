@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
@@ -13,7 +12,6 @@ export default function TestimonialManager({
 }: {
   initial: AdminTestimonial[];
 }) {
-  const router = useRouter();
   const [items, setItems] = useState(initial);
   const [quote, setQuote] = useState("");
   const [name, setName] = useState("");
@@ -23,7 +21,6 @@ export default function TestimonialManager({
 
   const refresh = async () => {
     await revalidateSite();
-    router.refresh();
   };
 
   const addTestimonial = async (e: React.FormEvent) => {

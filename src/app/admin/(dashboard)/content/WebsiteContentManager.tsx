@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
@@ -110,7 +109,6 @@ export default function WebsiteContentManager({
 /* ------------------------------------------------------- content block --- */
 
 function ContentBlockEditor({ config, initial }: { config: BlockConfig; initial: AdminSiteContent }) {
-  const router = useRouter();
 
   const [heading, setHeading] = useState(initial.heading ?? "");
   const [subheading, setSubheading] = useState(initial.subheading ?? "");
@@ -124,7 +122,6 @@ function ContentBlockEditor({ config, initial }: { config: BlockConfig; initial:
 
   const refresh = async () => {
     await revalidateSite();
-    router.refresh();
   };
 
   const addFile = async (files: FileList | null) => {
@@ -325,7 +322,6 @@ function CategoryTiles({ initial }: { initial: AdminCategory[] }) {
 }
 
 function CategoryTile({ category }: { category: AdminCategory }) {
-  const router = useRouter();
   const [photoPath, setPhotoPath] = useState(category.photoPath);
   const [photoUrl, setPhotoUrl] = useState(category.photoUrl);
   const [busy, setBusy] = useState(false);
@@ -333,7 +329,6 @@ function CategoryTile({ category }: { category: AdminCategory }) {
 
   const refresh = async () => {
     await revalidateSite();
-    router.refresh();
   };
 
   const onPick = async (files: FileList | null) => {
