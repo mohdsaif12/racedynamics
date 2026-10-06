@@ -1,4 +1,6 @@
+import { unstable_cache } from "next/cache";
 import { getSupabasePublic } from "@/lib/supabase/public";
+import { selectAll } from "@/lib/supabase/selectAll";
 import { accessoryImageUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
 import type { Accessory } from "./types";
@@ -34,20 +36,29 @@ const SELECT = "id, slug, name, description, category, price_inr, status, featur
 /**
  * Every accessory in stock, in the order the owner arranged them. No seed
  * fallback — unlike bikes, this section launches empty until the owner adds
- * the first item from /admin/accessories.
+ * the first item from /admin/accessories. Paged past PostgREST's 1000-row
+ * cap, and cached for 60 s like the rest of the data layer (admin saves
+ * revalidate the whole site layout, which clears it immediately).
  */
-export async function getAllAccessories(): Promise<Accessory[]> {
-  if (!hasSupabase) return [];
+export const getAllAccessories = unstable_cache(
+  async (): Promise<Accessory[]> => {
+    if (!hasSupabase) return [];
 
-  const supabase = getSupabasePublic();
-  const { data, error } = await supabase!
-    .from("accessories")
-    .select(SELECT)
-    .order("sort_order", { ascending: true });
+    const supabase = getSupabasePublic()!;
+    const data = await selectAll<Row>((from, to) =>
+      supabase
+        .from("accessories")
+        .select(SELECT)
+        .order("sort_order", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to),
+    );
 
-  if (error || !data) return [];
-  return (data as Row[]).map(mapRow);
-}
+    return data ? data.map(mapRow) : [];
+  },
+  ["all-accessories"],
+  { revalidate: 60, tags: ["accessories"] },
+);
 
 export async function getAccessoryBySlug(slug: string): Promise<Accessory | undefined> {
   if (!hasSupabase) return undefined;

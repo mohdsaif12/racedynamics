@@ -12,19 +12,25 @@ export type ShowcaseItem =
  * Every card fits on screen at once, phone included — the row used to be a
  * sideways scroller of big cards with nothing to tell you it scrolled, so
  * most people only ever saw one or two.
+ *
+ * Widths are always computed with the gaps included: a plain `w-1/5` plus
+ * gaps adds up to more than 100%, which wrapped the fifth card onto a line
+ * of its own on every screen between ~640px and ~1100px. From 480px up it's
+ * one row of all cards; below that, five in a row would be ~65px wide, so
+ * phones get three on top and the rest centred underneath.
  */
 export default function ShowcaseStrip({ items }: { items: ShowcaseItem[] }) {
   const cols = Math.min(items.length, 5);
 
   return (
     <ul
-      className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-center gap-2 px-3 sm:gap-5 sm:px-5 lg:px-10"
+      className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-center gap-x-[var(--gap)] gap-y-7 px-4 [--gap:0.75rem] [--per:min(var(--cols),3)] min-[480px]:flex-nowrap min-[480px]:gap-y-0 min-[480px]:[--per:var(--cols)] sm:px-5 sm:[--gap:1.25rem] lg:px-10"
       style={{ "--cols": cols } as React.CSSProperties}
     >
       {items.map((item, i) => (
         <li
           key={item.src}
-          className="w-[calc((100%_-_(var(--cols)_-_1)*0.5rem)/var(--cols))] sm:w-1/5 sm:max-w-56"
+          className="w-[calc((100%-(var(--per)-1)*var(--gap))/var(--per))] max-w-56 shrink-0"
         >
           <div
             className={`pointer-events-none grid aspect-[3/5] w-full -rotate-[8deg] select-none place-items-center overflow-hidden bg-mist shadow-sm ${

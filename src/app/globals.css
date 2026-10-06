@@ -141,3 +141,10 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Accessories logo marquee: the track holds two copies, so -50% is one full loop. */
+@keyframes brand-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}

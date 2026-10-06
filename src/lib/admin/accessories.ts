@@ -1,4 +1,5 @@
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { selectAll } from "@/lib/supabase/selectAll";
 import { accessoryImageUrl } from "@/lib/supabase/storage";
 
 export type AdminAccessory = {
@@ -45,12 +46,16 @@ export async function getAccessoriesForAdmin(): Promise<AdminAccessory[]> {
   const supabase = await getSupabaseServer();
   if (!supabase) return [];
 
-  const { data, error } = await supabase
-    .from("accessories")
-    .select(SELECT)
-    .order("sort_order", { ascending: true });
+  const data = await selectAll((from, to) =>
+    supabase
+      .from("accessories")
+      .select(SELECT)
+      .order("sort_order", { ascending: true })
+      .order("id", { ascending: true })
+      .range(from, to),
+  );
 
-  if (error || !data) return [];
+  if (!data) return [];
   return data.map(mapRow);
 }
 

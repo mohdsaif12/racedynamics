@@ -148,6 +148,84 @@ export function PhoneIcon(p: IconProps) {
   );
 }
 
+/* ------------------------------------------------------ accessories ----- */
+
+/** Genuine / authorised stock — a rosette with a tick. */
+export function VerifiedIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 2.8 14.2 4.4l2.7-.2.9 2.6 2.3 1.5-.7 2.6.7 2.6-2.3 1.5-.9 2.6-2.7-.2L12 19.4l-2.2-1.6-2.7.2-.9-2.6-2.3-1.5.7-2.6-.7-2.6 2.3-1.5.9-2.6 2.7.2L12 2.8Z" />
+      <path d="m8.8 11.2 2.2 2.2 4.2-4.3" />
+    </Svg>
+  );
+}
+
+/** Brands shipped in from manufacturers. */
+export function TruckIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M2.5 6.5h11v9h-11z" />
+      <path d="M13.5 9.5h4l3 3.2v2.8h-7" />
+      <circle cx="6.5" cy="17.5" r="1.8" />
+      <circle cx="17" cy="17.5" r="1.8" />
+    </Svg>
+  );
+}
+
+/** Boxed, on the shelf, ready to collect. */
+export function BoxIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="m12 3 8 4v10l-8 4-8-4V7l8-4Z" />
+      <path d="m4 7 8 4 8-4M12 11v10M8 5l8 4" />
+    </Svg>
+  );
+}
+
+/** Message us — outline speech bubble with a handset, the WhatsApp shape. */
+export function ChatIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M4.2 19.8 5.3 16A8.5 8.5 0 1 1 8.4 19z" />
+      <path d="M9.2 8.6c.2-.4.5-.5.8-.5h.5l.9 2.1-.6.8a5 5 0 0 0 2.3 2.3l.8-.6 2.1.9v.5c0 .3-.1.6-.5.8-.8.4-1.9.4-3.4-.5a8 8 0 0 1-2.4-2.4c-.9-1.5-.9-2.6-.5-3.4Z" />
+    </Svg>
+  );
+}
+
+export function HeartIcon({ className = "", size = 20, filled = false }: IconProps & { filled?: boolean }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth={1.7}
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M12 20s-7.5-4.4-7.5-10.1A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 2.6C19.5 15.6 12 20 12 20Z" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="m9 5 7 7-7 7" />
+    </Svg>
+  );
+}
+
+export function ArrowRightIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M4 12h15M13 6l6 6-6 6" />
+    </Svg>
+  );
+}
+
 /* --------------------------------------------------------- social ------- */
 /* Brand marks are filled, not stroked — they are recognised by silhouette. */
 
