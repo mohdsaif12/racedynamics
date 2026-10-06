@@ -43,6 +43,10 @@ next-env.d.ts
 
 # hero source clips (large, not needed at runtime)
 *.mp4
+# ...but the homepage showcase cards DO play these at runtime (~9 MB total,
+# already compressed — see src/lib/data/videos.ts). Without this exception
+# they never reached the deployed site and every card froze on its poster.
+!public/showcase/*.mp4
 nsone_in__.html
 
 # Client-supplied CorelDRAW source. ~70MB of embedded bitmap data that git
