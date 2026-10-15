@@ -6,7 +6,7 @@ import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { formatPrice } from "@/lib/format";
 import type { AdminAccessory } from "@/lib/admin/accessories";
-import { revalidateSite } from "../../actions";
+import { revalidateAccessories } from "../../actions";
 
 /** One row per accessory. Flip the switch to mark in / out of stock. */
 export default function AccessoryRow({ accessory }: { accessory: AdminAccessory }) {
@@ -29,7 +29,7 @@ export default function AccessoryRow({ accessory }: { accessory: AdminAccessory 
         alert("Couldn't save that — check your connection and try again.");
         return;
       }
-      await revalidateSite();
+      await revalidateAccessories();
     });
   };
 
@@ -49,7 +49,7 @@ export default function AccessoryRow({ accessory }: { accessory: AdminAccessory 
         alert("Couldn't delete that — check your connection and try again.");
         return;
       }
-      await revalidateSite();
+      await revalidateAccessories();
     });
   };
 

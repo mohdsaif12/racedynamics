@@ -22,7 +22,9 @@ export async function generateStaticParams() {
  * the sold-toggle Server Action in /admin calls `revalidatePath` for an
  * instant update on top of that.
  */
-export const revalidate = 60;
+// Must be a literal for Next.js to read it; keep in step with
+// REVALIDATE_SECONDS in src/lib/data/cachePolicy.ts.
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,

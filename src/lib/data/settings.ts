@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { REVALIDATE_SECONDS } from "./cachePolicy";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { hasSupabase } from "@/lib/supabase/env";
 import { SITE } from "@/lib/site";
@@ -97,7 +98,7 @@ export const getSiteSettings = unstable_cache(
     };
   },
   ["site-settings"],
-  { revalidate: 60, tags: ["site-settings"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["site-settings"] },
 );
 
 // whatsappLink / telLink live in ./links.ts — that file has no server-only

@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { REVALIDATE_SECONDS } from "./cachePolicy";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { ownerImageUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
@@ -124,5 +125,5 @@ export const getTestimonials = unstable_cache(
     }));
   },
   ["testimonials"],
-  { revalidate: 60, tags: ["testimonials"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["testimonials"] },
 );

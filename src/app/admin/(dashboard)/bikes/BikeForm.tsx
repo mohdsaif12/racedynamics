@@ -9,7 +9,7 @@ import { newStoragePath } from "@/lib/supabase/storage";
 import type { AdminCategory } from "@/lib/admin/categories";
 import type { EditableBike } from "@/lib/admin/bikes";
 import type { ExtraSpec } from "@/lib/data/types";
-import { revalidateSite } from "../../actions";
+import { revalidateBikes } from "../../actions";
 import { hasTransparency } from "@/lib/admin/transparency";
 
 type Props =
@@ -112,7 +112,7 @@ export default function BikeForm(props: Props) {
       return;
     }
     setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
-    await revalidateSite();
+    await revalidateBikes();
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -208,7 +208,7 @@ export default function BikeForm(props: Props) {
       }
     }
 
-    await revalidateSite();
+    await revalidateBikes();
     setSaving(false);
     router.push("/admin/bikes");
     router.refresh();

@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { REVALIDATE_SECONDS } from "./cachePolicy";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { siteContentImageUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
@@ -33,7 +34,7 @@ export const getSiteContentBlock = unstable_cache(
     };
   },
   ["site-content-block"],
-  { revalidate: 60, tags: ["site-content"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["site-content"] },
 );
 
 /** Every block at once — one round trip for the homepage instead of four. */
@@ -62,5 +63,5 @@ export const getAllSiteContentBlocks = unstable_cache(
     );
   },
   ["all-site-content"],
-  { revalidate: 60, tags: ["site-content"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["site-content"] },
 );

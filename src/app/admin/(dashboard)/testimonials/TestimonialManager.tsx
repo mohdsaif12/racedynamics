@@ -5,7 +5,7 @@ import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
 import type { AdminTestimonial } from "@/lib/admin/testimonials";
-import { revalidateSite } from "../../actions";
+import { revalidateTestimonials } from "../../actions";
 
 export default function TestimonialManager({
   initial,
@@ -20,7 +20,7 @@ export default function TestimonialManager({
   const [busy, setBusy] = useState(false);
 
   const refresh = async () => {
-    await revalidateSite();
+    await revalidateTestimonials();
   };
 
   const addTestimonial = async (e: React.FormEvent) => {

@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { REVALIDATE_SECONDS } from "./cachePolicy";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { bikeImageUrl } from "@/lib/supabase/storage";
 import { hasSupabase } from "@/lib/supabase/env";
@@ -106,8 +107,8 @@ const SELECT = `
   bike_images ( path, sort_order )
 `;
 
-/** Every bike in stock, newest first. Cached for 60 s to avoid a Supabase
- *  round-trip on every page load while keeping inventory reasonably fresh. */
+/** Every bike in stock, newest first. Cached (see ./cachePolicy.ts); bike
+ *  saves in admin clear it immediately via revalidateBikes(). */
 export const getAllBikes = unstable_cache(
   async (): Promise<Bike[]> => {
     if (!hasSupabase) return fromSeed();
@@ -122,7 +123,7 @@ export const getAllBikes = unstable_cache(
     return (data as unknown as Row[]).map(mapRow);
   },
   ["all-bikes"],
-  { revalidate: 60, tags: ["bikes"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["bikes"] },
 );
 
 export const getBikeBySlug = unstable_cache(
@@ -140,7 +141,7 @@ export const getBikeBySlug = unstable_cache(
     return mapRow(data as unknown as Row);
   },
   ["bike-by-slug"],
-  { revalidate: 60, tags: ["bikes"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["bikes"] },
 );
 
 /** Featured bikes — reuses the cached getAllBikes result, zero extra queries. */

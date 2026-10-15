@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { REVALIDATE_SECONDS } from "./cachePolicy";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { selectAll } from "@/lib/supabase/selectAll";
 import { accessoryImageUrl } from "@/lib/supabase/storage";
@@ -37,8 +38,8 @@ const SELECT = "id, slug, name, description, category, price_inr, status, featur
  * Every accessory in stock, in the order the owner arranged them. No seed
  * fallback — unlike bikes, this section launches empty until the owner adds
  * the first item from /admin/accessories. Paged past PostgREST's 1000-row
- * cap, and cached for 60 s like the rest of the data layer (admin saves
- * revalidate the whole site layout, which clears it immediately).
+ * cap, and cached like the rest of the data layer (see ./cachePolicy.ts);
+ * accessory saves in admin clear it immediately via revalidateAccessories().
  */
 export const getAllAccessories = unstable_cache(
   async (): Promise<Accessory[]> => {
@@ -57,7 +58,7 @@ export const getAllAccessories = unstable_cache(
     return data ? data.map(mapRow) : [];
   },
   ["all-accessories"],
-  { revalidate: 60, tags: ["accessories"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["accessories"] },
 );
 
 export async function getAccessoryBySlug(slug: string): Promise<Accessory | undefined> {

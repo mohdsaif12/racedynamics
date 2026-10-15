@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { REVALIDATE_SECONDS } from "./cachePolicy";
 import { getSupabasePublic } from "@/lib/supabase/public";
 import { hasSupabase } from "@/lib/supabase/env";
 import { siteContentImageUrl } from "@/lib/supabase/storage";
@@ -24,7 +25,7 @@ export const getCategories = unstable_cache(
     }));
   },
   ["categories"],
-  { revalidate: 60, tags: ["categories"] },
+  { revalidate: REVALIDATE_SECONDS, tags: ["categories"] },
 );
 
 export function getCategory(categories: Category[], slug: string) {

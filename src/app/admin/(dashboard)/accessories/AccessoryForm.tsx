@@ -7,7 +7,7 @@ import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { newStoragePath } from "@/lib/supabase/storage";
 import type { AdminAccessory } from "@/lib/admin/accessories";
-import { revalidateSite } from "../../actions";
+import { revalidateAccessories } from "../../actions";
 
 type Props =
   | { mode: "create"; existingCategories: string[] }
@@ -84,7 +84,7 @@ export default function AccessoryForm(props: Props) {
     }
     setExistingPhoto(null);
     setExistingPhotoUrl(null);
-    await revalidateSite();
+    await revalidateAccessories();
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -161,7 +161,7 @@ export default function AccessoryForm(props: Props) {
       }
     }
 
-    await revalidateSite();
+    await revalidateAccessories();
     setSaving(false);
     router.push("/admin/accessories");
     router.refresh();

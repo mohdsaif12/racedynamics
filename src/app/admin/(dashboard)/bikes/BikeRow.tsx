@@ -6,7 +6,7 @@ import Image from "next/image";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 import { formatKm, formatPrice } from "@/lib/format";
 import type { Bike, Category } from "@/lib/data/types";
-import { revalidateSite } from "../../actions";
+import { revalidateBikes } from "../../actions";
 
 /**
  * One row per bike. The whole point of this screen: flip the switch, the
@@ -40,7 +40,7 @@ export default function BikeRow({
         alert("Couldn't save that — check your connection and try again.");
         return;
       }
-      await revalidateSite();
+      await revalidateBikes();
     });
   };
 
@@ -57,7 +57,7 @@ export default function BikeRow({
         alert("Couldn't delete that — check your connection and try again.");
         return;
       }
-      await revalidateSite();
+      await revalidateBikes();
     });
   };
 
