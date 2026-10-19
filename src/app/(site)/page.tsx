@@ -16,6 +16,7 @@ import { getCategories } from "@/lib/data/categories";
 import { getTestimonials } from "@/lib/data/testimonials";
 import { getAllSiteContentBlocks } from "@/lib/data/siteContent";
 import { getShowcaseVideos } from "@/lib/data/videos";
+import { getSiteSettings } from "@/lib/data/settings";
 
 /**
  * Homepage — animation hierarchy:
@@ -30,13 +31,14 @@ import { getShowcaseVideos } from "@/lib/data/videos";
  * so the page still renders before a Supabase project exists.
  */
 export default async function HomePage() {
-  const [bikes, categories, featured, testimonials, content, showcaseVideos] = await Promise.all([
+  const [bikes, categories, featured, testimonials, content, showcaseVideos, settings] = await Promise.all([
     getAllBikes(),
     getCategories(),
     getFeaturedBikes(),
     getTestimonials(),
     getAllSiteContentBlocks(),
     getShowcaseVideos(),
+    getSiteSettings(),
   ]);
 
   return (
@@ -48,7 +50,7 @@ export default async function HomePage() {
           first; BrowseByCategory rises over it and pins in turn.    */}
       <div className="relative">
         <SectionCard tone="paper" dwell={45}>
-          <PlanningToSell bikes={bikes} content={content.planning_to_sell ?? null} />
+          <PlanningToSell bikesSold={settings.stats.bikesSold} content={content.planning_to_sell ?? null} />
         </SectionCard>
 
         <SectionCard tone="ink" dwell={50}>

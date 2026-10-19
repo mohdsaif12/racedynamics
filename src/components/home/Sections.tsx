@@ -25,11 +25,11 @@ import {
 const WRAP = "mx-auto max-w-[1400px] px-5 lg:px-10";
 
 /* ------------------------------------------------- Planning to sell? ----- */
-function valueProps(bikeCount: number) {
+function valueProps(bikesSold: number) {
   return [
     { top: "Outright", bottom: "Sale", icon: <RupeeNoteIcon size={30} /> },
     {
-      top: <CountUp to={bikeCount} suffix="+" />,
+      top: <CountUp to={bikesSold} suffix="+" />,
       bottom: "Bikes Sold",
       icon: <SoldBadgeIcon size={30} />,
     },
@@ -49,10 +49,11 @@ function valueProps(bikeCount: number) {
 const DEFAULT_SELL_IMAGE = "/bikes/diavel-1260s-2021.webp";
 
 export function PlanningToSell({
-  bikes,
+  bikesSold,
   content,
 }: {
-  bikes: Bike[];
+  /** "Bikes sold" stat from /admin/settings — not the live inventory count. */
+  bikesSold: number;
   /** Standalone content block — independent of inventory on purpose, see
    *  DEFAULT_SELL_IMAGE above. */
   content: SiteContentBlock | null;
@@ -74,7 +75,7 @@ export function PlanningToSell({
 
           <RevealGroup selector="li">
           <ul className="mt-10 grid gap-7 sm:grid-cols-2">
-            {valueProps(bikes.length).map((v) => (
+            {valueProps(bikesSold).map((v) => (
               <li key={v.bottom} className="flex items-center gap-4">
                 <span className="grid size-[74px] shrink-0 place-items-center border border-line text-red transition-colors duration-200 group-hover:border-red">
                   {v.icon}

@@ -30,18 +30,6 @@ export default async function OpengraphImage() {
       >
         <div
           style={{
-            fontSize: 30,
-            letterSpacing: 8,
-            textTransform: "uppercase",
-            color: "#e5132b",
-            fontWeight: 700,
-          }}
-        >
-          {SITE.city}
-        </div>
-        <div
-          style={{
-            marginTop: 24,
             fontSize: 120,
             fontWeight: 800,
             letterSpacing: -2,
@@ -49,6 +37,18 @@ export default async function OpengraphImage() {
           }}
         >
           {SITE.name.toUpperCase()}
+        </div>
+        <div
+          style={{
+            marginTop: 20,
+            fontSize: 44,
+            letterSpacing: 14,
+            textTransform: "uppercase",
+            color: "#e5132b",
+            fontWeight: 700,
+          }}
+        >
+          {SITE.city}
         </div>
         <div
           style={{
