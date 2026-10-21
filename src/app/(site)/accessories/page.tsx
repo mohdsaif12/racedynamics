@@ -70,14 +70,16 @@ export default async function AccessoriesPage() {
             sizes="(min-width: 1024px) 52vw, 100vw"
             className="object-cover object-left"
           />
-          <div className="absolute inset-y-[4%] right-[-8%] w-[82%] lg:inset-y-[8%] lg:right-[-5%] lg:w-[74%]">
+          {/* Edges are feathered in the file itself, so object-contain lets
+              the photo melt into the panel at every aspect ratio. */}
+          <div className="absolute inset-y-[2%] right-0 w-[88%] lg:w-[86%]">
             <Image
-              src="/bikes/streetfighter-v4-2023.webp"
+              src="/accessories-hero-bike.webp"
               alt=""
               fill
               priority
-              sizes="(min-width: 1024px) 40vw, 82vw"
-              className="-scale-x-100 object-contain drop-shadow-[0_30px_28px_rgba(0,0,0,0.65)]"
+              sizes="(min-width: 1024px) 40vw, 88vw"
+              className="object-contain object-right"
             />
           </div>
           <p className="display absolute left-[14%] top-[10%] -rotate-[7deg] text-[clamp(2rem,4.4vw,4.1rem)] font-extrabold italic leading-[0.84] drop-shadow-[0_4px_14px_rgba(0,0,0,0.5)] lg:left-[18%] lg:top-[12%]">
