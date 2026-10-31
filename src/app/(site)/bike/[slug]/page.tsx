@@ -34,7 +34,7 @@ export async function generateMetadata({
   if (!bike) return {};
 
   const title = `${bike.brand} ${bike.fullName} (${bike.year})`;
-  const description = `${bike.year} ${bike.brand} ${bike.fullName}, ${formatKm(bike.km)}, ${bike.location}. ${formatPrice(bike.priceINR)} at ${SITE.name}, ${SITE.city}.`;
+  const description = `${bike.year} ${bike.brand} ${bike.fullName}, ${formatKm(bike.km)}, ${bike.location}. ${formatPrice(bike.priceINR)} at ${SITE.name}.`;
 
   return {
     title,

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const DEFAULT_HEADING = "Lucknow’s Destination for Superbikes & Premium Motorcycles";
 const DEFAULT_SUBHEADING =
-  "Since 2014, Race Dynamics has been driven by one thing — a genuine passion for exceptional motorcycles.";
+  "Since 2014, Race Dynamics Lucknow has been driven by one thing — a genuine passion for exceptional motorcycles.";
 const DEFAULT_BODY = [
   "Over the years, we have grown from a motorcycle enthusiast’s dream into one of the leading destinations for superbikes and premium pre-owned motorcycles in Lucknow, serving riders across India.",
   "From iconic superbikes and performance motorcycles to carefully selected premium pre-owned machines, we bring together motorcycles that stand out for their performance, character and desirability.",
@@ -47,7 +47,7 @@ export default async function AboutPage() {
       <div className="mt-12 overflow-hidden border border-line bg-mist shadow-sm aspect-[16/9] lg:aspect-[21/9] relative">
         <NextImage
           src={image}
-          alt={`Inside the ${SITE.name} showroom and workshop in ${SITE.city}`}
+          alt={`Inside the ${SITE.name} showroom and workshop`}
           fill
           sizes="100vw"
           className="object-cover"
@@ -103,12 +103,12 @@ export default async function AboutPage() {
             Superbikes. Premium Bikes. Delivered Across India.
           </h2>
           <p>
-            Our collection features motorcycles from some of the world’s most sought-after performance and premium brands. Whether you’re in Lucknow, Delhi, Mumbai, Bengaluru, Hyderabad, Chennai, Kolkata or anywhere else in India, Race Dynamics can help bring your motorcycle to you.
+            Our collection features motorcycles from some of the world’s most sought-after performance and premium brands. Whether you’re in Lucknow, Delhi, Mumbai, Bengaluru, Hyderabad, Chennai, Kolkata or anywhere else in India, Race Dynamics Lucknow can help bring your motorcycle to you.
           </p>
           <div className="bg-mist p-6 border border-line mt-4">
             <h3 className="font-bold text-graphite text-lg mb-2">Pan-India Delivery</h3>
             <p className="text-[15.5px]">
-              Found your dream bike but you’re miles away from Lucknow? We’ve got you covered. We arrange safe and reliable Pan-India motorcycle delivery, making it easier for riders across the country to own a motorcycle from Race Dynamics. From our showroom to your doorstep, we take care of the logistics so you can focus on what matters — your next ride.
+              Found your dream bike but you’re miles away from Lucknow? We’ve got you covered. We arrange safe and reliable Pan-India motorcycle delivery, making it easier for riders across the country to own a motorcycle from Race Dynamics Lucknow. From our showroom to your doorstep, we take care of the logistics so you can focus on what matters — your next ride.
             </p>
           </div>
         </section>
@@ -129,10 +129,10 @@ export default async function AboutPage() {
         {/* Section 5 */}
         <section className="space-y-4">
           <h2 className="display text-2xl lg:text-3xl text-graphite">
-            The Race Dynamics Experience
+            The Race Dynamics Lucknow Experience
           </h2>
           <p>
-            Our relationship with a customer doesn’t end when the keys are handed over. From motorcycle sales and purchase to riding gear, accessories, customization, servicing and maintenance, Race Dynamics is built to support the complete ownership experience.
+            Our relationship with a customer doesn’t end when the keys are handed over. From motorcycle sales and purchase to riding gear, accessories, customization, servicing and maintenance, Race Dynamics Lucknow is built to support the complete ownership experience.
           </p>
           <p className="font-semibold text-graphite">
             Because when you’re passionate about motorcycles, one bike is rarely enough.
@@ -143,9 +143,9 @@ export default async function AboutPage() {
         <section className="mt-12 bg-ink text-white p-8 lg:p-12 text-center relative overflow-hidden">
           <span
             aria-hidden
-            className="ghost-word absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(4rem,14vw,11rem)] font-extrabold uppercase tracking-widest text-white/[0.04] pointer-events-none select-none"
+            className="ghost-word absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.5rem,8.5vw,7rem)] font-extrabold uppercase tracking-widest text-white/[0.04] pointer-events-none select-none"
           >
-            RACE DYNAMICS
+            RACE DYNAMICS LUCKNOW
           </span>
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="display text-2xl lg:text-3xl text-white mb-4 uppercase tracking-wide">
@@ -157,11 +157,11 @@ export default async function AboutPage() {
               It’s the freedom of an open road. It’s the feeling you get every time you turn the key.
             </p>
             <p className="text-[15.5px] text-ash/80 italic mb-8">
-              We understand that feeling — because we’re riders too. For more than a decade, Race Dynamics has been helping motorcycle enthusiasts find machines worth getting excited about.
+              We understand that feeling — because we’re riders too. For more than a decade, Race Dynamics Lucknow has been helping motorcycle enthusiasts find machines worth getting excited about.
             </p>
 
             <div className="pt-6 border-t border-line-dark text-xs font-semibold tracking-widest uppercase text-red mb-6">
-              Race Dynamics · Established 2014 · Lucknow, India
+              Race Dynamics Lucknow · Established 2014 · India
             </div>
 
             <Link href="/inventory" className="btn-red hover:bg-red-dark">

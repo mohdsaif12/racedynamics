@@ -38,7 +38,7 @@ const BLOCKS: BlockConfig[] = [
     title: "About page",
     description: "The header, hero photo and opening paragraphs on the standalone /about page.",
     heading: { label: "Headline (H1)", placeholder: "Lucknow’s Destination for Superbikes & Premium Motorcycles" },
-    subheading: { label: "Intro line", placeholder: "Since 2014, Race Dynamics has been driven by one thing — a genuine passion for exceptional motorcycles." },
+    subheading: { label: "Intro line", placeholder: "Since 2014, Race Dynamics Lucknow has been driven by one thing — a genuine passion for exceptional motorcycles." },
     body: { label: "Opening paragraphs", placeholder: "One paragraph per line. Leave a blank line between paragraphs.", rows: 6 },
     image: {
       defaultSrc: "/about/workshop.webp",
@@ -62,7 +62,7 @@ const BLOCKS: BlockConfig[] = [
     key: "about_band",
     title: "Homepage — “About” section",
     description: "The showroom photo and the two paragraphs about the business, further down the homepage.",
-    heading: { label: "Headline", placeholder: "About Race Dynamics" },
+    heading: { label: "Headline", placeholder: "About Race Dynamics Lucknow" },
     body: { label: "Paragraphs", placeholder: "One paragraph per line. Leave a blank line between paragraphs.", rows: 6 },
     image: {
       defaultSrc: "/about/workshop.webp",
@@ -75,7 +75,7 @@ const BLOCKS: BlockConfig[] = [
     title: "Homepage — “Trust us” banner",
     description: "The centred red-swoosh banner before the About section.",
     heading: { label: "Headline", placeholder: "Trust us to deliver excellence with every purchase" },
-    subheading: { label: "Subheading", placeholder: "Buy your dream bike with Race Dynamics confidence" },
+    subheading: { label: "Subheading", placeholder: "Buy your dream bike with Race Dynamics Lucknow confidence" },
   },
   {
     key: "footer_about",

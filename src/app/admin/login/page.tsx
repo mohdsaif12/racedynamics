@@ -53,7 +53,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-sm">
         <Image
           src="/brand/racedynamics-full.svg"
-          alt="RaceDynamics"
+          alt="Race Dynamics Lucknow"
           width={1200}
           height={581}
           unoptimized

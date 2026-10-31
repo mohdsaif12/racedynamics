@@ -14,7 +14,7 @@ const SOCIALS = [
   { key: "youtube", label: "YouTube", Icon: YoutubeIcon },
 ] as const;
 
-const DEFAULT_ABOUT_BODY = `A complete solution to owning your dream superbike, cruiser, adventure or classic — bought, inspected and delivered by ${SITE.name} in ${SITE.city}.`;
+const DEFAULT_ABOUT_BODY = `A complete solution to owning your dream superbike, cruiser, adventure or classic — bought, inspected and delivered by ${SITE.name}.`;
 
 /** Four-column dark footer: about, quick links, contact details, and the map. */
 export default function SiteFooter({
@@ -141,7 +141,7 @@ export default function SiteFooter({
           <h2 className="display text-xl text-white">Find us</h2>
           <div className="mt-5 overflow-hidden border border-line-dark">
             <iframe
-              title={`Map to ${SITE.name}, ${SITE.city}`}
+              title={`Map to ${SITE.name}`}
               src={mapEmbedSrc()}
               // The footer is on every page, so this would otherwise mean a
               // third-party frame loading on every single view. Lazy defers
@@ -165,7 +165,7 @@ export default function SiteFooter({
 
       <div className="mx-auto mt-14 flex max-w-[1400px] flex-wrap items-center justify-between gap-3 border-t border-line-dark px-5 py-5 lg:px-10">
         <p className="text-[12.5px] text-slate">
-          © {new Date().getFullYear()} {SITE.name}, {SITE.city}. All rights
+          © {new Date().getFullYear()} {SITE.name}. All rights
           reserved.
         </p>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">

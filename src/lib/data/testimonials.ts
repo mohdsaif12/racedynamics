@@ -9,7 +9,7 @@ const SEED: Testimonial[] = [
   {
     id: "seed-1",
     quote:
-      "Thank you for meeting my requirements. The Machine is not only good, it's Awesome! Your team is very supportive and friendly... will surely recommend Race Dynamics to my friends.",
+      "Thank you for meeting my requirements. The Machine is not only good, it's Awesome! Your team is very supportive and friendly... will surely recommend Race Dynamics Lucknow to my friends.",
     name: "Vikramaditya Sharma",
     bikeBought: "Kawasaki Z900",
     photo: "/owners/owner-1.webp",
@@ -41,7 +41,7 @@ const SEED: Testimonial[] = [
   {
     id: "seed-5",
     quote:
-      "Third bike I've bought from Race Dynamics. They tell you what's wrong before you even notice. Transparency at its best!",
+      "Third bike I've bought from Race Dynamics Lucknow. They tell you what's wrong before you even notice. Transparency at its best!",
     name: "Rahul Khurana",
     bikeBought: "Harley-Davidson Fat Boy",
     photo: "/owners/owner-5.webp",
@@ -57,7 +57,7 @@ const SEED: Testimonial[] = [
   {
     id: "seed-7",
     quote:
-      "Owning a Panigale V4 was my dream. Race Dynamics made the entire purchase and RTO process crystal clear.",
+      "Owning a Panigale V4 was my dream. Race Dynamics Lucknow made the entire purchase and RTO process crystal clear.",
     name: "Siddharth Malhotra",
     bikeBought: "Ducati Panigale V4",
     photo: "/owners/owner-7.jpg",
@@ -97,7 +97,7 @@ const SEED: Testimonial[] = [
   {
     id: "seed-12",
     quote:
-      "The handover experience was unforgettable. Race Dynamics is truly Lucknow's premier superbike hub!",
+      "The handover experience was unforgettable. Race Dynamics Lucknow is truly the city's premier superbike hub!",
     name: "Aman Gupta",
     bikeBought: "Yamaha YZF-R1",
     photo: "/owners/owner-12.jpg",

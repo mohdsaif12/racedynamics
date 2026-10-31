@@ -8,7 +8,7 @@ import AccessoriesBrowser from "./AccessoriesBrowser";
 
 export const metadata: Metadata = {
   title: "Accessories",
-  description: `Riding gear and bike accessories from ${SITE.name}, ${SITE.city} — helmets, riding jackets, gloves, exhausts and more.`,
+  description: `Riding gear and bike accessories from ${SITE.name} — helmets, riding jackets, gloves, exhausts and more.`,
   alternates: { canonical: "/accessories" },
 };
 

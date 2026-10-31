@@ -7,11 +7,13 @@
  * the deep link behaves on desktop.
  */
 export const SITE = {
-  name: "Race Dynamics",
+  name: "Race Dynamics Lucknow",
+  /** The bare wordmark, for layouts that set the city on its own line. */
+  brand: "Race Dynamics",
   city: "Lucknow",
   tagline: "Lucknow’s Destination for Superbikes & Premium Motorcycles",
   description:
-    "Since 2014, Race Dynamics is Lucknow’s premier destination for superbikes, performance motorcycles, and premium pre-owned bikes with Pan-India delivery.",
+    "Since 2014, Race Dynamics Lucknow is the city’s premier destination for superbikes, performance motorcycles, and premium pre-owned bikes with Pan-India delivery.",
 
   phonePrimary: "+91 98896 68858",
   phoneSecondary: "",

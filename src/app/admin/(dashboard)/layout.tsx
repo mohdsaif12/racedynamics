@@ -52,7 +52,7 @@ export default async function AdminLayout({
         <Link href="/admin" className="flex items-center gap-2 px-6 py-6">
           <Image
             src="/brand/racedynamics-full.svg"
-            alt="RaceDynamics"
+            alt="Race Dynamics Lucknow"
             width={1200}
             height={581}
             unoptimized

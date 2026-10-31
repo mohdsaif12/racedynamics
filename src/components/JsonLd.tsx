@@ -38,8 +38,8 @@ export function OrganizationJsonLd({ settings }: { settings: SiteSettings }) {
         // any of them resolve to the same knowledge-panel entity rather than
         // Google guessing.
         alternateName: [
+          "Race Dynamics",
           "RaceDynamics",
-          "Race Dynamics Lucknow",
           "RaceDynamics Lucknow",
           "Race Dynamics Motorcycles",
         ],
@@ -112,7 +112,7 @@ export function WebSiteJsonLd() {
         "@type": "WebSite",
         "@id": absoluteUrl("/#website"),
         name: SITE.name,
-        alternateName: ["RaceDynamics", "Race Dynamics Lucknow"],
+        alternateName: ["Race Dynamics", "RaceDynamics"],
         url: absoluteUrl("/"),
         publisher: { "@id": absoluteUrl("/#dealer") },
         potentialAction: {

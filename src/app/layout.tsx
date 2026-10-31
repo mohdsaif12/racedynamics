@@ -25,7 +25,7 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
-const TITLE = `${SITE.name} — Pre-owned superbikes in ${SITE.city}`;
+const TITLE = `${SITE.name} — Pre-owned superbikes & premium motorcycles`;
 
 export const metadata: Metadata = {
   // Without metadataBase, every relative Open Graph image URL below resolves

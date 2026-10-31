@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { SITE } from "@/lib/site";
 
-export const alt = `${SITE.name} — pre-owned superbikes in ${SITE.city}`;
+export const alt = `${SITE.name} — pre-owned superbikes & premium motorcycles`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -36,7 +36,7 @@ export default async function OpengraphImage() {
             lineHeight: 1,
           }}
         >
-          {SITE.name.toUpperCase()}
+          {SITE.brand.toUpperCase()}
         </div>
         <div
           style={{

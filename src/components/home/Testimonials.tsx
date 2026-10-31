@@ -9,8 +9,8 @@ import { StarIcon, QuoteMarkIcon } from "@/components/icons";
 
 /**
  * Honeycomb photo cluster + quote carousel matching the reference design.
- * Features background vector waves, interlocking hexagonal photos for every customer review,
- * interactive photo selection, and bold red/graphite typography.
+ * The hexagons are real customer handover photos from the showroom; they
+ * aren't tied to individual reviews, so the quotes page with the dashes.
  */
 export default function Testimonials({
   testimonials,
@@ -20,9 +20,7 @@ export default function Testimonials({
   const [i, setI] = useState(0);
   const reduced = useReducedMotion() ?? false;
 
-  // Filter only testimonials that have photos as requested
-  const itemsWithPhotos = testimonials.filter((t) => Boolean(t.photo));
-  const list = itemsWithPhotos.length > 0 ? itemsWithPhotos : testimonials;
+  const list = testimonials;
 
   if (list.length === 0) return null;
 
@@ -34,7 +32,7 @@ export default function Testimonials({
       {/* Background Ghost Wordmark */}
       <span
         aria-hidden
-        className="ghost-word absolute left-1/2 top-4 -translate-x-1/2 whitespace-nowrap text-[clamp(5rem,18vw,15rem)] font-extrabold uppercase tracking-widest text-slate/[0.04] pointer-events-none select-none"
+        className="ghost-word absolute left-1/2 top-4 -translate-x-1/2 whitespace-nowrap text-[clamp(3rem,11vw,9.5rem)] font-extrabold uppercase tracking-widest text-slate/[0.04] pointer-events-none select-none"
       >
         {SITE.name}
       </span>
@@ -43,75 +41,18 @@ export default function Testimonials({
       <BackgroundWaves />
 
       <div className="relative mx-auto max-w-[1400px] px-5 lg:px-10">
-        {/* Honeycomb Hexagonal Photo Cluster */}
-        <div className="mx-auto flex flex-col items-center justify-center max-w-4xl py-4">
-          <div className="flex flex-col items-center justify-center gap-y-[-12px] sm:gap-y-[-18px]">
-            {/* Row 1 (3 items) */}
-            <div className="flex justify-center gap-2 sm:gap-3">
-              {list.slice(0, 3).map((t, idx) => {
-                const globalIdx = idx;
-                const isActive = globalIdx === safeIndex;
-                return (
-                  <HexagonTile
-                    key={t.id}
-                    testimonial={t}
-                    isActive={isActive}
-                    onClick={() => setI(globalIdx)}
-                  />
-                );
-              })}
+        {/* Honeycomb of real customer handover photos — 4 / 5 / 4 */}
+        <div className="mx-auto flex max-w-4xl flex-col items-center py-4">
+          {HONEYCOMB_ROWS.map((row, r) => (
+            <div
+              key={r}
+              className={`flex justify-center gap-1 sm:gap-2 lg:gap-3 ${r > 0 ? "-mt-3 sm:-mt-5 lg:-mt-6" : ""}`}
+            >
+              {row.map((n) => (
+                <HexagonPhoto key={n} n={n} featured={n === FEATURED_PHOTO} />
+              ))}
             </div>
-
-            {/* Row 2 (4 items) - offset slightly */}
-            <div className="flex justify-center gap-2 sm:gap-3 -mt-3 sm:-mt-5">
-              {list.slice(3, 7).map((t, idx) => {
-                const globalIdx = 3 + idx;
-                const isActive = globalIdx === safeIndex;
-                return (
-                  <HexagonTile
-                    key={t.id}
-                    testimonial={t}
-                    isActive={isActive}
-                    onClick={() => setI(globalIdx)}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Row 3 (3 items) */}
-            <div className="flex justify-center gap-2 sm:gap-3 -mt-3 sm:-mt-5">
-              {list.slice(7, 10).map((t, idx) => {
-                const globalIdx = 7 + idx;
-                const isActive = globalIdx === safeIndex;
-                return (
-                  <HexagonTile
-                    key={t.id}
-                    testimonial={t}
-                    isActive={isActive}
-                    onClick={() => setI(globalIdx)}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Row 4 (2 items) */}
-            {list.length > 10 && (
-              <div className="flex justify-center gap-2 sm:gap-3 -mt-3 sm:-mt-5">
-                {list.slice(10, 12).map((t, idx) => {
-                  const globalIdx = 10 + idx;
-                  const isActive = globalIdx === safeIndex;
-                  return (
-                    <HexagonTile
-                      key={t.id}
-                      testimonial={t}
-                      isActive={isActive}
-                      onClick={() => setI(globalIdx)}
-                    />
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          ))}
         </div>
 
         {/* Section Heading: WHAT OUR CUSTOMER SAY */}
@@ -180,61 +121,40 @@ export default function Testimonials({
   );
 }
 
-/** Interactive Hexagonal Photo Tile */
-function HexagonTile({
-  testimonial,
-  isActive,
-  onClick,
-}: {
-  testimonial: Testimonial;
-  isActive: boolean;
-  onClick: () => void;
-}) {
+const HEX = "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)";
+
+/** Photo numbers in /public/customers, laid out row by row. Storefront shots
+ *  sit on opposite corners and the wide showroom shot takes the centre. */
+const HONEYCOMB_ROWS = [
+  [1, 2, 3, 4],
+  [5, 6, 7, 8, 9],
+  [10, 11, 12, 13],
+];
+const FEATURED_PHOTO = 7;
+
+function HexagonPhoto({ n, featured }: { n: number; featured: boolean }) {
+  const src = `/customers/customer-${String(n).padStart(2, "0")}.webp`;
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={`View review by ${testimonial.name}`}
-      className={`group relative size-20 sm:size-28 lg:size-32 transition-transform duration-300 ease-out focus:outline-none ${
-        isActive
-          ? "scale-110 z-20 drop-shadow-lg"
-          : "scale-100 hover:scale-105 z-10 opacity-90 hover:opacity-100"
+    <div
+      className={`group relative size-[62px] sm:size-24 lg:size-32 transition-transform duration-300 ease-out ${
+        featured ? "z-20 scale-110 drop-shadow-lg" : "z-10 hover:z-20 hover:scale-105"
       }`}
     >
       <div
-        className={`size-full overflow-hidden transition-all duration-300 ${
-          isActive ? "bg-red p-1" : "bg-mist hover:bg-slate/30"
-        }`}
-        style={{
-          clipPath:
-            "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
-        }}
+        className={`size-full overflow-hidden ${featured ? "bg-red p-1" : "bg-mist"}`}
+        style={{ clipPath: HEX }}
       >
-        <div
-          className="relative size-full overflow-hidden"
-          style={{
-            clipPath:
-              "polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)",
-          }}
-        >
-          {testimonial.photo ? (
-            <NextImage
-              src={testimonial.photo}
-              alt={testimonial.name}
-              fill
-              sizes="140px"
-              className={`object-cover transition-transform duration-500 ${
-                isActive ? "scale-110" : "group-hover:scale-105"
-              }`}
-            />
-          ) : (
-            <div className="size-full bg-mist grid place-items-center font-bold text-slate">
-              {testimonial.name[0]}
-            </div>
-          )}
+        <div className="relative size-full overflow-hidden" style={{ clipPath: HEX }}>
+          <NextImage
+            src={src}
+            alt={`${SITE.name} customer with their motorcycle`}
+            fill
+            sizes="(min-width: 1024px) 140px, (min-width: 640px) 100px, 70px"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+          />
         </div>
       </div>
-    </button>
+    </div>
   );
 }
 

@@ -386,7 +386,7 @@ export function AboutBand({ content }: { content: SiteContentBlock | null }) {
           <ImageReveal className="aspect-[4/3] overflow-hidden bg-mist">
             <NextImage
               src={image}
-              alt={`Inside the ${SITE.name} showroom in ${SITE.city}`}
+              alt={`Inside the ${SITE.name} showroom`}
               width={1200}
               height={900}
               className="h-full w-full object-cover"

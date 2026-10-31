@@ -8,8 +8,8 @@ import type { SiteSettings } from "./types";
 
 export function whatsappLink(settings: SiteSettings, subject?: string) {
   const text = subject
-    ? `Hi RaceDynamics, I'm interested in the ${subject}. Is it still available?`
-    : `Hi RaceDynamics, I'd like to know more about your current stock.`;
+    ? `Hi Race Dynamics Lucknow, I'm interested in the ${subject}. Is it still available?`
+    : `Hi Race Dynamics Lucknow, I'd like to know more about your current stock.`;
   return `https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(text)}`;
 }
 

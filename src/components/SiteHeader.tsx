@@ -32,21 +32,21 @@ export default function SiteHeader({
           it needs more height than the old wide wordmark to stay legible.
           InventoryBrowser offsets by this height — keep them in step. */}
       <div className="mx-auto flex h-[76px] max-w-[1400px] items-center gap-8 px-5 lg:px-10">
-        <Link href="/" className="shrink-0" aria-label="RaceDynamics — home">
+        <Link href="/" className="shrink-0" aria-label="Race Dynamics Lucknow — home">
           {logoUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element -- an
                uploaded file of unknown dimensions; next/image would need
                them up front. */
             <img
               src={logoUrl}
-              alt="RaceDynamics"
+              alt="Race Dynamics Lucknow"
               fetchPriority="high"
               className="h-[60px] w-auto max-w-[200px] object-contain lg:max-w-[260px]"
             />
           ) : (
             <Image
               src="/brand/racedynamics-full.svg"
-              alt="RaceDynamics"
+              alt="Race Dynamics Lucknow"
               width={1200}
               height={581}
               priority

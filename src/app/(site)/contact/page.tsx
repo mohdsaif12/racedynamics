@@ -5,7 +5,7 @@ import { SITE, mapEmbedSrc } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: `Visit ${SITE.name} in ${SITE.city}, or reach us on WhatsApp and phone.`,
+  description: `Visit ${SITE.name}, or reach us on WhatsApp and phone.`,
   alternates: { canonical: "/contact" },
 };
 
@@ -88,7 +88,7 @@ export default async function ContactPage() {
 
       <div className="mt-12 overflow-hidden border border-line">
         <iframe
-          title={`Map to ${SITE.name}, ${SITE.city}`}
+          title={`Map to ${SITE.name}`}
           // Was pointing at the city, which dropped a pin in the middle of
           // Lucknow rather than at the shop.
           src={mapEmbedSrc()}

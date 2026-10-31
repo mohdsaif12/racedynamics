@@ -296,7 +296,7 @@ export default function HeroSequence() {
           className="absolute inset-x-0 bottom-12 z-10 flex flex-col items-center gap-3 px-5"
         >
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/70">
-            {SITE.name} · {SITE.city}
+            {SITE.name}
           </p>
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">
             Scroll

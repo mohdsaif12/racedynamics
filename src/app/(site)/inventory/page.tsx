@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const bikes = await getAllBikes();
   return {
     title: "Inventory",
-    description: `All ${bikes.length} pre-owned superbikes currently in stock at ${SITE.name}, ${SITE.city}. Filter by category or search by make, model and city.`,
+    description: `All ${bikes.length} pre-owned superbikes currently in stock at ${SITE.name}. Filter by category or search by make, model and city.`,
     alternates: { canonical: "/inventory" },
   };
 }
@@ -38,7 +38,7 @@ export default async function InventoryPage({
   return (
     <>
       <h1 className="sr-only">
-        {SITE.name} inventory in {SITE.city} — {bikes.length} pre-owned superbikes in stock
+        {SITE.name} inventory — {bikes.length} pre-owned superbikes in stock
       </h1>
       <InventoryBrowser
         bikes={bikes}
