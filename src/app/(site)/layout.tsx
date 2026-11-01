@@ -3,6 +3,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactRail from "@/components/ContactRail";
 import ClosedBanner from "@/components/ClosedBanner";
+import StoryBubble from "@/components/StoryBubble";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/JsonLd";
 import { getCategories } from "@/lib/data/categories";
 import { getSiteSettings } from "@/lib/data/settings";
@@ -36,6 +37,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       <main className="flex-1">{children}</main>
       <SiteFooter settings={settings} aboutBody={footerAbout?.body ?? null} />
       <ContactRail settings={settings} />
+      <StoryBubble instagramUrl={settings.social.instagram} />
       <OrganizationJsonLd settings={settings} />
       <WebSiteJsonLd />
     </SmoothScroll>

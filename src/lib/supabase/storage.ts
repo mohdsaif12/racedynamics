@@ -31,6 +31,11 @@ export function siteContentImageUrl(path: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/site-content/${path}`;
 }
 
+/** 24-hour story photos — see supabase/migrations/0015_stories.sql. */
+export function storyImageUrl(path: string) {
+  return `${SUPABASE_URL}/storage/v1/object/public/stories/${path}`;
+}
+
 /** A collision-safe storage path: keeps the extension, randomises the name. */
 export function newStoragePath(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";

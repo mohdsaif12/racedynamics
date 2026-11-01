@@ -148,3 +148,14 @@
     transform: translate3d(-50%, 0, 0);
   }
 }
+
+/* Story viewer progress bar — see src/components/StoryBubble.tsx. Driven by a
+   CSS animation so pausing (press-and-hold) is just animation-play-state. */
+@keyframes story-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

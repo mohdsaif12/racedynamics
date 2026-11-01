@@ -9,6 +9,7 @@ import AdminMobileNav from "./AdminMobileNav";
 const NAV = [
   { href: "/admin/bikes", label: "Bikes", short: "Bikes", icon: BikeIcon },
   { href: "/admin/accessories", label: "Accessories", short: "Accessories", icon: BoxIcon },
+  { href: "/admin/stories", label: "Stories", short: "Stories", icon: StoryIcon },
   { href: "/admin/content", label: "Website content", short: "Content", icon: ImageIcon },
   { href: "/admin/appointments", label: "Appointments", short: "Bookings", icon: CalendarIcon },
   { href: "/admin/enquiries", label: "Enquiries", short: "Enquiries", icon: InboxIcon },
@@ -128,6 +129,14 @@ function BikeIcon() {
       <circle cx="5.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.6" />
       <circle cx="18.5" cy="17.5" r="3.5" stroke="currentColor" strokeWidth="1.6" />
       <path d="M5.5 17.5 10 8h5l3.5 9.5M10 8l2 4.5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function StoryIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" strokeDasharray="4 2.2" />
+      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
 }
